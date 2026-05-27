@@ -250,10 +250,6 @@ export default function EpisodeGrid({
                         >
                           {episode.title}
                         </h4>
-
-                        <p className="text-xs text-stone-400 font-sans line-clamp-2 leading-relaxed">
-                          {episode.description}
-                        </p>
                       </div>
 
                       {/* Speaker Credit & More actions */}

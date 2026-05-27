@@ -65,9 +65,6 @@ export default function EpisodeDetail({
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-stone-100 uppercase max-w-4xl leading-snug">
             {episode.title}
           </h1>
-          <p className="text-sm font-mono text-stone-400 max-w-3xl leading-relaxed">
-            {episode.description}
-          </p>
         </div>
 
         {/* Media Block / Video Player + Glow effect */}
