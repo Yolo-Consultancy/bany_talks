@@ -219,7 +219,7 @@ export default function App() {
           >
             <motion.div
               animate={{ rotate: mobileMenuOpen ? 180 : 0, scale: mobileMenuOpen ? 1.1 : 1 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ type: "spring", stiffness: 250, damping: 20 }}
               className="flex items-center justify-center"
             >
               {mobileMenuOpen ? <X className="w-5 h-5 text-amber-500" /> : <Menu className="w-5 h-5" />}

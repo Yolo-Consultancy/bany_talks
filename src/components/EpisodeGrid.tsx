@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Play, Clock, ArrowUpRight, Flame, FilterX, ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Episode } from '../types';
 
 interface EpisodeGridProps {
@@ -9,7 +9,10 @@ interface EpisodeGridProps {
 }
 
 // Framer Motion Animation Variants
-const containerVariants = {
+import { Variants } from 'framer-motion';
+
+// Framer Motion Animation Variants
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -19,7 +22,7 @@ const containerVariants = {
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 35, scale: 0.98 },
   visible: {
     opacity: 1,
