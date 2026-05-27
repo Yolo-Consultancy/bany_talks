@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Poltawski+Nowy:ital,wght@0,400..700;1,400..700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Poltawski Nowy", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Sleek Theme Override - Translating all stone classes to design-matched pure black and pitch grays */
+  --color-stone-950: #050505;
+  --color-stone-900: #0f0f0f;
+  --color-stone-850: #121212;
+  --color-stone-800: rgba(255, 255, 255, 0.1);
+  --color-stone-750: rgba(255, 255, 255, 0.08);
+  --color-stone-700: rgba(255, 255, 255, 0.12);
+  --color-stone-600: rgba(255, 255, 255, 0.35);
+  --color-stone-500: rgba(255, 255, 255, 0.45);
+  --color-stone-400: rgba(255, 255, 255, 0.65);
+  --color-stone-300: rgba(255, 255, 255, 0.85);
+  --color-stone-200: #e5e7eb;
+  --color-stone-100: #ffffff;
+
+  /* Accent highlights precisely matched to sleek model */
+  --color-amber-500: #f59e0b;
+  --color-amber-400: #fbbf24;
+}
+
+@utility animate-spin-slow {
+  animation: spin 12s linear infinite;
+}
+
+/* Custom fade in animation utilities */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Extra premium glass effects for sleek modern borders */
+.sleek-card {
+  background: #0f0f0f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem; /* 24px rounded-3xl */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+.sleek-inner {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem; /* rounded-2xl */
+}
+
+/* Custom scrollbar rules for listings */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(5, 5, 5, 0.8);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #f59e0b;
+}
+
+

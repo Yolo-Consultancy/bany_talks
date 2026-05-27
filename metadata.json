@@ -1,0 +1,6 @@
+{
+  "name": "Bany Talks",
+  "description": "Plateforme premium officielle de Bany Talks — Conversations vraies, récits inspirants et podcasts média haut de gamme.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
