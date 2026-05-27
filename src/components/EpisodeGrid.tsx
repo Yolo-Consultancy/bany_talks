@@ -256,7 +256,7 @@ export default function EpisodeGrid({
                       <div className="pt-4 border-t border-stone-900 flex items-center justify-between">
                         <div className="flex items-center gap-2.5">
                           <img
-                            src={episode.guest.avatar}
+                            src={episode.thumbnail}
                             alt={episode.guest.name}
                             className="w-7 h-7 object-cover rounded-full border border-stone-800"
                             referrerPolicy="no-referrer"

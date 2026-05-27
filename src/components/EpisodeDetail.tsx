@@ -84,9 +84,8 @@ export default function EpisodeDetail({
             allowFullScreen
           />
         </div>
-
-        {/* Control buttons & Engagement stats */}
-        <div className="flex flex-wrap items-center justify-between gap-4 bg-stone-900/50 border border-stone-850 p-5 rounded-2xl mb-12 text-left">
+          {/* Guest Details Container */}
+          <div className="bg-stone-900/40 bo border border-stone-850 p-5 rounded-2xl mb-12 text-left">
           
           <div className="flex items-center gap-4">
             <button
@@ -216,7 +215,7 @@ export default function EpisodeDetail({
               
               <div className="text-center space-y-3 pb-4 border-b border-stone-850">
                 <img
-                  src={episode.guest.avatar}
+                  src={episode.thumbnail}
                   alt={episode.guest.name}
                   className="w-20 h-20 object-cover rounded-full border border-stone-800 mx-auto bg-stone-950"
                   referrerPolicy="no-referrer"
