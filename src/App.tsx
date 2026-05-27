@@ -210,19 +210,21 @@ export default function App() {
           </div>
 
           {/* Mobile Menu Action Icon */}
-          <button
+          <motion.button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle mobile menu"
             className="md:hidden p-2 text-stone-400 hover:text-stone-100 transition cursor-pointer relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-stone-900/50"
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.05 }}
           >
             <motion.div
-              animate={{ rotate: mobileMenuOpen ? 180 : 0, scale: mobileMenuOpen ? 1.05 : 1 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              animate={{ rotate: mobileMenuOpen ? 180 : 0, scale: mobileMenuOpen ? 1.1 : 1 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
               className="flex items-center justify-center"
             >
               {mobileMenuOpen ? <X className="w-5 h-5 text-amber-500" /> : <Menu className="w-5 h-5" />}
             </motion.div>
-          </button>
+          </motion.button>
 
         </div>
 

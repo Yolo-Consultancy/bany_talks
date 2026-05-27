@@ -199,6 +199,17 @@ export default function EpisodeGrid({
                             referrerPolicy="no-referrer"
                           />
                           
+                          {/* Guest Overlay Badge */}
+                          <div className="absolute bottom-2 left-2 flex items-center gap-2 bg-stone-900/80 backdrop-blur-md px-2 py-1 rounded-lg">
+                            <img
+                              src={episode.guest.avatar}
+                              alt={episode.guest.name}
+                              className="w-6 h-6 object-cover rounded-full border border-stone-800"
+                              referrerPolicy="no-referrer"
+                            />
+                            <span className="text-xs font-bold text-stone-100 truncate max-w-[80px]">{episode.guest.name}</span>
+                          </div>
+
                           {/* Shadow overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent pointer-events-none" />
 
