@@ -191,8 +191,8 @@ export default function EpisodeDetail({
               </h4>
               <div className="grid grid-cols-1 gap-4">
                 {episode.quotes.map((quote, idx) => (
-                  <div key={idx} className="p-5 bg-gradient-to-r from-stone-900 to-stone-950 border border-stone-850 rounded-2xl relative overflow-hidden">
-                    <span className="absolute top-1 right-4 text-7xl font-serif text-stone-800 pointer-events-none select-none select-none opacity-40">“</span>
+                  <div key={idx} className="p-5 bg-linear-to-r from-stone-900 to-stone-950 border border-stone-850 rounded-2xl relative overflow-hidden">
+                    <span className="absolute top-1 right-4 text-7xl font-serif text-stone-800 pointer-events-none select-none opacity-40">“</span>
                     <p className="text-sm text-stone-200 italic font-sans leading-relaxed relative z-10">
                       "{quote.text}"
                     </p>
@@ -264,7 +264,7 @@ export default function EpisodeDetail({
             </div>
 
             {/* Quick Gated checklist for listeners */}
-            <div className="bg-gradient-to-br from-stone-900 to-ambient-950 border border-rose-500/20 rounded-2xl p-6 p-6 space-y-4">
+            <div className="bg-linear-to-br from-stone-900 to-ambient-950 border border-rose-500/20 rounded-2xl p-6 space-y-4">
               <span className="text-[9px] font-mono font-bold text-rose-400 uppercase tracking-widest bg-rose-400/10 px-2.5 py-1 rounded">
                 BONUS AUDIO EXCLUSIF
               </span>

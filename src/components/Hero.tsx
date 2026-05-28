@@ -11,7 +11,7 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
   return (
     <section 
       id="hero-section"
-      className="relative overflow-hidden bg-gradient-to-b from-stone-950 via-stone-900 to-stone-950 py-16 lg:py-24 border-b border-stone-800/60"
+      className="relative overflow-hidden bg-linear-to-b from-stone-950 via-stone-900 to-stone-950 py-16 lg:py-24 border-b border-stone-800/60"
     >
       {/* Background radial highlight */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-96 bg-rose-500/5 blur-[120px] rounded-full pointer-events-none" />
@@ -33,7 +33,7 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
             {/* Powerful display title */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold tracking-tight text-stone-100 uppercase leading-[1.05]">
               Conversations <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-rose-500 to-rose-600">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-rose-400 via-rose-500 to-rose-600">
                 vraies.
               </span> <br />
               Des histoires qui marquent.
@@ -92,9 +92,9 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
             <div className="relative mx-auto max-w-sm lg:max-w-none group">
               
               {/* Outer light aura */}
-              <div className="absolute -inset-1.5 bg-gradient-to-r from-rose-500 via-rose-400 to-rose-500 rounded-3xl blur-md opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
+              <div className="absolute -inset-1.5 bg-linear-to-r from-rose-500 via-rose-400 to-rose-500 rounded-3xl blur-md opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
               
-              <div className="relative overflow-hidden rounded-2xl border border-stone-800 bg-stone-950 aspect-[4/5] md:aspect-square lg:aspect-[3/4]">
+              <div className="relative overflow-hidden rounded-2xl border border-stone-800 bg-stone-950 aspect-4/5 md:aspect-square lg:aspect-3/4">
                 <img 
                   src={HOST_DETAILS.avatar} 
                   alt="Bany Talks Host Portrait" 
@@ -103,7 +103,7 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
                 />
                 
                 {/* Floating caption overlay */}
-                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-stone-950 via-stone-950/70 to-transparent p-6 text-left">
+                <div className="absolute bottom-0 inset-x-0 bg-linear-to-t from-stone-950 via-stone-950/70 to-transparent p-6 text-left">
                   <p className="text-xs font-mono text-rose-500 uppercase tracking-widest mb-1">
                     {HOST_DETAILS.title}
                   </p>

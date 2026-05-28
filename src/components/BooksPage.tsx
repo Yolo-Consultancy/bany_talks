@@ -80,7 +80,7 @@ export default function BooksPage() {
     >
       {/* Page Hero Header */}
       <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0f0f0f] p-8 md:p-12">
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/70 to-transparent z-10" />
+        <div className="absolute inset-0 bg-linear-to-r from-stone-950 via-stone-950/70 to-transparent z-10" />
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1513001900722-370f803f498d?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center opacity-10 filter grayscale brightness-50" />
         
         <div className="relative z-20 max-w-2xl space-y-4">
@@ -107,7 +107,7 @@ export default function BooksPage() {
             </div>
             <div>
               <span className="block text-xl font-bold text-rose-500">4.9/5</span>
-              <span className="text-[9px] font-mono uppercase tracking-widest text-[10px] text-stone-500">Moyenne Critique</span>
+              <span className="text-[9px] font-mono uppercase tracking-widest text-stone-500">Moyenne Critique</span>
             </div>
           </div>
         </div>
@@ -186,7 +186,7 @@ export default function BooksPage() {
                         <div className="relative group perspective">
                           {/* Book spine & 3D side layout */}
                           <div 
-                            className={`w-44 h-60 rounded-r-lg relative transition-all duration-300 transform preserve-3d group-hover:rotate-y-[-10deg] shadow-2xl bg-gradient-to-br ${book.coverGradient} flex flex-col justify-between p-4 text-left border-l border-white/20`}
+                            className={`w-44 h-60 rounded-r-lg relative transition-all duration-300 transform preserve-3d group-hover:rotate-y-[-10deg] shadow-2xl bg-linear-to-br ${book.coverGradient} flex flex-col justify-between p-4 text-left border-l border-white/20`}
                           >
                             {/* Paper overlay textures */}
                             <div className="absolute inset-y-0 left-0 w-2.5 bg-black/10 shadow-[inset_-1px_0_0_rgba(255,255,255,0.1)] rounded-l" />
@@ -215,7 +215,7 @@ export default function BooksPage() {
                           </div>
                           
                           {/* 3D pages effect */}
-                          <div className="absolute left-[173px] top-[4px] bottom-[4px] w-2 bg-stone-300 rounded-r border-y border-stone-400 select-none shadow-md transform rotate-y-[80deg] z-0" />
+                          <div className="absolute left-43.25 top-1 bottom-1 w-2 bg-stone-300 rounded-r border-y border-stone-400 select-none shadow-md transform rotate-y-80 z-0" />
                         </div>
                       </div>
 

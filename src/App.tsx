@@ -136,7 +136,7 @@ export default function App() {
               {currentView === 'home' && (
                 <motion.span 
                   layoutId="activeHeaderUnderline" 
-                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
+                  className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
@@ -151,7 +151,7 @@ export default function App() {
               {currentView === 'about' && (
                 <motion.span 
                   layoutId="activeHeaderUnderline" 
-                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
+                  className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
@@ -166,7 +166,7 @@ export default function App() {
               {(currentView === 'episodes' || currentView === 'episode-detail') && (
                 <motion.span 
                   layoutId="activeHeaderUnderline" 
-                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
+                  className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
@@ -181,7 +181,7 @@ export default function App() {
               {currentView === 'books' && (
                 <motion.span 
                   layoutId="activeHeaderUnderline" 
-                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
+                  className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
@@ -196,7 +196,7 @@ export default function App() {
               {currentView === 'hub' && (
                 <motion.span 
                   layoutId="activeHeaderUnderline" 
-                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
+                  className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}

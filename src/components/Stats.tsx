@@ -47,14 +47,14 @@ export default function Stats({ onInviteClick }: StatsProps) {
               )}
             </div>
 
-            <div className="lg:col-span-5 relative overflow-hidden rounded-2xl border border-stone-800/80 aspect-[4/5] bg-stone-950 shadow-2xl group w-full max-w-md mx-auto lg:mx-0">
+            <div className="lg:col-span-5 relative overflow-hidden rounded-2xl border border-stone-800/80 aspect-4/5 bg-stone-950 shadow-2xl group w-full max-w-md mx-auto lg:mx-0">
               <img 
                 src={HOST_DETAILS.aboutpicture} 
                 alt="Banyabo Bigomokero Studio Session" 
                 className="w-full h-full object-cover grayscale brightness-90 hover:grayscale-0 hover:scale-102 transition duration-700 ease-out"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-linear-to-t from-stone-950/70 via-transparent to-transparent pointer-events-none" />
               <div className="absolute bottom-5 left-5 bg-stone-900/90 border border-stone-800 px-3 py-1.5 rounded text-[10px] font-mono font-bold text-rose-400 uppercase tracking-widest">
                 🎙️ En Session Live
               </div>
@@ -65,14 +65,14 @@ export default function Stats({ onInviteClick }: StatsProps) {
           {/* Block 2: Photo 2 (Left) + Mission/Impact (Right) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
-            <div className="lg:col-span-5 order-2 lg:order-1 relative overflow-hidden rounded-2xl border border-stone-800/80 aspect-video md:aspect-[4/3] bg-stone-950 shadow-xl group w-full max-w-md mx-auto lg:mx-0">
+            <div className="lg:col-span-5 order-2 lg:order-1 relative overflow-hidden rounded-2xl border border-stone-800/80 aspect-video md:aspect-4/3 bg-stone-950 shadow-xl group w-full max-w-md mx-auto lg:mx-0">
               <img 
                 src={HOST_DETAILS.avatar} 
                 alt="Banyabo Bigomokero Host Portrait" 
                 className="w-full h-full object-cover grayscale contrast-110 group-hover:grayscale-0 group-hover:scale-103 transition duration-700 ease-in-out"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-linear-to-t from-stone-950/60 to-transparent pointer-events-none" />
               <div className="absolute bottom-5 left-5 bg-stone-900/90 border border-stone-800 px-3 py-1.5 rounded text-[10px] font-mono font-bold text-stone-200 uppercase tracking-widest">
                 💡 Hôte Passionné
               </div>

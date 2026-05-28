@@ -219,7 +219,7 @@ export default function EpisodeGrid({
                           
 
                           {/* Shadow overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent pointer-events-none" />
+                          <div className="absolute inset-0 bg-linear-to-t from-stone-950/80 via-transparent to-transparent pointer-events-none" />
 
                           {/* Left overlay values */}
                           <div className="absolute top-3 left-3 flex gap-2">

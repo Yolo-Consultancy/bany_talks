@@ -504,7 +504,7 @@ export default function InviteBany() {
             <div className="lg:col-span-5 space-y-6">
               
               {/* Recipient speaking package breakdown */}
-              <div className="bg-gradient-to-br from-rose-500/10 via-stone-950 to-stone-950 border border-rose-500/15 rounded-2xl p-6 space-y-5">
+              <div className="bg-linear-to-br from-rose-500/10 via-stone-950 to-stone-950 border border-rose-500/15 rounded-2xl p-6 space-y-5">
                 <div>
                   <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-rose-400 bg-rose-400/10 px-2 py-0.5 rounded uppercase">
                     Offre Recommandée
@@ -663,7 +663,7 @@ export default function InviteBany() {
                 )}
 
                 {sheetsError && (
-                  <p className="text-[10px] font-mono text-rose-400 leading-relaxed pt-2 border-t border-stone-900 bg-rose-500/5 p-2.5 rounded-lg border border-rose-500/10">
+                  <p className="text-[10px] font-mono text-rose-400 leading-relaxed pt-2 border-t bg-rose-500/5 p-2.5 rounded-lg border border-rose-500/10">
                     ⚠️ {sheetsError}
                   </p>
                 )}
