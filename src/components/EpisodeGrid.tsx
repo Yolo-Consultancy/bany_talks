@@ -36,7 +36,8 @@ const cardVariants: Variants = {
   },
 };
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE_MOBILE = 3;
+const ITEMS_PER_PAGE_DESKTOP = 6;
 
 export default function EpisodeGrid({
   episodes,
@@ -46,6 +47,19 @@ export default function EpisodeGrid({
   const [selectedCategory, setSelectedCategory] = useState<string>('Toutes');
   const [currentPage, setCurrentPage] = useState(1);
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Detect window resize for responsive pagination
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setCurrentPage(1);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const ITEMS_PER_PAGE = isMobile ? ITEMS_PER_PAGE_MOBILE : ITEMS_PER_PAGE_DESKTOP;
 
   const categories = useMemo(() => {
     return ['Toutes', 'Émissions', 'Podcasts'];
