@@ -175,14 +175,15 @@ export default function EpisodeGrid({
               viewport={{ once: true, margin: "-80px" }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             >
-              {paginatedEpisodes.map((episode) => {
-                const isVideoPlaying = playingVideoId === episode.id;
+              {paginatedEpisodes.map((episode, i) => {
+              const isHiddenOnMobile = i >= 3;
+              const isVideoPlaying = playingVideoId === episode.id;
 
                 return (
                   <motion.article
                     key={episode.id}
                     variants={cardVariants}
-                    className="group flex flex-col bg-stone-950 border border-stone-800/80 rounded-2xl overflow-hidden shadow-xl hover:border-stone-700 transition duration-300 relative text-left"
+                    className={`group flex flex-col bg-stone-950 border border-stone-800/80 rounded-2xl overflow-hidden shadow-xl hover:border-stone-700 transition duration-300 relative text-left ${isHiddenOnMobile ? 'hidden md:block' : ''}`}
                   >
                     
                     {/* Thumbnail / Video Player */}
@@ -303,40 +304,48 @@ export default function EpisodeGrid({
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-stone-800/60 font-mono">
-                <span className="text-xs text-stone-500">
-                  Affichage de {Math.min(filteredEpisodes.length, (currentPage - 1) * ITEMS_PER_PAGE + 1)} à {Math.min(filteredEpisodes.length, currentPage * ITEMS_PER_PAGE)} sur {filteredEpisodes.length} épisodes
+              <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 pt-6 border-t border-stone-800/60 font-mono overflow-x-auto">
+                <span className="text-[10px] sm:text-xs text-stone-500 whitespace-nowrap">
+                  {Math.min(filteredEpisodes.length, (currentPage - 1) * ITEMS_PER_PAGE + 1)}-{Math.min(filteredEpisodes.length, currentPage * ITEMS_PER_PAGE)} / {filteredEpisodes.length}
                 </span>
                 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                   <button
                     disabled={currentPage === 1}
                     onClick={() => {
                       setCurrentPage(prev => Math.max(1, prev - 1));
                       document.getElementById('episodes-section')?.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="p-2.5 bg-stone-950 border border-stone-850 hover:bg-stone-850 disabled:opacity-40 disabled:hover:bg-stone-950 disabled:cursor-not-allowed text-stone-400 hover:text-stone-100 rounded-lg transition shrink-0 cursor-pointer"
+                    className="p-2 sm:p-2.5 bg-stone-950 border border-stone-850 hover:bg-stone-850 disabled:opacity-40 disabled:hover:bg-stone-950 disabled:cursor-not-allowed text-stone-400 hover:text-stone-100 rounded-lg transition shrink-0 cursor-pointer"
                     aria-label="Page précédente"
                   >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
 
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
-                    <button
-                      key={pg}
-                      onClick={() => {
-                        setCurrentPage(pg);
-                        document.getElementById('episodes-section')?.scrollIntoView({ behavior: 'smooth' });
-                      }}
-                      className={`min-w-9 h-9 text-xs font-bold rounded-lg border transition cursor-pointer flex items-center justify-center ${
-                        currentPage === pg
-                          ? 'bg-rose-500 border-rose-500 text-stone-950 font-black shadow-lg shadow-rose-500/15'
-                          : 'bg-stone-950 hover:bg-stone-850 text-stone-450 hover:text-stone-100 border-stone-850'
-                      }`}
-                    >
-                      {pg}
-                    </button>
-                  ))}
+                  {/* Page numbers - hidden on mobile */}
+                  <div className="hidden sm:flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
+                      <button
+                        key={pg}
+                        onClick={() => {
+                          setCurrentPage(pg);
+                          document.getElementById('episodes-section')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className={`min-w-8 h-8 text-xs font-bold rounded-lg border transition cursor-pointer flex items-center justify-center ${
+                          currentPage === pg
+                            ? 'bg-rose-500 border-rose-500 text-stone-950 font-black shadow-lg shadow-rose-500/15'
+                            : 'bg-stone-950 hover:bg-stone-850 text-stone-450 hover:text-stone-100 border-stone-850'
+                        }`}
+                      >
+                        {pg}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Mobile page indicator */}
+                  <div className="sm:hidden text-xs text-stone-400 font-mono px-2">
+                    {currentPage} / {totalPages}
+                  </div>
 
                   <button
                     disabled={currentPage === totalPages}
@@ -344,10 +353,10 @@ export default function EpisodeGrid({
                       setCurrentPage(prev => Math.min(totalPages, prev + 1));
                       document.getElementById('episodes-section')?.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="p-2.5 bg-stone-950 border border-stone-850 hover:bg-stone-850 disabled:opacity-40 disabled:hover:bg-stone-950 disabled:cursor-not-allowed text-stone-400 hover:text-stone-100 rounded-lg transition shrink-0 cursor-pointer"
+                    className="p-2 sm:p-2.5 bg-stone-950 border border-stone-850 hover:bg-stone-850 disabled:opacity-40 disabled:hover:bg-stone-950 disabled:cursor-not-allowed text-stone-400 hover:text-stone-100 rounded-lg transition shrink-0 cursor-pointer"
                     aria-label="Page suivante"
                   >
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                 </div>
               </div>
