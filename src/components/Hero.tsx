@@ -50,11 +50,11 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
             </p>
 
             {/* Interactive CTAs */}
-            <div className="flex flex-wrap gap-3 pt-4">
+            <div className="flex flex-row gap-2 sm:gap-3 pt-4">
               
               <button 
                 onClick={onInviteBany}
-                className="flex items-center gap-2.5 px-6 py-3.5 bg-rose-500 hover:bg-rose-400 text-stone-950 font-bold font-mono rounded-xl transition cursor-pointer transform active:scale-95 shadow-xl shadow-rose-500/10 text-sm"
+                className="flex items-center gap-1.5 sm:gap-2.5 px-3 sm:px-6 py-2.5 sm:py-3.5 bg-rose-500 hover:bg-rose-400 text-stone-950 font-bold font-mono rounded-lg sm:rounded-xl transition cursor-pointer transform active:scale-95 text-xs sm:text-sm whitespace-nowrap animate-pulse-glow"
               >
                 <Calendar className="w-4 h-4 text-stone-950" />
                 INVITER BANY
@@ -62,7 +62,7 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
 
               <button 
                 onClick={onExploreEpisodes}
-                className="flex items-center gap-2.5 px-6 py-3.5 bg-stone-900 hover:bg-stone-800 text-stone-100 border border-stone-800 hover:border-stone-700 font-bold font-mono rounded-xl transition cursor-pointer transform active:scale-95 text-sm"
+                className="flex items-center gap-1.5 sm:gap-2.5 px-3 sm:px-6 py-2.5 sm:py-3.5 bg-stone-900 hover:bg-stone-800 text-stone-100 border border-stone-800 hover:border-stone-700 font-bold font-mono rounded-lg sm:rounded-xl transition cursor-pointer transform active:scale-95 text-xs sm:text-sm whitespace-nowrap"
               >
                 <Video className="w-4 h-4 text-stone-400" />
                 EXPLORER LES ÉPISODES

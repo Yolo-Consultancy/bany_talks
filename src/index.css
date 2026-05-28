@@ -103,4 +103,19 @@
   background: rgba(239, 59, 59, 0.8);
 }
 
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(239, 59, 59, 0.3), 0 12px 20px rgba(239, 59, 59, 0.1);
+    transform: translateY(0px);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(239, 59, 59, 0.6), 0 12px 40px rgba(239, 59, 59, 0.25);
+    transform: translateY(-3px);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
 
