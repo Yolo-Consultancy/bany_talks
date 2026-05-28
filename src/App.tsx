@@ -247,7 +247,7 @@ export default function App() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
               className="md:hidden bg-stone-950 border-b border-stone-900 overflow-hidden shadow-2xl"
             >
               <div className="px-5 pt-3 pb-6 space-y-3 font-bold uppercase font-mono">
