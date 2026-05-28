@@ -219,7 +219,7 @@ export default function EpisodeDetail({
                 />
                 <div>
                   <h4 className="text-base font-bold text-stone-100 tracking-tight">
-                    {episode.guest.name}
+                    Bany Talks avec {episode.guest.name}
                   </h4>
                   <p className="text-xs text-amber-500 font-mono uppercase font-bold tracking-wider mt-0.5">
                     {episode.guest.role} {episode.guest.company ? `• ${episode.guest.company}` : ''}

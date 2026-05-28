@@ -263,7 +263,7 @@ export default function EpisodeGrid({
                           />
                           <div className="text-left leading-none">
                             <span className="text-xs font-bold text-stone-200 block truncate w-32">
-                              {episode.guest.name}
+                              Bany Talks
                             </span>
                             <span className="text-[9px] text-stone-500 block truncate w-32">
                               {episode.guest.role}
