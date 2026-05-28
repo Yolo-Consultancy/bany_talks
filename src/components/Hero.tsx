@@ -14,7 +14,7 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
       className="relative overflow-hidden bg-gradient-to-b from-stone-950 via-stone-900 to-stone-950 py-16 lg:py-24 border-b border-stone-800/60"
     >
       {/* Background radial highlight */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-96 bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-96 bg-rose-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -23,17 +23,17 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
           <div className="lg:col-span-7 text-left space-y-6 lg:pr-6">
             
             {/* Live indicator / badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full">
-              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-              <span className="text-xs font-mono font-bold tracking-wider text-amber-500 uppercase">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/10 border border-rose-500/20 rounded-full">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              <span className="text-xs font-mono font-bold tracking-wider text-rose-500 uppercase">
                 PODCAST & MÉDIA PREMIUM • DISPONIBLE
               </span>
             </div>
 
             {/* Powerful display title */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-stone-100 uppercase leading-[1.05]">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold tracking-tight text-stone-100 uppercase leading-[1.05]">
               Conversations <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-rose-500 to-rose-600">
                 vraies.
               </span> <br />
               Des histoires qui marquent.
@@ -54,7 +54,7 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
               
               <button 
                 onClick={onInviteBany}
-                className="flex items-center gap-2.5 px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold font-mono rounded-xl transition cursor-pointer transform active:scale-95 shadow-xl shadow-amber-500/10 text-sm"
+                className="flex items-center gap-2.5 px-6 py-3.5 bg-rose-500 hover:bg-rose-400 text-stone-950 font-bold font-mono rounded-xl transition cursor-pointer transform active:scale-95 shadow-xl shadow-rose-500/10 text-sm"
               >
                 <Calendar className="w-4 h-4 text-stone-950" />
                 INVITER BANY
@@ -73,13 +73,13 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
             <div className="pt-6 flex flex-wrap items-center gap-5 text-stone-500">
               <span className="text-xs uppercase font-mono tracking-widest">Disponible sur :</span>
               <div className="flex items-center gap-4 text-xs font-mono font-medium text-stone-400">
-                <span className="flex items-center gap-1.5 hover:text-amber-500 transition">
+                <span className="flex items-center gap-1.5 hover:text-rose-500 transition">
                   <Radio className="w-3.5 h-3.5 text-stone-500" /> Spotify
                 </span>
-                <span className="flex items-center gap-1.5 hover:text-amber-500 transition">
+                <span className="flex items-center gap-1.5 hover:text-rose-500 transition">
                   <Radio className="w-3.5 h-3.5 text-stone-500" /> Youtube
                 </span>
-                <span className="flex items-center gap-1.5 hover:text-amber-500 transition">
+                <span className="flex items-center gap-1.5 hover:text-rose-500 transition">
                   <Radio className="w-3.5 h-3.5 text-stone-500" /> Apple Podcasts
                 </span>
               </div>
@@ -92,7 +92,7 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
             <div className="relative mx-auto max-w-sm lg:max-w-none group">
               
               {/* Outer light aura */}
-              <div className="absolute -inset-1.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl blur-md opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-rose-500 via-rose-400 to-rose-500 rounded-3xl blur-md opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
               
               <div className="relative overflow-hidden rounded-2xl border border-stone-800 bg-stone-950 aspect-[4/5] md:aspect-square lg:aspect-[3/4]">
                 <img 
@@ -104,7 +104,7 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
                 
                 {/* Floating caption overlay */}
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-stone-950 via-stone-950/70 to-transparent p-6 text-left">
-                  <p className="text-xs font-mono text-amber-500 uppercase tracking-widest mb-1">
+                  <p className="text-xs font-mono text-rose-500 uppercase tracking-widest mb-1">
                     {HOST_DETAILS.title}
                   </p>
                   <h3 className="text-xl font-bold text-stone-100 tracking-tight">
@@ -118,7 +118,7 @@ export default function Hero({ onExploreEpisodes, onInviteBany }: HeroProps) {
 
               {/* Graphic badges */}
               <div className="absolute -top-4 -right-4 bg-stone-900 border border-stone-800 text-stone-100 px-4 py-2.5 rounded-xl shadow-lg font-mono text-xs flex flex-col items-center">
-                <span className="text-amber-500 font-bold text-lg leading-none">124</span>
+                <span className="text-rose-500 font-bold text-lg leading-none">124</span>
                 <span className="text-[9px] uppercase font-bold text-stone-500 mt-1">Émissions actives</span>
               </div>
 

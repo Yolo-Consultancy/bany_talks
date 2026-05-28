@@ -33,7 +33,7 @@ export default function Newsletter() {
       id="newsletter-section"
       className="bg-stone-900 py-16 lg:py-24 border-b border-stone-800/60 relative overflow-hidden text-left"
     >
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-amber-500/5 blur-[100px] rounded-full pointer-events-none -translate-y-1/2" />
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-rose-500/5 blur-[100px] rounded-full pointer-events-none -translate-y-1/2" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -42,7 +42,7 @@ export default function Newsletter() {
           <div className="lg:col-span-7 space-y-6">
             
             <div className="space-y-3">
-              <span className="text-xs font-mono font-bold tracking-widest text-amber-500 uppercase bg-amber-500/10 px-3 py-1 rounded">
+              <span className="text-xs font-mono font-bold tracking-widest text-rose-500 uppercase bg-rose-500/10 px-3 py-1 rounded">
                 COMMUNAUTÉ PRIVÉE & VIP
               </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-100 uppercase max-w-xl leading-none">
@@ -55,7 +55,7 @@ export default function Newsletter() {
 
             {isSubscribed ? (
               /* Success State with Gated Resource Download panel */
-              <div className="p-6 bg-stone-950 border border-amber-500/20 rounded-2xl space-y-4 animate-fade-in-up">
+              <div className="p-6 bg-stone-950 border border-rose-500/20 rounded-2xl space-y-4 animate-fade-in-up">
                 <div className="flex items-center gap-2.5 text-emerald-500 font-mono text-xs font-extrabold uppercase">
                   <CheckCircle2 className="w-5 h-5" /> Inscription validée avec succès !
                 </div>
@@ -74,10 +74,10 @@ export default function Newsletter() {
                       e.preventDefault();
                       alert("Téléchargement du plan d'action de l'épisode 124 démarré !");
                     }}
-                    className="flex items-center justify-between p-3.5 bg-stone-900 border border-stone-800 rounded-xl hover:border-amber-500 hover:text-amber-400 transition text-stone-200"
+                    className="flex items-center justify-between p-3.5 bg-stone-900 border border-stone-800 rounded-xl hover:border-rose-500 hover:text-rose-400 transition text-stone-200"
                   >
                     <div className="flex items-center gap-2 overflow-hidden">
-                      <FileText className="w-4 h-4 text-amber-500 shrink-0" />
+                      <FileText className="w-4 h-4 text-rose-500 shrink-0" />
                       <div className="text-left font-mono truncate w-36">
                         <span className="text-xs font-bold block">Plan_Action_Bloomflow.pdf</span>
                         <span className="text-[10px] text-stone-500">1.2 MB • PDF</span>
@@ -92,10 +92,10 @@ export default function Newsletter() {
                       e.preventDefault();
                       alert("Téléchargement de la checklist de négociation d'Antoine Dupont démarré !");
                     }}
-                    className="flex items-center justify-between p-3.5 bg-stone-900 border border-stone-800 rounded-xl hover:border-amber-500 hover:text-amber-400 transition text-stone-200"
+                    className="flex items-center justify-between p-3.5 bg-stone-900 border border-stone-800 rounded-xl hover:border-rose-500 hover:text-rose-400 transition text-stone-200"
                   >
                     <div className="flex items-center gap-2 overflow-hidden">
-                      <FileText className="w-4 h-4 text-amber-500 shrink-0" />
+                      <FileText className="w-4 h-4 text-rose-500 shrink-0" />
                       <div className="text-left font-mono truncate w-36">
                         <span className="text-xs font-bold block">Checklist_Negociation.pdf</span>
                         <span className="text-[10px] text-stone-500">840 KB • PDF</span>
@@ -118,14 +118,14 @@ export default function Newsletter() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={loading}
-                      className="w-full pl-10 pr-4 py-3 bg-stone-950 border border-stone-800 focus:border-amber-500 text-stone-100 placeholder-stone-650 rounded-xl focus:outline-none transition duration-200 text-xs font-mono disabled:opacity-50"
+                      className="w-full pl-10 pr-4 py-3 bg-stone-950 border border-stone-800 focus:border-rose-500 text-stone-100 placeholder-stone-650 rounded-xl focus:outline-none transition duration-200 text-xs font-mono disabled:opacity-50"
                     />
                   </div>
                   
                   <button
                     type="submit"
                     disabled={loading}
-                    className="py-3 px-6 bg-amber-500 hover:bg-amber-400 disabled:bg-stone-800 text-stone-950 font-bold font-mono text-xs rounded-xl transition cursor-pointer transform active:scale-95 flex items-center justify-center gap-2 shrink-0 shadow-lg shadow-amber-500/10"
+                    className="py-3 px-6 bg-rose-500 hover:bg-rose-400 disabled:bg-stone-800 text-stone-950 font-bold font-mono text-xs rounded-xl transition cursor-pointer transform active:scale-95 flex items-center justify-center gap-2 shrink-0 shadow-lg shadow-rose-500/10"
                   >
                     {loading ? (
                       <span className="w-4 h-4 rounded-full border-2 border-stone-950 border-t-transparent animate-spin" />

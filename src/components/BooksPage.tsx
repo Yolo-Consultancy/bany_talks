@@ -84,12 +84,12 @@ export default function BooksPage() {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1513001900722-370f803f498d?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center opacity-10 filter grayscale brightness-50" />
         
         <div className="relative z-20 max-w-2xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 rounded-full border border-amber-500/25">
-            <BookOpen className="w-3.5 h-3.5 text-amber-500" />
-            <span className="text-[10px] font-mono font-black uppercase tracking-widest text-amber-500">Bibliothèque</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/10 rounded-full border border-rose-500/25">
+            <BookOpen className="w-3.5 h-3.5 text-rose-500" />
+            <span className="text-[10px] font-mono font-black uppercase tracking-widest text-rose-500">Bibliothèque</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
-            Mes <span className="text-amber-500 italic">Livres</span>
+            Mes <span className="text-rose-500 italic">Livres</span>
           </h1>
           <p className="text-sm md:text-base text-stone-400 leading-relaxed font-sans">
             Je me limite pas seulement à des discussions. Retrouvez ici la collection exclusive de mes ouvrages phares sur le monde du business, de la négociation, du leadership et de l’indépendance de l’esprit.
@@ -98,15 +98,15 @@ export default function BooksPage() {
           {/* Quick numbers bar */}
           <div className="pt-4 grid grid-cols-3 gap-4 border-t border-white/5 max-w-md">
             <div>
-              <span className="block text-xl font-bold text-amber-500">2 Livres</span>
+              <span className="block text-xl font-bold text-rose-500">2 Livres</span>
               <span className="text-[9px] font-mono uppercase tracking-widest text-stone-500">Écrits par Bany</span>
             </div>
             <div>
-              <span className="block text-xl font-bold text-amber-500">100%</span>
+              <span className="block text-xl font-bold text-rose-500">100%</span>
               <span className="text-[9px] font-mono uppercase tracking-widest text-stone-500">Auteur Unique</span>
             </div>
             <div>
-              <span className="block text-xl font-bold text-amber-500">4.9/5</span>
+              <span className="block text-xl font-bold text-rose-500">4.9/5</span>
               <span className="text-[9px] font-mono uppercase tracking-widest text-[10px] text-stone-500">Moyenne Critique</span>
             </div>
           </div>
@@ -130,7 +130,7 @@ export default function BooksPage() {
                 placeholder="Rechercher un livre, auteur..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-stone-950 border border-stone-800 focus:border-amber-500 text-xs rounded-xl text-stone-200 focus:outline-none placeholder-stone-600 font-sans"
+                className="w-full pl-9 pr-4 py-2 bg-stone-950 border border-stone-800 focus:border-rose-500 text-xs rounded-xl text-stone-200 focus:outline-none placeholder-stone-600 font-sans"
               />
               <Search className="w-4 h-4 text-stone-600 absolute left-3 top-1/2 -translate-y-1/2" />
             </div>
@@ -144,7 +144,7 @@ export default function BooksPage() {
                   onClick={() => setSelectedCategory(cat)}
                   className={`w-full text-left px-3 py-2 rounded-xl text-xs font-mono uppercase tracking-wider transition ${
                     selectedCategory === cat
-                      ? 'bg-amber-500 text-stone-950 font-black'
+                      ? 'bg-rose-500 text-stone-950 font-black'
                       : 'bg-stone-950 hover:bg-stone-850 text-stone-450 hover:text-stone-200 border border-stone-850'
                   }`}
                 >
@@ -164,7 +164,7 @@ export default function BooksPage() {
               <p className="text-stone-400 text-sm">Aucun livre ne correspond à vos filtres actuels.</p>
               <button 
                 onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
-                className="mt-4 text-xs font-mono text-amber-500 hover:text-amber-400 underline"
+                className="mt-4 text-xs font-mono text-rose-500 hover:text-rose-400 underline"
               >
                 Réinitialiser les filtres
               </button>
@@ -194,7 +194,7 @@ export default function BooksPage() {
                             
                             {/* Typography of the cover */}
                             <div className="space-y-1.5 z-10">
-                              <span className="block text-[8px] font-mono uppercase tracking-widest text-amber-400/95 font-black">
+                              <span className="block text-[8px] font-mono uppercase tracking-widest text-rose-400/95 font-black">
                                 {book.category}
                               </span>
                               <h2 className="text-base font-black tracking-tight leading-snug text-white line-clamp-3">
@@ -210,7 +210,7 @@ export default function BooksPage() {
                                 <span className="block text-[8px] font-mono uppercase text-stone-400">Auteur</span>
                                 <span className="block text-[10px] font-black font-sans text-white">{book.author}</span>
                               </div>
-                              <span className="text-[10px] font-mono text-amber-500 font-bold uppercase tracking-tighter">Bany Ed.</span>
+                              <span className="text-[10px] font-mono text-rose-500 font-bold uppercase tracking-tighter">Bany Ed.</span>
                             </div>
                           </div>
                           
@@ -226,8 +226,8 @@ export default function BooksPage() {
                             <span className="bg-stone-950 border border-stone-800 text-stone-400 px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider">
                               {book.category}
                             </span>
-                            <div className="flex items-center gap-1.5 text-amber-550 text-xs font-bold bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10">
-                              <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                            <div className="flex items-center gap-1.5 text-rose-550 text-xs font-bold bg-rose-500/5 px-2 py-0.5 rounded border border-rose-500/10">
+                              <Star className="w-3 h-3 fill-rose-500 text-rose-500" />
                               <span>{book.rating}/5</span>
                             </div>
                             <span className="text-[10px] text-stone-500 font-mono">
@@ -235,7 +235,7 @@ export default function BooksPage() {
                             </span>
                           </div>
 
-                          <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white hover:text-amber-500 transition duration-150">
+                          <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white hover:text-rose-500 transition duration-150">
                             {book.title}
                           </h2>
                           
@@ -254,13 +254,13 @@ export default function BooksPage() {
                             onClick={() => setExpandedBookId(isExpanded ? null : book.id)}
                             className="px-4 py-2 bg-stone-950 hover:bg-stone-850 text-stone-300 border border-stone-800 text-[10px] font-black uppercase tracking-widest rounded-xl transition flex items-center gap-2 cursor-pointer"
                           >
-                            <Layers className="w-3.5 h-3.5 text-amber-500" />
+                            <Layers className="w-3.5 h-3.5 text-rose-500" />
                             {isExpanded ? "Masquer les points clés" : "Voir les 3 points clés"}
                           </button>
                           
                           <a
                             href={book.buyUrl}
-                            className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 text-[10px] font-black uppercase tracking-widest rounded-xl transition flex items-center gap-2"
+                            className="px-4 py-2 bg-rose-500 hover:bg-rose-400 text-stone-950 text-[10px] font-black uppercase tracking-widest rounded-xl transition flex items-center gap-2"
                           >
                             <ShoppingBag className="w-3.5 h-3.5" />
                             Acheter l'ouvrage
@@ -282,8 +282,8 @@ export default function BooksPage() {
                         >
                           <div className="p-6 md:p-8 space-y-6">
                             <div className="space-y-1.5">
-                              <span className="text-[9px] font-mono font-black tracking-widest uppercase text-amber-500 flex items-center gap-1.5">
-                                <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
+                              <span className="text-[9px] font-mono font-black tracking-widest uppercase text-rose-500 flex items-center gap-1.5">
+                                <ShieldCheck className="w-3.5 h-3.5 text-rose-500" />
                                 Enseignements Stratégiques Clés
                               </span>
                               <p className="text-[11px] text-stone-400 font-sans">
@@ -294,7 +294,7 @@ export default function BooksPage() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               {book.highlights.map((hlt, i) => (
                                 <div key={i} className="bg-stone-900 border border-stone-850 p-4 rounded-xl space-y-2">
-                                  <div className="w-6 h-6 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-mono text-xs font-black flex items-center justify-center">
+                                  <div className="w-6 h-6 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 font-mono text-xs font-black flex items-center justify-center">
                                     {i + 1}
                                   </div>
                                   <p className="text-[11px] text-stone-300 leading-relaxed font-sans">
@@ -308,7 +308,7 @@ export default function BooksPage() {
                             <div className="bg-stone-900/40 border border-stone-850/60 p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
                               <div className="space-y-1">
                                 <span className="text-[10px] font-bold text-stone-250 flex items-center gap-1.5">
-                                  <Mail className="w-3.5 h-3.5 text-amber-500" /> Recevoir un chapitre offert
+                                  <Mail className="w-3.5 h-3.5 text-rose-500" /> Recevoir un chapitre offert
                                 </span>
                                 <p className="text-[10px] text-stone-500">
                                   Laissez votre e-mail et recevez instantanément les 40 premières pages en PDF.
@@ -332,11 +332,11 @@ export default function BooksPage() {
                                     value={excerptEmail}
                                     onChange={(e) => setExcerptEmail(e.target.value)}
                                     placeholder="votre.email@domaine.com"
-                                    className="px-3 py-1.5 bg-stone-950 border border-stone-800 focus:border-amber-500 rounded-lg text-xs text-stone-350 focus:outline-none w-full md:w-56"
+                                    className="px-3 py-1.5 bg-stone-950 border border-stone-800 focus:border-rose-500 rounded-lg text-xs text-stone-350 focus:outline-none w-full md:w-56"
                                   />
                                   <button
                                     type="submit"
-                                    className="px-4 py-1.5 bg-amber-500 text-stone-950 hover:bg-amber-400 font-bold font-mono text-[9px] uppercase rounded-lg transition shrink-0 cursor-pointer flex items-center gap-1"
+                                    className="px-4 py-1.5 bg-rose-500 text-stone-950 hover:bg-rose-400 font-bold font-mono text-[9px] uppercase rounded-lg transition shrink-0 cursor-pointer flex items-center gap-1"
                                   >
                                     Débloquer <ArrowRight className="w-3 h-3" />
                                   </button>

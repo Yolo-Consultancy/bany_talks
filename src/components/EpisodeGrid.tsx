@@ -89,7 +89,7 @@ export default function EpisodeGrid({
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           
           <div className="text-left space-y-2">
-            <span className="text-xs font-mono font-bold text-amber-500 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full">
+            <span className="text-xs font-mono font-bold text-rose-500 uppercase tracking-widest bg-rose-500/10 px-3 py-1 rounded-full">
               PRODUCTION MULTIMÉDIA
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-100 tracking-tight uppercase">
@@ -110,7 +110,7 @@ export default function EpisodeGrid({
               placeholder="Rechercher un invité, sujet..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-stone-950 border border-stone-800 focus:border-amber-500 text-stone-100 placeholder-stone-500 rounded-xl focus:outline-none transition duration-200 text-sm font-mono"
+              className="w-full pl-10 pr-4 py-2.5 bg-stone-950 border border-stone-800 focus:border-rose-500 text-stone-100 placeholder-stone-500 rounded-xl focus:outline-none transition duration-200 text-sm font-mono"
             />
           </div>
 
@@ -124,7 +124,7 @@ export default function EpisodeGrid({
               onClick={() => setSelectedCategory(cat)}
               className={`px-4 py-1.5 rounded-full text-xs font-mono font-bold tracking-wider uppercase transition cursor-pointer border ${
                 (selectedCategory === cat)
-                  ? 'bg-amber-500 text-stone-950 border-amber-500 shadow-lg shadow-amber-500/10'
+                  ? 'bg-rose-500 text-stone-950 border-rose-500 shadow-lg shadow-rose-500/10'
                   : 'bg-stone-950 text-stone-400 border-stone-800/80 hover:text-stone-100 hover:border-stone-700'
               }`}
             >
@@ -146,7 +146,7 @@ export default function EpisodeGrid({
                 setSearchQuery('');
                 setSelectedCategory('Toutes');
               }}
-              className="px-5 py-2 bg-stone-900 hover:bg-stone-800 border border-stone-800 text-amber-500 font-mono text-xs font-bold rounded-xl transition cursor-pointer"
+              className="px-5 py-2 bg-stone-900 hover:bg-stone-800 border border-stone-800 text-rose-500 font-mono text-xs font-bold rounded-xl transition cursor-pointer"
             >
               RÉINITIALISER TOUT
             </button>
@@ -208,14 +208,14 @@ export default function EpisodeGrid({
 
                           {/* Left overlay values */}
                           <div className="absolute top-3 left-3 flex gap-2">
-                            <span className="text-[10px] font-mono font-bold tracking-wider text-amber-400 bg-stone-900/90 border border-stone-800 px-2.5 py-1 rounded shadow-lg uppercase">
+                            <span className="text-[10px] font-mono font-bold tracking-wider text-rose-400 bg-stone-900/90 border border-stone-800 px-2.5 py-1 rounded shadow-lg uppercase">
                               {episode.category}
                             </span>
                           </div>
 
                           {/* Stats overlay / Right info */}
                           <div className="absolute bottom-3 right-3 flex items-center gap-2 text-[10px] font-mono font-medium text-stone-300 bg-stone-900/80 px-2 py-1 rounded backdrop-blur">
-                            <Clock className="w-3 h-3 text-amber-500" />
+                            <Clock className="w-3 h-3 text-rose-500" />
                             {episode.duration}
                           </div>
 
@@ -226,7 +226,7 @@ export default function EpisodeGrid({
                           >
                             <button
                               aria-label="Regarder la vidéo"
-                              className="w-14 h-14 flex items-center justify-center rounded-full bg-amber-500 text-stone-950 hover:scale-110 active:scale-95 transition cursor-pointer shadow-lg shadow-amber-500/35"
+                              className="w-14 h-14 flex items-center justify-center rounded-full bg-rose-500 text-stone-950 hover:scale-110 active:scale-95 transition cursor-pointer shadow-lg shadow-rose-500/35"
                             >
                               <Play className="w-6 h-6 fill-stone-950 ml-0.5" />
                             </button>
@@ -246,7 +246,7 @@ export default function EpisodeGrid({
                         {/* Clickable detail title */}
                         <h4 
                           onClick={() => onEpisodeClick(episode)}
-                          className="text-base font-bold text-stone-100 leading-snug cursor-pointer hover:text-amber-400 transition"
+                          className="text-base font-bold text-stone-100 leading-snug cursor-pointer hover:text-rose-400 transition"
                         >
                           {episode.title}
                         </h4>
@@ -274,7 +274,7 @@ export default function EpisodeGrid({
                         {/* Detail anchor action */}
                         <button
                           onClick={() => onEpisodeClick(episode)}
-                          className="text-[10px] font-mono font-bold tracking-wider text-amber-500 group-hover:text-amber-400 flex items-center gap-1 hover:underline cursor-pointer uppercase"
+                          className="text-[10px] font-mono font-bold tracking-wider text-rose-500 group-hover:text-rose-400 flex items-center gap-1 hover:underline cursor-pointer uppercase"
                         >
                           Détails <ArrowUpRight className="w-3.5 h-3.5" />
                         </button>
@@ -316,7 +316,7 @@ export default function EpisodeGrid({
                       }}
                       className={`min-w-9 h-9 text-xs font-bold rounded-lg border transition cursor-pointer flex items-center justify-center ${
                         currentPage === pg
-                          ? 'bg-amber-500 border-amber-500 text-stone-950 font-black shadow-lg shadow-amber-500/15'
+                          ? 'bg-rose-500 border-rose-500 text-stone-950 font-black shadow-lg shadow-rose-500/15'
                           : 'bg-stone-950 hover:bg-stone-850 text-stone-450 hover:text-stone-100 border-stone-850'
                       }`}
                     >

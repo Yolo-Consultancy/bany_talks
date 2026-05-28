@@ -231,7 +231,7 @@ export default function Hub() {
         
         {/* Title Content */}
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-          <span className="text-xs font-mono font-bold tracking-widest text-amber-500 uppercase bg-amber-500/10 px-3 py-1 rounded-full">
+          <span className="text-xs font-mono font-bold tracking-widest text-rose-500 uppercase bg-rose-500/10 px-3 py-1 rounded-full">
             ESPACE AUDIENCE COLLABORATIF
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-100 uppercase tracking-tight leading-none">
@@ -249,7 +249,7 @@ export default function Hub() {
             
             <div className="space-y-1">
               <h3 className="text-base font-bold text-stone-150 uppercase tracking-wide flex items-center gap-2">
-                <Mic className="w-4 h-4 text-amber-500" />
+                <Mic className="w-4 h-4 text-rose-500" />
                 Dédicace / Vos Messages Vocaux
               </h3>
               <p className="text-xs text-stone-450 leading-relaxed font-sans">
@@ -300,7 +300,7 @@ export default function Hub() {
                   {/* Simulated wave static preview */}
                   <div className="bg-stone-900 border border-stone-850 p-3 rounded-lg flex items-center justify-between text-left font-mono text-xs text-stone-350">
                     <span>Aperçu de l'enregistrement</span>
-                    <span className="text-amber-500 font-bold">{formatSec(recordingSeconds)}</span>
+                    <span className="text-rose-500 font-bold">{formatSec(recordingSeconds)}</span>
                   </div>
 
                   {/* Submission Name field */}
@@ -314,7 +314,7 @@ export default function Hub() {
                       placeholder="Ex: Sophie de Marseille"
                       value={voiceAuthor}
                       onChange={(e) => setVoiceAuthor(e.target.value)}
-                      className="w-full px-3 py-2 bg-stone-900 border border-stone-800 text-stone-100 placeholder-stone-600 focus:outline-none focus:border-amber-500 rounded-lg text-xs font-mono"
+                      className="w-full px-3 py-2 bg-stone-900 border border-stone-800 text-stone-100 placeholder-stone-600 focus:outline-none focus:border-rose-500 rounded-lg text-xs font-mono"
                     />
                   </div>
 
@@ -328,7 +328,7 @@ export default function Hub() {
                     </button>
                     <button
                       onClick={handleSendVoice}
-                      className="flex items-center justify-center gap-1.5 py-2.5 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-xl font-mono text-xs font-bold cursor-pointer transition"
+                      className="flex items-center justify-center gap-1.5 py-2.5 bg-rose-500 hover:bg-rose-400 text-stone-950 rounded-xl font-mono text-xs font-bold cursor-pointer transition"
                     >
                       <Send className="w-3.5 h-3.5" /> Envoyer à Bany
                     </button>
@@ -337,12 +337,12 @@ export default function Hub() {
               ) : (
                 /* Initial Idle Trigger state */
                 <div className="py-6 text-center space-y-4">
-                  <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 mx-auto">
+                  <div className="w-12 h-12 bg-rose-500/10 rounded-full flex items-center justify-center text-rose-500 mx-auto">
                     <Mic className="w-6 h-6" />
                   </div>
                   <button
                     onClick={startVoiceRecording}
-                    className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold font-mono text-xs rounded-xl transition cursor-pointer transform hover:scale-102 shadow-lg shadow-amber-500/10 animate-pulse"
+                    className="px-6 py-3 bg-rose-500 hover:bg-rose-400 text-stone-950 font-bold font-mono text-xs rounded-xl transition cursor-pointer transform hover:scale-102 shadow-lg shadow-rose-500/10 animate-pulse"
                   >
                     COMMENCER L'ENREGISTREMENT
                   </button>
@@ -383,7 +383,7 @@ export default function Hub() {
                         <div className="flex items-center gap-2 overflow-hidden text-left">
                           <button
                             onClick={() => toggleVoicePlay(voice)}
-                            className="w-7 h-7 flex items-center justify-center rounded-full bg-stone-900 border border-stone-800 text-amber-500 hover:text-amber-400 cursor-pointer"
+                            className="w-7 h-7 flex items-center justify-center rounded-full bg-stone-900 border border-stone-800 text-rose-500 hover:text-rose-400 cursor-pointer"
                           >
                             {isPlayingThis ? <Square className="w-3 h-3 fill-current" /> : <Play className="w-3 h-3 fill-current ml-0.5" />}
                           </button>
@@ -414,7 +414,7 @@ export default function Hub() {
             
             <div className="flex items-center justify-between border-b border-stone-850 pb-3">
               <h3 className="text-base font-bold text-stone-150 uppercase tracking-wide flex items-center gap-2">
-                <HelpCircle className="w-4 h-4 text-amber-500" />
+                <HelpCircle className="w-4 h-4 text-rose-500" />
                 La Boite à Questions
               </h3>
               <span className="text-xs font-mono text-stone-500">
@@ -437,7 +437,7 @@ export default function Hub() {
                   required
                   rows={2}
                   placeholder="Ex: Quelle méthode utilises-tu pour monétiser un podcast francophone ?"
-                  className="w-full px-3 py-2.5 bg-stone-950 border border-stone-800 text-stone-100 placeholder-stone-600 focus:outline-none focus:border-amber-500 rounded-xl text-xs font-mono resize-none leading-relaxed"
+                  className="w-full px-3 py-2.5 bg-stone-950 border border-stone-800 text-stone-100 placeholder-stone-600 focus:outline-none focus:border-rose-500 rounded-xl text-xs font-mono resize-none leading-relaxed"
                 />
               </div>
 
@@ -448,12 +448,12 @@ export default function Hub() {
                   placeholder="Votre Nom (Ex: Karim)"
                   value={authorName}
                   onChange={(e) => setAuthorName(e.target.value)}
-                  className="w-full sm:w-48 px-3 py-2 bg-stone-950 border border-stone-850 text-stone-100 placeholder-stone-600 focus:border-amber-500 rounded-lg text-xs font-mono focus:outline-none"
+                  className="w-full sm:w-48 px-3 py-2 bg-stone-950 border border-stone-850 text-stone-100 placeholder-stone-600 focus:border-rose-500 rounded-lg text-xs font-mono focus:outline-none"
                 />
                 
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold font-mono text-xs rounded-lg transition transform active:scale-95 cursor-pointer flex items-center justify-center gap-1"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-rose-500 hover:bg-rose-400 text-stone-950 font-bold font-mono text-xs rounded-lg transition transform active:scale-95 cursor-pointer flex items-center justify-center gap-1"
                 >
                   <Send className="w-3.5 h-3.5" /> SOUMETTRE LA QUESTION
                 </button>
@@ -474,7 +474,7 @@ export default function Hub() {
                     onClick={() => handleUpvote(item.id)}
                     className={`flex flex-row md:flex-col items-center justify-center gap-1.5 px-3 py-2 rounded-xl border transition cursor-pointer shrink-0 md:w-14 text-center ${
                       item.isUpvoted 
-                        ? 'border-amber-500 bg-amber-500/5 text-amber-500' 
+                        ? 'border-rose-500 bg-rose-500/5 text-rose-500' 
                         : 'border-stone-800 bg-stone-950 text-stone-400 hover:text-stone-200 hover:border-stone-700'
                     }`}
                   >
@@ -497,9 +497,9 @@ export default function Hub() {
 
                     {/* Replies segment */}
                     {item.replies && item.replies.length > 0 && (
-                      <div className="pl-4 border-l border-amber-500/20 space-y-2 mt-2">
-                        <div className="flex items-center gap-1.5 text-[9px] font-mono tracking-widest text-amber-500 uppercase font-black">
-                          <MessageCircle className="w-3.5 h-3.5 text-amber-500" /> Réponse de l'hôte
+                      <div className="pl-4 border-l border-rose-500/20 space-y-2 mt-2">
+                        <div className="flex items-center gap-1.5 text-[9px] font-mono tracking-widest text-rose-500 uppercase font-black">
+                          <MessageCircle className="w-3.5 h-3.5 text-rose-500" /> Réponse de l'hôte
                         </div>
                         {item.replies.map((reply, index) => (
                           <div key={index} className="p-3 bg-stone-950/60 rounded-lg text-xs text-stone-400 italic">

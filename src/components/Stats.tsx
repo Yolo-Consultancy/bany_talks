@@ -23,7 +23,7 @@ export default function Stats({ onInviteClick }: StatsProps) {
             
             <div className="lg:col-span-7 text-left space-y-6 lg:pr-8">
               <div className="space-y-4">
-                <span className="text-xs font-mono font-bold tracking-widest text-amber-500 uppercase bg-amber-500/10 px-3 py-1 rounded-full">
+                <span className="text-xs font-mono font-bold tracking-widest text-rose-500 uppercase bg-rose-500/10 px-3 py-1 rounded-full">
                   L’HÔTE DERRIÈRE LE MICRO
                 </span>
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-100 tracking-tight uppercase leading-none">
@@ -40,7 +40,7 @@ export default function Stats({ onInviteClick }: StatsProps) {
               {onInviteClick && (
                 <button
                   onClick={onInviteClick}
-                  className="mt-2 inline-flex items-center gap-2 px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-black uppercase tracking-wider rounded-xl transition duration-150 cursor-pointer shadow-lg shadow-amber-500/5 hover:translate-x-0.5 active:translate-x-0"
+                  className="mt-2 inline-flex items-center gap-2 px-6 py-3.5 bg-rose-500 hover:bg-rose-400 text-stone-950 text-xs font-black uppercase tracking-wider rounded-xl transition duration-150 cursor-pointer shadow-lg shadow-rose-500/5 hover:translate-x-0.5 active:translate-x-0"
                 >
                   Inviter Bany ↗
                 </button>
@@ -55,7 +55,7 @@ export default function Stats({ onInviteClick }: StatsProps) {
                 referrerPolicy="no-referrer"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute bottom-5 left-5 bg-stone-900/90 border border-stone-800 px-3 py-1.5 rounded text-[10px] font-mono font-bold text-amber-400 uppercase tracking-widest">
+              <div className="absolute bottom-5 left-5 bg-stone-900/90 border border-stone-800 px-3 py-1.5 rounded text-[10px] font-mono font-bold text-rose-400 uppercase tracking-widest">
                 🎙️ En Session Live
               </div>
             </div>
@@ -81,7 +81,7 @@ export default function Stats({ onInviteClick }: StatsProps) {
             <div className="lg:col-span-7 order-1 lg:order-2 space-y-6 lg:pl-8 text-left">
               
               <div className="p-6 bg-stone-900/40 border border-stone-800/80 rounded-2xl flex flex-col sm:flex-row gap-5 items-start">
-                <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500 shrink-0">
                   <Target className="w-6 h-6" />
                 </div>
                 <div>
@@ -93,7 +93,7 @@ export default function Stats({ onInviteClick }: StatsProps) {
               </div>
 
               <div className="p-6 bg-stone-900/40 border border-stone-800/80 rounded-2xl flex flex-col sm:flex-row gap-5 items-start">
-                <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500 shrink-0">
                   <Award className="w-6 h-6" />
                 </div>
                 <div>
@@ -114,7 +114,7 @@ export default function Stats({ onInviteClick }: StatsProps) {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 bg-stone-900/40 border border-stone-800/80 p-6 rounded-2xl mb-16 shadow-xl">
           {HOST_DETAILS.statistics.map((stat, idx) => (
             <div key={idx} className="text-center p-4 space-y-1">
-              <span className="block text-3xl sm:text-4xl lg:text-5xl font-extrabold text-amber-400 tracking-tight font-mono">
+              <span className="block text-3xl sm:text-4xl lg:text-5xl font-extrabold text-rose-400 tracking-tight font-mono">
                 {stat.value}
               </span>
               <span className="block text-[11px] sm:text-xs font-mono uppercase tracking-widest text-stone-400">
@@ -127,7 +127,7 @@ export default function Stats({ onInviteClick }: StatsProps) {
         {/* Animated Centered Timeline */}
         <div className="space-y-12 mt-24">
           <div className="text-center space-y-3">
-            <span className="inline-block text-xs font-mono font-bold text-amber-500 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full">
+            <span className="inline-block text-xs font-mono font-bold text-rose-500 uppercase tracking-widest bg-rose-500/10 px-3 py-1 rounded-full">
               Le Parcours
             </span>
             <h3 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight text-stone-100">
@@ -155,12 +155,12 @@ export default function Stats({ onInviteClick }: StatsProps) {
                   <div className="hidden md:block w-1/2" />
 
                   {/* Node bullet */}
-                  <div className="absolute left-6 md:left-1/2 w-4 h-4 rounded-full border-4 border-stone-950 bg-amber-500 transform -translate-x-1/2 z-10 shadow-[0_0_15px_rgba(245,158,11,0.6)]" />
+                  <div className="absolute left-6 md:left-1/2 w-4 h-4 rounded-full border-4 border-stone-950 bg-rose-500 transform -translate-x-1/2 z-10 shadow-[0_0_15px_rgba(245,158,11,0.6)]" />
 
                   {/* Content card */}
                   <div className={`w-full md:w-1/2 pl-16 md:pl-0 ${isEven ? 'md:pr-16 text-left md:text-right' : 'md:pl-16 text-left'}`}>
                     <div className="bg-stone-900/40 hover:bg-stone-900/70 border border-stone-800/80 p-6 rounded-2xl transition duration-300 group shadow-lg">
-                      <span className={`inline-block font-mono text-sm font-black text-amber-500 mb-3 bg-amber-500/10 px-3 py-1.5 rounded-lg group-hover:scale-105 transition-transform ${isEven ? 'md:origin-right' : 'md:origin-left'} origin-left`}>
+                      <span className={`inline-block font-mono text-sm font-black text-rose-500 mb-3 bg-rose-500/10 px-3 py-1.5 rounded-lg group-hover:scale-105 transition-transform ${isEven ? 'md:origin-right' : 'md:origin-left'} origin-left`}>
                         {milestone.year}
                       </span>
                       <h4 className="text-lg font-bold text-stone-100 tracking-tight uppercase mb-2">

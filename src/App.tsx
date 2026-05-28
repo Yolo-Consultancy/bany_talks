@@ -98,7 +98,7 @@ export default function App() {
   }
 
   return (
-    <div id="brand-layout-root" className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans select-none antialiased selection:bg-amber-500 selection:text-stone-950">
+    <div id="brand-layout-root" className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans select-none antialiased selection:bg-rose-500 selection:text-stone-950">
       
       {/* Premium Sticky Navigation Header */}
       <nav 
@@ -114,10 +114,10 @@ export default function App() {
           {/* Logo brand */}
           <button 
             onClick={() => { setCurrentView('home'); jumpToTop(); }}
-            className="flex items-center gap-2 text-stone-100 hover:text-amber-500 transition cursor-pointer"
+            className="flex items-center gap-2 text-stone-100 hover:text-rose-500 transition cursor-pointer"
           >
-            <Disc className="w-5 h-5 text-amber-500 animate-spin-slow" />
-            <span className="text-sm font-black tracking-wider uppercase">BANY TALKS</span>
+            <Disc className="w-5 h-5 text-rose-500 animate-spin-slow" />
+            <span className="text-xl font-display font-black tracking-wider uppercase">BANY TALKS</span>
           </button>
 
           {/* Desktop Links */}
@@ -125,14 +125,14 @@ export default function App() {
             <button 
               onClick={() => scrollToSection('hero-section')} 
               className={`relative py-1 transition-colors duration-200 cursor-pointer ${
-                currentView === 'home' ? 'text-amber-500 font-extrabold' : 'hover:text-amber-400'
+                currentView === 'home' ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'
               }`}
             >
               Accueil
               {currentView === 'home' && (
                 <motion.span 
                   layoutId="activeHeaderUnderline" 
-                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-amber-500 rounded-full" 
+                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
@@ -140,14 +140,14 @@ export default function App() {
             <button 
               onClick={() => scrollToSection('about-bany')} 
               className={`relative py-1 transition-colors duration-200 cursor-pointer ${
-                currentView === 'about' ? 'text-amber-500 font-extrabold' : 'hover:text-amber-400'
+                currentView === 'about' ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'
               }`}
             >
               À Propos
               {currentView === 'about' && (
                 <motion.span 
                   layoutId="activeHeaderUnderline" 
-                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-amber-500 rounded-full" 
+                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
@@ -155,14 +155,14 @@ export default function App() {
             <button 
               onClick={() => scrollToSection('episodes-section')} 
               className={`relative py-1 transition-colors duration-200 cursor-pointer ${
-                currentView === 'episodes' || currentView === 'episode-detail' ? 'text-amber-500 font-extrabold' : 'hover:text-amber-400'
+                currentView === 'episodes' || currentView === 'episode-detail' ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'
               }`}
             >
               Émissions
               {(currentView === 'episodes' || currentView === 'episode-detail') && (
                 <motion.span 
                   layoutId="activeHeaderUnderline" 
-                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-amber-500 rounded-full" 
+                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
@@ -170,14 +170,14 @@ export default function App() {
             <button 
               onClick={() => navigateToView('books')} 
               className={`relative py-1 transition-colors duration-200 cursor-pointer ${
-                currentView === 'books' ? 'text-amber-500 font-extrabold' : 'hover:text-amber-400'
+                currentView === 'books' ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'
               }`}
             >
               Livres
               {currentView === 'books' && (
                 <motion.span 
                   layoutId="activeHeaderUnderline" 
-                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-amber-500 rounded-full" 
+                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
@@ -185,14 +185,14 @@ export default function App() {
             <button 
               onClick={() => scrollToSection('audience-hub')} 
               className={`relative py-1 transition-colors duration-200 cursor-pointer ${
-                currentView === 'hub' ? 'text-amber-500 font-extrabold' : 'hover:text-amber-400'
+                currentView === 'hub' ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'
               }`}
             >
               Audience Hub
               {currentView === 'hub' && (
                 <motion.span 
                   layoutId="activeHeaderUnderline" 
-                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-amber-500 rounded-full" 
+                  className="absolute bottom-[-16px] left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
@@ -205,15 +205,15 @@ export default function App() {
               onClick={() => scrollToSection('booking-section')}
               className={`px-5 py-2.5 rounded-xl transition font-mono uppercase text-[10px] tracking-wider cursor-pointer shadow-lg hover:scale-105 active:scale-95 ${
                 currentView === 'invite' 
-                  ? 'bg-amber-400 text-stone-950 font-black shadow-amber-500/20 ring-2 ring-amber-500/30' 
-                  : 'bg-amber-500 hover:bg-amber-400 text-stone-950 font-black shadow-amber-500/10'
+                  ? 'bg-rose-400 text-stone-950 font-black shadow-rose-500/20 ring-2 ring-rose-500/30' 
+                  : 'bg-rose-500 hover:bg-rose-400 text-stone-950 font-black shadow-rose-500/10'
               }`}
             >
               Inviter Bany ↗
             </button>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 rounded-full border border-amber-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-amber-500">LIVE CHAT</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/10 rounded-full border border-rose-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">LIVE CHAT</span>
             </div>
           </div>
 
@@ -230,7 +230,7 @@ export default function App() {
               transition={{ type: "spring", stiffness: 250, damping: 20 }}
               className="flex items-center justify-center"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5 text-amber-500" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 text-rose-500" /> : <Menu className="w-5 h-5" />}
             </motion.div>
           </motion.button>
 
@@ -250,7 +250,7 @@ export default function App() {
                 <button 
                   onClick={() => scrollToSection('hero-section')} 
                   className={`block w-full text-left py-2.5 border-b border-stone-900/40 transition duration-150 ${
-                    currentView === 'home' ? 'text-amber-500 font-extrabold' : 'text-stone-400 hover:text-amber-500'
+                    currentView === 'home' ? 'text-rose-500 font-extrabold' : 'text-stone-400 hover:text-rose-500'
                   }`}
                 >
                   Accueil
@@ -258,7 +258,7 @@ export default function App() {
                 <button 
                   onClick={() => scrollToSection('about-bany')} 
                   className={`block w-full text-left py-2.5 border-b border-stone-900/40 transition duration-150 ${
-                    currentView === 'about' ? 'text-amber-500 font-extrabold' : 'text-stone-400 hover:text-amber-500'
+                    currentView === 'about' ? 'text-rose-500 font-extrabold' : 'text-stone-400 hover:text-rose-500'
                   }`}
                 >
                   À Propos
@@ -266,7 +266,7 @@ export default function App() {
                 <button 
                   onClick={() => scrollToSection('episodes-section')} 
                   className={`block w-full text-left py-2.5 border-b border-stone-900/40 transition duration-150 ${
-                    currentView === 'episodes' || currentView === 'episode-detail' ? 'text-amber-500 font-extrabold' : 'text-stone-400 hover:text-amber-500'
+                    currentView === 'episodes' || currentView === 'episode-detail' ? 'text-rose-500 font-extrabold' : 'text-stone-400 hover:text-rose-500'
                   }`}
                 >
                   Émissions
@@ -274,7 +274,7 @@ export default function App() {
                 <button 
                   onClick={() => navigateToView('books')} 
                   className={`block w-full text-left py-2.5 border-b border-stone-900/40 transition duration-150 ${
-                    currentView === 'books' ? 'text-amber-500 font-extrabold' : 'text-stone-400 hover:text-amber-500'
+                    currentView === 'books' ? 'text-rose-500 font-extrabold' : 'text-stone-400 hover:text-rose-500'
                   }`}
                 >
                   Livres
@@ -282,7 +282,7 @@ export default function App() {
                 <button 
                   onClick={() => scrollToSection('audience-hub')} 
                   className={`block w-full text-left py-2.5 border-b border-stone-900/40 transition duration-150 ${
-                    currentView === 'hub' ? 'text-amber-500 font-extrabold' : 'text-stone-400 hover:text-amber-500'
+                    currentView === 'hub' ? 'text-rose-500 font-extrabold' : 'text-stone-400 hover:text-rose-500'
                   }`}
                 >
                   Audience Hub
@@ -290,7 +290,7 @@ export default function App() {
                 <div className="pt-2">
                   <button 
                     onClick={() => scrollToSection('booking-section')} 
-                    className="w-full text-center py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-xl font-black text-xs uppercase tracking-wider block transition shadow-lg shadow-amber-500/15"
+                    className="w-full text-center py-3 bg-rose-500 hover:bg-rose-400 text-stone-950 rounded-xl font-black text-xs uppercase tracking-wider block transition shadow-lg shadow-rose-500/15"
                   >
                     Inviter Bany ↗
                   </button>
@@ -319,7 +319,7 @@ export default function App() {
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <div className="bg-stone-900 border border-stone-850 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 text-left">
                   <div className="space-y-2">
-                    <span className="text-[10px] font-mono text-amber-500 uppercase tracking-widest font-black">Nouveau</span>
+                    <span className="text-[10px] font-mono text-rose-500 uppercase tracking-widest font-black">Nouveau</span>
                     <h2 className="text-xl md:text-2xl font-black text-white">Prêt à explorer les émissions phares ?</h2>
                     <p className="text-xs text-stone-400 font-sans max-w-xl">
                       Découvrez sans filtre nos 120+ épisodes avec des leaders du CAC40, négociateurs de haut niveau et experts de hyper-croissance.
@@ -327,7 +327,7 @@ export default function App() {
                   </div>
                   <button
                     onClick={() => navigateToView('episodes')}
-                    className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 font-mono font-black text-xs uppercase tracking-wider rounded-xl transition shrink-0 cursor-pointer"
+                    className="px-6 py-3 bg-rose-500 hover:bg-rose-400 text-stone-950 font-mono font-black text-xs uppercase tracking-wider rounded-xl transition shrink-0 cursor-pointer"
                   >
                     Découvrir les émissions ↗
                   </button>
@@ -443,7 +443,7 @@ export default function App() {
         <button
           onClick={jumpToTop}
           aria-label="Scroll back to top"
-          className="fixed bottom-8 right-6 z-40 p-3 bg-amber-500 hover:bg-amber-400 active:scale-95 text-stone-950 rounded-full shadow-lg transition duration-200 cursor-pointer"
+          className="fixed bottom-8 right-6 z-40 p-3 bg-rose-500 hover:bg-rose-400 active:scale-95 text-stone-950 rounded-full shadow-lg transition duration-200 cursor-pointer"
         >
           <ArrowUp className="w-4 h-4" />
         </button>

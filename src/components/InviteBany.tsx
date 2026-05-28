@@ -266,7 +266,7 @@ export default function InviteBany() {
         
         {/* Header Block */}
         <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
-          <span className="text-xs font-mono font-bold tracking-widest text-amber-500 uppercase bg-amber-500/10 px-3 py-1 rounded-full">
+          <span className="text-xs font-mono font-bold tracking-widest text-rose-500 uppercase bg-rose-500/10 px-3 py-1 rounded-full">
             FORMULAIRE PROFESSIONNEL DE COLLABORATION
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-100 tracking-tight uppercase leading-none">
@@ -279,8 +279,8 @@ export default function InviteBany() {
 
         {submitted && bookingSummary ? (
           /* Confirmation State Box with details */
-          <div className="max-w-xl mx-auto bg-stone-950 border border-amber-500/20 rounded-2xl p-8 text-center space-y-6 animate-fade-in-up">
-            <div className="w-14 h-14 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-400 mx-auto">
+          <div className="max-w-xl mx-auto bg-stone-950 border border-rose-500/20 rounded-2xl p-8 text-center space-y-6 animate-fade-in-up">
+            <div className="w-14 h-14 bg-rose-500/10 rounded-full flex items-center justify-center text-rose-400 mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             
@@ -298,7 +298,7 @@ export default function InviteBany() {
               <div><span className="text-stone-500">Type de Service :</span> {bookingSummary.eventType}</div>
               <div><span className="text-stone-500">Date planifiée :</span> {bookingSummary.date}</div>
               <div><span className="text-stone-500">Budget alloué :</span> {budgetDisplay(bookingSummary.budgetRange)}</div>
-              <div className="pt-2 border-t border-stone-800 text-[11px] text-amber-500/80 flex items-center gap-1.5 font-bold">
+              <div className="pt-2 border-t border-stone-800 text-[11px] text-rose-500/80 flex items-center gap-1.5 font-bold">
                 <Sparkles className="w-3.5 h-3.5" /> Option validée : {currentPackage.tier}
               </div>
               {successSheetsSync && (
@@ -321,7 +321,7 @@ export default function InviteBany() {
                   message: '',
                 });
               }}
-              className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold font-mono text-xs rounded-xl transition cursor-pointer"
+              className="w-full py-3 bg-rose-500 hover:bg-rose-400 text-stone-950 font-bold font-mono text-xs rounded-xl transition cursor-pointer"
             >
               SOUMETTRE UNE NOUVELLE COLLABORATION
             </button>
@@ -349,7 +349,7 @@ export default function InviteBany() {
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="Jean Dupont"
-                      className="w-full pl-9 pr-4 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 text-stone-100 rounded-xl focus:outline-none transition duration-200 text-xs font-mono"
+                      className="w-full pl-9 pr-4 py-2 bg-stone-900 border border-stone-800 focus:border-rose-500 text-stone-100 rounded-xl focus:outline-none transition duration-200 text-xs font-mono"
                     />
                   </div>
                 </div>
@@ -368,7 +368,7 @@ export default function InviteBany() {
                       value={formData.company}
                       onChange={handleInputChange}
                       placeholder="Ex: Orange, Stripe, Agence Web"
-                      className="w-full pl-9 pr-4 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 text-stone-100 rounded-xl focus:outline-none transition duration-200 text-xs font-mono"
+                      className="w-full pl-9 pr-4 py-2 bg-stone-900 border border-stone-800 focus:border-rose-500 text-stone-100 rounded-xl focus:outline-none transition duration-200 text-xs font-mono"
                     />
                   </div>
                 </div>
@@ -389,7 +389,7 @@ export default function InviteBany() {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="jean@entreprise.com"
-                    className="w-full pl-9 pr-4 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 text-stone-100 rounded-xl focus:outline-none transition duration-200 text-xs font-mono"
+                    className="w-full pl-9 pr-4 py-2 bg-stone-900 border border-stone-800 focus:border-rose-500 text-stone-100 rounded-xl focus:outline-none transition duration-200 text-xs font-mono"
                   />
                 </div>
               </div>
@@ -405,7 +405,7 @@ export default function InviteBany() {
                     name="eventType"
                     value={formData.eventType}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 text-stone-100 rounded-xl focus:outline-none transition duration-205 text-xs font-mono"
+                    className="w-full px-4 py-2 bg-stone-900 border border-stone-800 focus:border-rose-500 text-stone-100 rounded-xl focus:outline-none transition duration-205 text-xs font-mono"
                   >
                     {FREQUENT_EVENT_TYPES.map((type, i) => (
                       <option key={i} value={type}>{type}</option>
@@ -427,7 +427,7 @@ export default function InviteBany() {
                       required
                       value={formData.date}
                       onChange={handleInputChange}
-                      className="w-full pl-9 pr-4 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 text-stone-100 rounded-xl focus:outline-none transition duration-200 text-xs font-mono"
+                      className="w-full pl-9 pr-4 py-2 bg-stone-900 border border-stone-800 focus:border-rose-500 text-stone-100 rounded-xl focus:outline-none transition duration-200 text-xs font-mono"
                     />
                   </div>
                 </div>
@@ -448,7 +448,7 @@ export default function InviteBany() {
                       key={i} 
                       className={`flex items-center gap-2 p-3 bg-stone-900 border border-stone-800 rounded-xl cursor-pointer transition select-none text-xs font-mono font-bold ${
                         formData.budgetRange === elem.value 
-                          ? 'border-amber-500 text-amber-500 bg-amber-500/5' 
+                          ? 'border-rose-500 text-rose-500 bg-rose-500/5' 
                           : 'text-stone-300 hover:text-stone-100 hover:border-stone-700'
                       }`}
                     >
@@ -478,7 +478,7 @@ export default function InviteBany() {
                   onChange={handleInputChange}
                   rows={4}
                   placeholder="Expliquez en quelques mots l'audience cible, les thèmes à aborder et le timing..."
-                  className="w-full px-4 py-2.5 bg-stone-901 border border-stone-800 focus:border-amber-500 text-stone-100 placeholder-stone-500 rounded-xl focus:outline-none transition duration-200 text-xs font-mono resize-none leading-relaxed"
+                  className="w-full px-4 py-2.5 bg-stone-901 border border-stone-800 focus:border-rose-500 text-stone-100 placeholder-stone-500 rounded-xl focus:outline-none transition duration-200 text-xs font-mono resize-none leading-relaxed"
                 />
               </div>
 
@@ -486,7 +486,7 @@ export default function InviteBany() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-amber-500 hover:bg-amber-400 disabled:bg-stone-800 text-stone-950 font-bold font-mono text-xs rounded-xl transition cursor-pointer transform active:scale-95 shadow-xl"
+                className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-rose-500 hover:bg-rose-400 disabled:bg-stone-800 text-stone-950 font-bold font-mono text-xs rounded-xl transition cursor-pointer transform active:scale-95 shadow-xl"
               >
                 {loading ? (
                   <span className="w-4 h-4 rounded-full border-2 border-stone-950 border-t-transparent animate-spin" />
@@ -504,9 +504,9 @@ export default function InviteBany() {
             <div className="lg:col-span-5 space-y-6">
               
               {/* Recipient speaking package breakdown */}
-              <div className="bg-gradient-to-br from-amber-500/10 via-stone-950 to-stone-950 border border-amber-500/15 rounded-2xl p-6 space-y-5">
+              <div className="bg-gradient-to-br from-rose-500/10 via-stone-950 to-stone-950 border border-rose-500/15 rounded-2xl p-6 space-y-5">
                 <div>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded uppercase">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-rose-400 bg-rose-400/10 px-2 py-0.5 rounded uppercase">
                     Offre Recommandée
                   </span>
                   <h3 className="text-xl font-bold uppercase tracking-tight text-stone-100 mt-2 font-mono">
@@ -542,7 +542,7 @@ export default function InviteBany() {
               {/* Google Sheets Synchronization Control Panel */}
               <div className="bg-stone-950 border border-stone-850 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between border-b border-stone-900 pb-3">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-amber-500 font-bold flex items-center gap-1.5">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-rose-500 font-bold flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     Google Sheets Sync
                   </span>
@@ -581,7 +581,7 @@ export default function InviteBany() {
                       {user.photoURL ? (
                         <img referrerPolicy="no-referrer" src={user.photoURL} alt={user.displayName || ''} className="w-5 h-5 rounded-full border border-stone-800" />
                       ) : (
-                        <div className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-500 font-bold flex items-center justify-center text-[10px]">{user.displayName?.[0] || 'U'}</div>
+                        <div className="w-5 h-5 rounded-full bg-rose-500/20 text-rose-500 font-bold flex items-center justify-center text-[10px]">{user.displayName?.[0] || 'U'}</div>
                       )}
                       <span className="text-xs font-mono text-stone-300 font-bold truncate">
                         {user.displayName || user.email}
@@ -597,7 +597,7 @@ export default function InviteBany() {
                           type="button"
                           onClick={handleCreateSheet}
                           disabled={syncingSheets}
-                          className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-amber-500 hover:bg-amber-400 disabled:bg-stone-800 text-stone-950 font-bold font-mono text-[10px] rounded-lg transition"
+                          className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-rose-500 hover:bg-rose-400 disabled:bg-stone-800 text-stone-950 font-bold font-mono text-[10px] rounded-lg transition"
                         >
                           {syncingSheets ? (
                             <span className="w-3.5 h-3.5 rounded-full border-2 border-stone-950 border-t-transparent animate-spin" />
@@ -616,7 +616,7 @@ export default function InviteBany() {
                             value={manualInputSheetId}
                             onChange={(e) => setManualInputSheetId(e.target.value)}
                             placeholder="Coller l'URL ou ID de feuille..."
-                            className="w-full px-3 py-1.5 bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-lg text-[11px] font-mono text-stone-350 focus:outline-none"
+                            className="w-full px-3 py-1.5 bg-stone-900 border border-stone-800 focus:border-rose-500 rounded-lg text-[11px] font-mono text-stone-350 focus:outline-none"
                           />
                           <button
                             type="button"
@@ -645,7 +645,7 @@ export default function InviteBany() {
                             href={spreadsheetUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="flex items-center justify-center gap-1 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 text-center font-bold font-mono text-[10px] rounded-lg transition"
+                            className="flex items-center justify-center gap-1 py-2 bg-rose-500 hover:bg-rose-400 text-stone-950 text-center font-bold font-mono text-[10px] rounded-lg transition"
                           >
                             OUVRIR SHEET ↗
                           </a>
@@ -677,7 +677,7 @@ export default function InviteBany() {
                     href="mailto:contact@banytalks.com" 
                     className="flex items-center gap-2 p-3 bg-stone-900 rounded-xl hover:bg-stone-850 transition text-stone-300 hover:text-stone-100 border border-stone-850"
                   >
-                    <Mail className="w-4 h-4 text-amber-500" />
+                    <Mail className="w-4 h-4 text-rose-500" />
                     <span>Email Direct</span>
                   </a>
                   <a 

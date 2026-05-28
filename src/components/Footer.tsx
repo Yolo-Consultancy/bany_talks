@@ -20,7 +20,7 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
           {/* Column Brand Story / 5 cols */}
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-2">
-              <Disc className="w-5 h-5 text-amber-500 animate-spin-slow" />
+              <Disc className="w-5 h-5 text-rose-500 animate-spin-slow" />
               <span className="text-lg font-black uppercase tracking-wider text-stone-100 font-mono">
                 BANY TALKS
               </span>
@@ -37,7 +37,7 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
                 target="_blank" 
                 rel="noreferrer"
                 aria-label="YouTube Channel"
-                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-amber-500 rounded-lg text-stone-400 transition border border-stone-850"
+                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-rose-500 rounded-lg text-stone-400 transition border border-stone-850"
               >
                 <Youtube className="w-4 h-4" />
               </a>
@@ -47,7 +47,7 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
                 target="_blank" 
                 rel="noreferrer"
                 aria-label="Spotify Podcast"
-                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-amber-500 rounded-lg text-stone-400 transition border border-stone-850"
+                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-rose-500 rounded-lg text-stone-400 transition border border-stone-850"
               >
                 <Radio className="w-4 h-4" />
               </a>
@@ -57,7 +57,7 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
                 target="_blank" 
                 rel="noreferrer"
                 aria-label="Instagram Profile"
-                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-amber-500 rounded-lg text-stone-400 transition border border-stone-850"
+                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-rose-500 rounded-lg text-stone-400 transition border border-stone-850"
               >
                 <Instagram className="w-4 h-4" />
               </a>
@@ -67,7 +67,7 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
                 target="_blank" 
                 rel="noreferrer"
                 aria-label="WhatsApp direct contact"
-                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-amber-500 rounded-lg text-stone-400 transition border border-stone-850"
+                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-rose-500 rounded-lg text-stone-400 transition border border-stone-850"
               >
                 <MessageCircle className="w-4 h-4" />
               </a>
@@ -96,8 +96,8 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
                   <button
                     key={link.value}
                     onClick={() => onNavigate(link.value as any)}
-                    className={`text-left hover:text-amber-400 transition cursor-pointer font-bold ${
-                      isLinkActive ? 'text-amber-500 font-extrabold' : 'text-stone-400'
+                    className={`text-left hover:text-rose-400 transition cursor-pointer font-bold ${
+                      isLinkActive ? 'text-rose-500 font-extrabold' : 'text-stone-400'
                     }`}
                   >
                     {link.label}
@@ -114,7 +114,7 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
               <p className="text-xs text-stone-300 italic font-sans leading-relaxed">
                 "{HOST_DETAILS.quote}"
               </p>
-              <span className="text-[9px] font-mono text-amber-500 uppercase block mt-2 text-right font-bold">
+              <span className="text-[9px] font-mono text-rose-500 uppercase block mt-2 text-right font-bold">
                 — {HOST_DETAILS.name}
               </span>
             </div>

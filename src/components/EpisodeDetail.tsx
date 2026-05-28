@@ -59,7 +59,7 @@ export default function EpisodeDetail({
 
         {/* Title Block */}
         <div className="text-left space-y-4 mb-10">
-          <span className="text-xs font-mono font-bold tracking-widest text-amber-500 uppercase bg-amber-500/10 px-3 py-1 rounded">
+          <span className="text-xs font-mono font-bold tracking-widest text-rose-500 uppercase bg-rose-500/10 px-3 py-1 rounded">
             {episode.category}
           </span>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-stone-100 uppercase max-w-4xl leading-snug">
@@ -70,7 +70,7 @@ export default function EpisodeDetail({
         {/* Media Block / Video Player + Glow effect */}
         <div className="relative mb-12 aspect-video w-full rounded-2xl overflow-hidden border border-stone-850 shadow-2xl bg-stone-900">
           {/* Backlight Glow ambient element */}
-          <div className="absolute inset-0 bg-amber-500/5 blur-[80px] scale-90 pointer-events-none" />
+          <div className="absolute inset-0 bg-rose-500/5 blur-[80px] scale-90 pointer-events-none" />
 
           {/* Real responsive YouTube iframe or placeholder graphic */}
           <iframe
@@ -87,7 +87,7 @@ export default function EpisodeDetail({
           <div className="flex items-center gap-4">
             <button
               onClick={() => onPlayClick(episode)}
-              className="flex items-center gap-2.5 px-5 py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold font-mono rounded-xl transition cursor-pointer transform active:scale-95 text-xs shadow-lg shadow-amber-500/10"
+              className="flex items-center gap-2.5 px-5 py-3 bg-rose-500 hover:bg-rose-400 text-stone-950 font-bold font-mono rounded-xl transition cursor-pointer transform active:scale-95 text-xs shadow-lg shadow-rose-500/10"
             >
               <Play className="w-4 h-4 fill-stone-950" />
               ÉCOUTER L'AUDIO COMPLET ({episode.duration})
@@ -171,11 +171,11 @@ export default function EpisodeDetail({
                     onClick={() => onSeekTo(ts.seconds)}
                     className="w-full flex items-start gap-4 p-3.5 bg-stone-900/60 hover:bg-stone-900 border border-stone-850 rounded-xl transition duration-200 cursor-pointer group text-left"
                   >
-                    <span className="text-amber-500 font-mono text-xs font-extrabold bg-amber-500/10 px-2 py-0.5 rounded tracking-wide group-hover:bg-amber-500 group-hover:text-stone-950 transition duration-200 shrink-0">
+                    <span className="text-rose-500 font-mono text-xs font-extrabold bg-rose-500/10 px-2 py-0.5 rounded tracking-wide group-hover:bg-rose-500 group-hover:text-stone-950 transition duration-200 shrink-0">
                       {ts.time}
                     </span>
                     <div className="space-y-0.5">
-                      <span className="text-xs font-bold text-stone-200 block group-hover:text-amber-400 transition">
+                      <span className="text-xs font-bold text-stone-200 block group-hover:text-rose-400 transition">
                         {ts.topic}
                       </span>
                     </div>
@@ -196,7 +196,7 @@ export default function EpisodeDetail({
                     <p className="text-sm text-stone-200 italic font-sans leading-relaxed relative z-10">
                       "{quote.text}"
                     </p>
-                    <span className="text-[10px] font-mono text-amber-500 uppercase block mt-3 font-semibold">— {quote.author}</span>
+                    <span className="text-[10px] font-mono text-rose-500 uppercase block mt-3 font-semibold">— {quote.author}</span>
                   </div>
                 ))}
               </div>
@@ -221,7 +221,7 @@ export default function EpisodeDetail({
                   <h4 className="text-base font-bold text-stone-100 tracking-tight">
                     Bany Talks avec {episode.guest.name}
                   </h4>
-                  <p className="text-xs text-amber-500 font-mono uppercase font-bold tracking-wider mt-0.5">
+                  <p className="text-xs text-rose-500 font-mono uppercase font-bold tracking-wider mt-0.5">
                     {episode.guest.role} {episode.guest.company ? `• ${episode.guest.company}` : ''}
                   </p>
                 </div>
@@ -244,7 +244,7 @@ export default function EpisodeDetail({
                     href={episode.guest.socials.linkedin}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-1.5 bg-stone-950 border border-stone-800 rounded hover:text-amber-500 transition text-stone-400"
+                    className="p-1.5 bg-stone-950 border border-stone-800 rounded hover:text-rose-500 transition text-stone-400"
                   >
                     <Linkedin className="w-3.5 h-3.5" />
                   </a>
@@ -254,7 +254,7 @@ export default function EpisodeDetail({
                     href={episode.guest.socials.twitter}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-1.5 bg-stone-950 border border-stone-800 rounded hover:text-amber-500 transition text-stone-400"
+                    className="p-1.5 bg-stone-950 border border-stone-800 rounded hover:text-rose-500 transition text-stone-400"
                   >
                     <Twitter className="w-3.5 h-3.5" />
                   </a>
@@ -264,8 +264,8 @@ export default function EpisodeDetail({
             </div>
 
             {/* Quick Gated checklist for listeners */}
-            <div className="bg-gradient-to-br from-stone-900 to-ambient-950 border border-amber-500/20 rounded-2xl p-6 p-6 space-y-4">
-              <span className="text-[9px] font-mono font-bold text-amber-400 uppercase tracking-widest bg-amber-400/10 px-2.5 py-1 rounded">
+            <div className="bg-gradient-to-br from-stone-900 to-ambient-950 border border-rose-500/20 rounded-2xl p-6 p-6 space-y-4">
+              <span className="text-[9px] font-mono font-bold text-rose-400 uppercase tracking-widest bg-rose-400/10 px-2.5 py-1 rounded">
                 BONUS AUDIO EXCLUSIF
               </span>
               <h4 className="text-sm font-bold text-stone-100 uppercase tracking-tight">
