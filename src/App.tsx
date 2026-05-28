@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { Disc, Menu, X, ArrowUp } from 'lucide-react';
 import { EPISODES } from './data';
+import logoBany from './assets/logos/logo_bany.png';
 import { Episode } from './types';
 import { fetchYouTubeVideos, fetchYouTubePlaylistData, fetchYouTubePlaylistHTML, DEFAULT_YOUTUBE_CHANNEL_ID, DEFAULT_YOUTUBE_API_KEY } from './services/youtube';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -114,10 +115,13 @@ export default function App() {
           {/* Logo brand */}
           <button 
             onClick={() => { setCurrentView('home'); jumpToTop(); }}
-            className="flex items-center gap-2 text-stone-100 hover:text-rose-500 transition cursor-pointer"
+            className="flex items-center gap-2 text-stone-100 hover:opacity-80 transition cursor-pointer"
           >
-            <Disc className="w-5 h-5 text-rose-500 animate-spin-slow" />
-            <span className="text-xl font-display font-black tracking-wider uppercase">BANY TALKS</span>
+            <img 
+              src={logoBany}
+              alt="BANY TALKS"
+              className="h-12 w-auto"
+            />
           </button>
 
           {/* Desktop Links */}

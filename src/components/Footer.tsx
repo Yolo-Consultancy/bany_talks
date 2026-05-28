@@ -1,6 +1,7 @@
 import React from 'react';
 import { HOST_DETAILS } from '../data';
 import { Youtube, Instagram, Radio, Send, MessageCircle, Moon, Disc } from 'lucide-react';
+import logoBany from '../assets/logos/logo_bany.png';
 
 interface FooterProps {
   onNavigate: (view: 'home' | 'about' | 'episodes' | 'booking' | 'hub' | 'books') => void;
@@ -20,10 +21,11 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
           {/* Column Brand Story / 5 cols */}
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-2">
-              <Disc className="w-5 h-5 text-rose-500 animate-spin-slow" />
-              <span className="text-lg font-black uppercase tracking-wider text-stone-100 font-mono">
-                BANY TALKS
-              </span>
+              <img 
+                src={logoBany}
+                alt="BANY TALKS"
+                className="h-10 w-auto"
+              />
             </div>
             
             <p className="text-xs text-stone-400 font-sans leading-relaxed max-w-sm">
