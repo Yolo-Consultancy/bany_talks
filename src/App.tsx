@@ -89,6 +89,14 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  function handlePlayEpisode(ep: Episode): void {
+    throw new Error('Function not implemented.');
+  }
+
+  function handleTimestampSeek(sec: number): void {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <div id="brand-layout-root" className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans select-none antialiased selection:bg-amber-500 selection:text-stone-950">
       

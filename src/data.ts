@@ -214,42 +214,6 @@ export const BOOKS: Book[] = [
       'Le désamorçage par l’empathie tactique : valider la colère d’autrui pour mieux la réorienter.',
       'Comment asseoir un statut de leader d’exception face à des dynamiques de pouvoir asymétriques.'
     ]
-  },
-  {
-    id: 'book-arr',
-    title: 'Vendre ou Rentrer Chez Sou',
-    subtitle: 'Le playbook de la pré-vente et de la croissance bootstrappée avec Bany.',
-    author: 'Banyabo Bigomokero',
-    description: 'Le manuel de persuasion et de closing ultime signé Banyabo Bigomokero. Pas de blabla théorique : des scripts d’e-mails à fort taux de réponse, des techniques de pricing agressif et le secret de Bany pour pré-vendre n’importe quelle masterclass ou format média d’impact avant même d’investir un seul euro.',
-    coverGradient: 'from-neutral-900 to-amber-700/80',
-    category: 'Entrepreneuriat SaaS',
-    publishedYear: '2026',
-    pagesCount: 218,
-    rating: 4.9,
-    buyUrl: '#',
-    highlights: [
-      'La méthode de la facture anticipée comme unique preuve de validation réelle d’un marché.',
-      'Le Playbook Cold Outbound : structures d’e-mails de Bany générant plus de 45% de taux d’ouverture qualifiée.',
-      'Minimalisme opérationnel : comment piloter une émission de prestige avec un flux de travail hyper-allégé.'
-    ]
-  },
-  {
-    id: 'book-independance',
-    title: 'L’Indépendance Mentale',
-    subtitle: 'Échapper à la dopamine artificielle et financer sa liberté physique.',
-    author: 'Banyabo Bigomokero',
-    description: 'Une étude psychologique écrite par Banyabo Bigomokero pour blinder son mental contre l’addiction des notifications instantanées. Apprenez le protocole précis pour recycler l’attention reçue sur les écrans en actifs physiques tangibles (immobilier locatif, fonds commerciaux traditionnels et écosystèmes autonomes).',
-    coverGradient: 'from-stone-950 via-zinc-900 to-stone-900',
-    category: 'Mindset & Finance',
-    publishedYear: '2026',
-    pagesCount: 280,
-    rating: 4.7,
-    buyUrl: '#',
-    highlights: [
-      'La diète dopaminergique bimensuelle : réinitialiser sa concentration profonde en 48 heures.',
-      'Le pipeline d’actifs : convertir les statistiques virtuelles en briques, ciment et flux de trésorerie réels.',
-      'Techniques de blindage psychologique contre la fatigue décisionnelle et le syndrome de l’imposteur.'
-    ]
   }
 ];
 

@@ -89,16 +89,16 @@ export default function BooksPage() {
             <span className="text-[10px] font-mono font-black uppercase tracking-widest text-amber-500">Bibliothèque</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
-            Les lectures écrits par <span className="text-amber-500 italic">Bany lui-même.</span>
+            Mes <span className="text-amber-500 italic">Livres</span>
           </h1>
           <p className="text-sm md:text-base text-stone-400 leading-relaxed font-sans">
-            Bany Talks ne se limite pas à des discussions éphémères. Retrouvez ici la collection exclusive d’ouvrages phares écrits par Banyabo Bigomokero lui-même sur le monde du business, de la négociation, du leadership et de l’indépendance de l’esprit.
+            Je me limite pas seulement à des discussions. Retrouvez ici la collection exclusive de mes ouvrages phares sur le monde du business, de la négociation, du leadership et de l’indépendance de l’esprit.
           </p>
           
           {/* Quick numbers bar */}
           <div className="pt-4 grid grid-cols-3 gap-4 border-t border-white/5 max-w-md">
             <div>
-              <span className="block text-xl font-bold text-amber-500">4 Livres</span>
+              <span className="block text-xl font-bold text-amber-500">2 Livres</span>
               <span className="text-[9px] font-mono uppercase tracking-widest text-stone-500">Écrits par Bany</span>
             </div>
             <div>
@@ -154,85 +154,6 @@ export default function BooksPage() {
             </div>
           </div>
 
-          {/* Add Community Recommendation */}
-          <div className="bg-stone-900 border border-stone-850 p-5 rounded-2xl space-y-4">
-            <div className="flex items-center gap-2">
-              <HeartHandshake className="w-4 h-4 text-amber-500" />
-              <h3 className="text-xs font-mono font-black uppercase tracking-widest text-stone-200">
-                Suggérer un livre
-              </h3>
-            </div>
-            <p className="text-[11px] text-stone-400 leading-relaxed">
-              Un livre vous a marqué et Bany devrait en parler ? Soumettez votre suggestion d'élite ci-dessous.
-            </p>
-
-            {recSuccess ? (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-450 p-3 rounded-xl text-[11px] flex items-start gap-2"
-              >
-                <CheckCircle className="w-4 h-4 shrink-0 text-emerald-500" />
-                <span>Merci pour votre recommandation ! Elle a été enregistrée avec succès.</span>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleRecommendBook} className="space-y-3 font-sans">
-                <div>
-                  <label className="block text-[9px] font-mono uppercase tracking-widest text-stone-500 mb-1">Titre de l'ouvrage *</label>
-                  <input
-                    type="text"
-                    required
-                    value={recTitle}
-                    onChange={(e) => setRecTitle(e.target.value)}
-                    placeholder="L'effet Cumulé, Pouvoir Illimité..."
-                    className="w-full px-3 py-1.5 bg-stone-950 border border-stone-800 rounded-lg text-xs text-stone-300 focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[9px] font-mono uppercase tracking-widest text-stone-500 mb-1">Auteur de l'ouvrage *</label>
-                  <input
-                    type="text"
-                    required
-                    value={recAuthor}
-                    onChange={(e) => setRecAuthor(e.target.value)}
-                    placeholder="Darren Hardy, Robin Sharma..."
-                    className="w-full px-3 py-1.5 bg-stone-950 border border-stone-800 rounded-lg text-xs text-stone-300 focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[9px] font-mono uppercase tracking-widest text-stone-500 mb-1">Pourquoi ce livre ?</label>
-                  <textarea
-                    value={recReason}
-                    onChange={(e) => setRecReason(e.target.value)}
-                    rows={2}
-                    placeholder="Leçon clé, rapport avec l'esprit Bany Talks..."
-                    className="w-full px-3 py-1.5 bg-stone-950 border border-stone-800 rounded-lg text-xs text-stone-300 focus:outline-none focus:border-amber-500 resize-none"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold font-mono text-[10px] uppercase rounded-xl transition cursor-pointer"
-                >
-                  Envoyer ma Suggestion
-                </button>
-              </form>
-            )}
-
-            {/* Simulated mini list of recommendations recorded */}
-            {communityRecs.length > 0 && (
-              <div className="pt-3 border-t border-stone-850 space-y-2">
-                <span className="block text-[9px] font-mono text-stone-500 uppercase tracking-widest">Vos propositions</span>
-                <div className="max-h-24 overflow-y-auto custom-scrollbar space-y-1.5 pr-1">
-                  {communityRecs.map((r, idx) => (
-                    <div key={r.id || idx} className="bg-stone-950 p-2 rounded border border-stone-900 text-[10px]">
-                      <span className="font-bold text-stone-300 block truncate">{r.title}</span>
-                      <span className="text-stone-500 font-mono block truncate">de {r.author}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Core Books display list */}
