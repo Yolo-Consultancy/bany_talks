@@ -1,3 +1,4 @@
+import { Facebook } from 'lucide-react';
 import { Episode, Book } from './types';
 
 export const HOST_DETAILS = {
@@ -16,12 +17,12 @@ export const HOST_DETAILS = {
     { label: 'Note Moyenne (Spotify)', value: '4.9/5' }
   ],
   socialLinks: {
-    youtube: 'https://youtube.com',
+    youtube: 'https://youtube.com/@banybanyabo',
     spotify: 'https://spotify.com',
     apple: 'https://podcasts.apple.com',
-    instagram: 'https://instagram.com',
+    instagram: 'www.instagram.com/banyofficial',
     tiktok: 'https://tiktok.com',
-    whatsapp: 'https://wa.me/33600000000'
+    whatsapp: 'https://wa.me/1234567890',
   }
 };
 

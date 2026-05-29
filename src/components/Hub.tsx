@@ -427,7 +427,7 @@ export default function Hub() {
               
               <div className="space-y-1.5 text-left">
                 <label htmlFor="question-textarea" className="block text-[9px] font-mono text-stone-500 uppercase tracking-widest font-bold">
-                  Posez votre question à Dany Talks
+                  Posez votre question à Bany Talks
                 </label>
                 <textarea
                   id="question-textarea"

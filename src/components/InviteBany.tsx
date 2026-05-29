@@ -167,7 +167,7 @@ export default function InviteBany() {
     } else {
       return {
         tier: 'Gold Sovereign Elite',
-        features: ['Animation exclusive de toute la demi-journée', 'Interview exclusive enregistrée au studio Dany Talks (Paris)', 'Post-sponsorisé dédié VIP permanent sur tous les réseaux', 'Newsletter Bany Talks exclusive dédiée (Capacité 40K mails)'],
+        features: ['Animation exclusive de toute la demi-journée', 'Interview exclusive enregistrée au studio Bany Talks (Paris)', 'Post-sponsorisé dédié VIP permanent sur tous les réseaux', 'Newsletter Bany Talks exclusive dédiée (Capacité 40K mails)'],
         estHours: '6+ Heures'
       };
     }

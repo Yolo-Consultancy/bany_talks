@@ -31,7 +31,7 @@ export default function Newsletter() {
   return (
     <section 
       id="newsletter-section"
-      className="bg-stone-900 py-16 lg:py-24 border-b border-stone-800/60 relative overflow-hidden text-left"
+      className="bg-stone-700 py-16 lg:py-24 border-b border-stone-800/60 relative overflow-hidden text-left"
     >
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-rose-500/5 blur-[100px] rounded-full pointer-events-none -translate-y-1/2" />
 
