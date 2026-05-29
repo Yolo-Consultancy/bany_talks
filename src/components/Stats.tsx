@@ -11,7 +11,7 @@ export default function Stats({ onInviteClick }: StatsProps) {
   return (
     <section 
       id="about-bany"
-      className="bg-stone-900 py-16 lg:py-24 border-b border-stone-800/60"
+      className="bg-stone-950 py-16 lg:py-24 border-b border-stone-800/60"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -125,7 +125,7 @@ export default function Stats({ onInviteClick }: StatsProps) {
         </div>
 
         {/* Animated Centered Timeline */}
-        <div className="space-y-12 mt-24 bg-stone-700/50 border border-stone-800/80 p-8 rounded-2xl">
+        <div className="space-y-12 mt-24 bg-stone-800/50 border border-stone-800/80 p-8 rounded-2xl">
           <div className="text-center space-y-3">
             <span className="inline-block text-xs font-mono font-bold text-rose-500 uppercase tracking-widest bg-rose-500/10 px-3 py-1 rounded-full">
               Le Parcours
