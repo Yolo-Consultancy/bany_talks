@@ -539,149 +539,21 @@ export default function InviteBany() {
                 </div>
               </div>
 
-              {/* Google Sheets Synchronization Control Panel */}
-              <div className="bg-stone-950 border border-stone-850 rounded-2xl p-5 space-y-4">
-                <div className="flex items-center justify-between border-b border-stone-900 pb-3">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-rose-500 font-bold flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Google Sheets Sync
-                  </span>
-                  {user && (
-                    <button 
-                      onClick={handleGoogleLogout}
-                      className="text-[9px] font-mono uppercase bg-stone-900 hover:bg-stone-850 text-stone-400 hover:text-stone-200 px-2 py-0.5 rounded transition cursor-pointer"
-                    >
-                      Déconnexion
-                    </button>
-                  )}
-                </div>
-
-                {!user ? (
-                  <div className="space-y-3">
-                    <p className="text-xs text-stone-400 font-sans leading-relaxed">
-                      Connectez votre compte Google pour sauvegarder automatiquement chaque demande d'invitation directement dans une feuille de calcul Sheets.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={handleGoogleLogin}
-                      className="w-full flex items-center justify-center gap-2.5 py-2.5 bg-white hover:bg-stone-200 text-stone-950 font-bold font-mono text-xs rounded-xl transition cursor-pointer"
-                    >
-                      <svg className="w-4 h-4" viewBox="0 0 48 48">
-                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
-                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
-                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
-                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
-                      </svg>
-                      Connexion Google Sheets
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      {user.photoURL ? (
-                        <img referrerPolicy="no-referrer" src={user.photoURL} alt={user.displayName || ''} className="w-5 h-5 rounded-full border border-stone-800" />
-                      ) : (
-                        <div className="w-5 h-5 rounded-full bg-rose-500/20 text-rose-500 font-bold flex items-center justify-center text-[10px]">{user.displayName?.[0] || 'U'}</div>
-                      )}
-                      <span className="text-xs font-mono text-stone-300 font-bold truncate">
-                        {user.displayName || user.email}
-                      </span>
-                    </div>
-
-                    {!spreadsheetId ? (
-                      <div className="space-y-3 pt-2 border-t border-stone-900">
-                        <p className="text-[11px] text-stone-400 font-sans leading-relaxed">
-                          Sélectionnez une option pour configurer la feuille cible :
-                        </p>
-                        <button
-                          type="button"
-                          onClick={handleCreateSheet}
-                          disabled={syncingSheets}
-                          className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-rose-500 hover:bg-rose-400 disabled:bg-stone-800 text-stone-950 font-bold font-mono text-[10px] rounded-lg transition"
-                        >
-                          {syncingSheets ? (
-                            <span className="w-3.5 h-3.5 rounded-full border-2 border-stone-950 border-t-transparent animate-spin" />
-                          ) : (
-                            "🪄 CRÉER FEUILLE AUTOMATIQUEMENT"
-                          )}
-                        </button>
-
-                        <div className="relative flex items-center justify-center border-t border-stone-900 my-4">
-                          <span className="absolute bg-stone-950 px-2 text-[9px] font-mono text-stone-500 tracking-wider">OU EXPORT EXISTANT</span>
-                        </div>
-
-                        <div className="space-y-2">
-                          <input
-                            type="text"
-                            value={manualInputSheetId}
-                            onChange={(e) => setManualInputSheetId(e.target.value)}
-                            placeholder="Coller l'URL ou ID de feuille..."
-                            className="w-full px-3 py-1.5 bg-stone-900 border border-stone-800 focus:border-rose-500 rounded-lg text-[11px] font-mono text-stone-350 focus:outline-none"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleConnectSheet}
-                            disabled={syncingSheets}
-                            className="w-full py-2 bg-stone-800 hover:bg-stone-750 disabled:bg-stone-900 border border-stone-800 text-stone-300 font-bold font-mono text-[10px] rounded-lg transition"
-                          >
-                            CONNECTER CETTE FEUILLE
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-3 pt-2 border-t border-stone-900">
-                        <div className="bg-stone-900 border border-stone-850 p-3 rounded-xl space-y-1.5">
-                          <span className="text-[9px] font-mono text-stone-500 font-bold uppercase tracking-widest block">STATUT DE LIAISON</span>
-                          <span className="text-xs text-stone-300 font-bold font-mono block truncate">
-                            {spreadsheetTitle || 'Feuille Active'}
-                          </span>
-                          <span className="text-[10px] text-stone-400 font-mono block truncate">
-                            ID: {spreadsheetId.slice(0, 8)}...{spreadsheetId.slice(-8)}
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                          <a
-                            href={spreadsheetUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex items-center justify-center gap-1 py-2 bg-rose-500 hover:bg-rose-400 text-stone-950 text-center font-bold font-mono text-[10px] rounded-lg transition"
-                          >
-                            OUVRIR SHEET ↗
-                          </a>
-                          <button
-                            type="button"
-                            onClick={handleClearSpreadsheet}
-                            className="py-2 bg-stone-900 hover:bg-stone-850 border border-stone-800 text-rose-400 hover:text-rose-350 font-bold font-mono text-[10px] rounded-lg transition"
-                          >
-                            DÉTACHER LA FEUILLE
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {sheetsError && (
-                  <p className="text-[10px] font-mono text-rose-400 leading-relaxed pt-2 border-t bg-rose-500/5 p-2.5 rounded-lg border border-rose-500/10">
-                    ⚠️ {sheetsError}
-                  </p>
-                )}
-              </div>
+             
 
               {/* Direct channels widget */}
               <div className="bg-stone-950 border border-stone-850 rounded-2xl p-5 space-y-4">
                 <span className="text-[10px] font-mono uppercase tracking-widest text-stone-500 block">Autres Canaux</span>
                 <div className="grid grid-cols-2 gap-3 font-mono text-xs">
                   <a 
-                    href="mailto:contact@banytalks.com" 
+                    href="mailto:contact@banyofficial.com " 
                     className="flex items-center gap-2 p-3 bg-stone-900 rounded-xl hover:bg-stone-850 transition text-stone-300 hover:text-stone-100 border border-stone-850"
                   >
                     <Mail className="w-4 h-4 text-rose-500" />
                     <span>Email Direct</span>
                   </a>
                   <a 
-                    href="https://wa.me/33600000000" 
+                    href="https://wa.me/813622975" 
                     target="_blank" 
                     rel="noreferrer"
                     className="flex items-center gap-2 p-3 bg-stone-900 rounded-xl hover:bg-stone-850 transition text-stone-300 hover:text-stone-100 border border-stone-850"

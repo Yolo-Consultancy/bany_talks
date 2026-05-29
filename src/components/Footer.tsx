@@ -1,5 +1,6 @@
 import React from 'react';
 import { HOST_DETAILS } from '../data';
+import { NAV_ITEMS } from '../data/navItems';
 import { Youtube, Instagram, Radio, Send, MessageCircle, Moon, Disc } from 'lucide-react';
 import logoBany from '../assets/logos/logo_bany.png';
 
@@ -81,31 +82,21 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
           <div className="md:col-span-3 space-y-4 font-mono text-xs">
             <h4 className="text-[10px] text-stone-500 uppercase font-black tracking-widest">Navigation</h4>
             <div className="flex flex-col gap-2.5">
-              {[
-                { label: 'Accueil / Hero', value: 'home' },
-                { label: 'À Propos de Bany', value: 'about' },
-                { label: 'Émissions & Épisodes', value: 'episodes' },
-                { label: 'Recommandations Livres', value: 'books' },
-                { label: 'Inviter Bany', value: 'booking' },
-                { label: 'Hub Audience', value: 'hub' },
-              ].map((link) => {
-                const isLinkActive = 
-                  activeView === link.value || 
-                  (activeView === 'invite' && link.value === 'booking') ||
-                  (activeView === 'episode-detail' && link.value === 'episodes');
-
-                return (
-                  <button
-                    key={link.value}
-                    onClick={() => onNavigate(link.value as any)}
-                    className={`text-left hover:text-rose-400 transition cursor-pointer font-bold ${
-                      isLinkActive ? 'text-rose-500 font-extrabold' : 'text-stone-400'
-                    }`}
-                  >
-                    {link.label}
-                  </button>
-                );
-              })}
+                {NAV_ITEMS.map((link) => {
+                  const isLinkActive =
+                    activeView === link.value ||
+                    (activeView === 'invite' && link.value === 'booking') ||
+                    (activeView === 'episode-detail' && link.value === 'episodes');
+                  return (
+                    <button
+                      key={link.value}
+                      onClick={() => onNavigate(link.value as any)}
+                      className={`text-left hover:text-rose-400 transition cursor-pointer font-bold ${isLinkActive ? 'text-rose-500 font-extrabold' : 'text-stone-400'}`}
+                    >
+                      {link.label}
+                    </button>
+                  );
+                })}
             </div>
           </div>
 

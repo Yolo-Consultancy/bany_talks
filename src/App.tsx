@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { Disc, Menu, X, ArrowUp } from 'lucide-react';
 import { EPISODES } from './data';
 import logoBany from './assets/logos/logo_bany.png';
+import { NAV_ITEMS } from './data/navItems';
 import { Episode } from './types';
 import { fetchYouTubeVideos, fetchYouTubePlaylistData, fetchYouTubePlaylistHTML, DEFAULT_YOUTUBE_CHANNEL_ID, DEFAULT_YOUTUBE_API_KEY } from './services/youtube';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -126,81 +127,38 @@ export default function App() {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-6 text-stone-400 font-bold uppercase font-mono relative">
-            <button 
-              onClick={() => scrollToSection('hero-section')} 
-              className={`relative py-1 transition-colors duration-200 cursor-pointer ${
-                currentView === 'home' ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'
-              }`}
-            >
-              Accueil
-              {currentView === 'home' && (
-                <motion.span 
-                  layoutId="activeHeaderUnderline" 
-                  className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
-                  transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                />
-              )}
-            </button>
-            <button 
-              onClick={() => scrollToSection('about-bany')} 
-              className={`relative py-1 transition-colors duration-200 cursor-pointer ${
-                currentView === 'about' ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'
-              }`}
-            >
-              À Propos
-              {currentView === 'about' && (
-                <motion.span 
-                  layoutId="activeHeaderUnderline" 
-                  className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
-                  transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                />
-              )}
-            </button>
-            <button 
-              onClick={() => scrollToSection('episodes-section')} 
-              className={`relative py-1 transition-colors duration-200 cursor-pointer ${
-                currentView === 'episodes' || currentView === 'episode-detail' ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'
-              }`}
-            >
-              Émissions
-              {(currentView === 'episodes' || currentView === 'episode-detail') && (
-                <motion.span 
-                  layoutId="activeHeaderUnderline" 
-                  className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
-                  transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                />
-              )}
-            </button>
-            <button 
-              onClick={() => navigateToView('books')} 
-              className={`relative py-1 transition-colors duration-200 cursor-pointer ${
-                currentView === 'books' ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'
-              }`}
-            >
-              Livres
-              {currentView === 'books' && (
-                <motion.span 
-                  layoutId="activeHeaderUnderline" 
-                  className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
-                  transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                />
-              )}
-            </button>
-            <button 
-              onClick={() => scrollToSection('audience-hub')} 
-              className={`relative py-1 transition-colors duration-200 cursor-pointer ${
-                currentView === 'hub' ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'
-              }`}
-            >
-              Audience Hub
-              {currentView === 'hub' && (
-                <motion.span 
-                  layoutId="activeHeaderUnderline" 
-                  className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full" 
-                  transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                />
-              )}
-            </button>
+            {NAV_ITEMS.map((link) => {
+              const isActive = currentView === link.value || (currentView === 'episode-detail' && link.value === 'episodes');
+              const handleClick = () => {
+                if (['home','about','episodes','hub','contact'].includes(link.value)) {
+                  const sectionId = link.value === 'contact' ? 'contact-section' :
+                    link.value === 'home' ? 'hero-section' :
+                    link.value === 'about' ? 'about-bany' :
+                    link.value === 'episodes' ? 'episodes-section' :
+                    link.value === 'hub' ? 'audience-hub' :
+                    link.value;
+                  scrollToSection(sectionId);
+                } else {
+                  navigateToView(link.value as any);
+                }
+              };
+              return (
+                <button
+                  key={link.value}
+                  onClick={handleClick}
+                  className={`relative py-1 transition-colors duration-200 cursor-pointer ${isActive ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'}`}
+                >
+                  {link.label}
+                  {isActive && (
+                    <motion.span
+                      layoutId="activeHeaderUnderline"
+                      className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full"
+                      transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                    />
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* Right Action Trigger */}
