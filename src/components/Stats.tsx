@@ -36,18 +36,9 @@ export default function Stats({ onInviteClick }: StatsProps) {
 
         <hr className="editorial-rule mb-24 lg:mb-32" />
 
-        {/* Photo + stats row */}
+        {/* Stats + photo row — text first, image after */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-24 lg:mb-32">
-          <div className="lg:col-span-6 relative aspect-[4/5] overflow-hidden">
-            <img
-              src={HOST_DETAILS.aboutpicture}
-              alt="Bany en session studio"
-              className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition duration-700"
-              referrerPolicy="no-referrer"
-            />
-          </div>
-
-          <div className="lg:col-span-6 space-y-10">
+          <div className="lg:col-span-6 space-y-10 order-1">
             <div>
               <p className="section-label mb-4">Chiffres clés</p>
               <div className="grid grid-cols-2 gap-8">
@@ -72,6 +63,15 @@ export default function Stats({ onInviteClick }: StatsProps) {
                 — {HOST_DETAILS.fullName}
               </cite>
             </blockquote>
+          </div>
+
+          <div className="lg:col-span-6 relative aspect-[4/5] overflow-hidden order-2">
+            <img
+              src={HOST_DETAILS.aboutpicture}
+              alt="Bany en session studio"
+              className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition duration-700"
+              referrerPolicy="no-referrer"
+            />
           </div>
         </div>
 
