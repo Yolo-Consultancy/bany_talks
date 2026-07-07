@@ -4,12 +4,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Disc, Menu, X, ArrowUp } from 'lucide-react';
+import { Menu, X, ArrowUp } from 'lucide-react';
 import { EPISODES } from './data';
 import logoBany from './assets/logos/logo_bany.png';
 import { NAV_ITEMS } from './data/navItems';
 import { Episode } from './types';
-import { fetchYouTubeVideos, fetchYouTubePlaylistData, fetchYouTubePlaylistHTML, DEFAULT_YOUTUBE_CHANNEL_ID, DEFAULT_YOUTUBE_API_KEY } from './services/youtube';
+import { loadPlaylistEpisodes } from './services/youtube';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Importing custom brand units
@@ -21,7 +21,7 @@ import InviteBany from './components/InviteBany';
 import Hub from './components/Hub';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
-// AudioPlayer removed — audio not yet available
+import HomeShowcase from './components/HomeShowcase';
 import BooksPage from './components/BooksPage';
 
 export default function App() {
@@ -32,23 +32,23 @@ export default function App() {
 
   useEffect(() => {
     async function loadEpisodes() {
+      const emissionsPlaylistId = import.meta.env.VITE_PLAYLIST_EMISSIONS_ID ?? 'PLXxMao9EmHNDMU4n8XuVFdbGmWjXSH9LC';
+      const podcastsPlaylistId = import.meta.env.VITE_PLAYLIST_PODCASTS_ID ?? 'PLXxMao9EmHNAf_hXS8lZkWyZJA8F_Sr17';
+
       try {
-        const emissionsPlaylistId = import.meta.env.VITE_PLAYLIST_EMISSIONS_ID ?? 'PLXxMao9EmHNDMU4n8XuVFdbGmWjXSH9LC';
-        const podcastsPlaylistId = import.meta.env.VITE_PLAYLIST_PODCASTS_ID ?? 'PLXxMao9EmHNAf_hXS8lZkWyZJA8F_Sr17';
-        
-        const [rawEmissions, rawPodcasts] = await Promise.all([
-          fetchYouTubePlaylistData(emissionsPlaylistId, 'Émissions').catch(() => []),
-          fetchYouTubePlaylistData(podcastsPlaylistId, 'Podcasts').catch(() => [])
+        const [emissions, podcasts] = await Promise.all([
+          loadPlaylistEpisodes(emissionsPlaylistId, 'Émissions'),
+          loadPlaylistEpisodes(podcastsPlaylistId, 'Podcasts'),
         ]);
 
-        // Fallback to HTML parsing if emissions are empty
-        const emissions = rawEmissions.length > 0 ? rawEmissions : await fetchYouTubePlaylistHTML(emissionsPlaylistId, 'Émissions').catch(() => []);
-        const podcasts = rawPodcasts;
-
-        // Combine emissions and podcasts into episodes list
-        setEpisodes([...emissions, ...podcasts]);
+        const combined = [...emissions, ...podcasts];
+        if (combined.length > 0) {
+          setEpisodes(combined);
+        } else {
+          console.warn('Aucun épisode YouTube récupéré, conservation des données locales.');
+        }
       } catch (err) {
-        console.error("Erreur lors du chargement des vidéos YouTube", err);
+        console.error('Erreur lors du chargement des vidéos YouTube', err);
       }
     }
     loadEpisodes();
@@ -100,15 +100,14 @@ export default function App() {
   }
 
   return (
-    <div id="brand-layout-root" className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans select-none antialiased selection:bg-rose-500 selection:text-stone-950">
+    <div id="brand-layout-root" className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-body antialiased selection:bg-rose-500 selection:text-stone-950">
       
-      {/* Premium Sticky Navigation Header */}
-      <nav 
+      <nav
         id="main-navigation"
-        className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 font-mono text-xs border-b ${
-          scrolled 
-            ? 'bg-stone-950/90 backdrop-blur-xl border-stone-900 py-3.5 shadow-lg' 
-            : 'bg-transparent border-transparent py-5'
+        className={`fixed top-0 inset-x-0 z-40 transition-all duration-500 border-b ${
+          scrolled
+            ? 'bg-stone-950/95 backdrop-blur-md border-white/5 py-4'
+            : 'bg-transparent border-transparent py-6'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -125,8 +124,7 @@ export default function App() {
             />
           </button>
 
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-6 text-stone-400 font-bold uppercase font-mono relative">
+          <div className="hidden md:flex items-center gap-8 text-sm font-body relative">
             {NAV_ITEMS.map((link) => {
               const isActive = currentView === link.value || (currentView === 'episode-detail' && link.value === 'episodes');
               const handleClick = () => {
@@ -139,20 +137,22 @@ export default function App() {
                     link.value;
                   scrollToSection(sectionId);
                 } else {
-                  navigateToView(link.value as any);
+                  navigateToView(link.value as 'home' | 'about' | 'episodes' | 'invite' | 'books' | 'hub');
                 }
               };
               return (
                 <button
                   key={link.value}
                   onClick={handleClick}
-                  className={`relative py-1 transition-colors duration-200 cursor-pointer ${isActive ? 'text-rose-500 font-extrabold' : 'hover:text-rose-400'}`}
+                  className={`relative py-1 transition-colors duration-200 cursor-pointer ${
+                    isActive ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
+                  }`}
                 >
                   {link.label}
                   {isActive && (
                     <motion.span
                       layoutId="activeHeaderUnderline"
-                      className="absolute -bottom-4 left-0 right-0 h-[2.5px] bg-rose-500 rounded-full"
+                      className="absolute -bottom-1 left-0 right-0 h-px bg-rose-500"
                       transition={{ type: "spring", stiffness: 350, damping: 28 }}
                     />
                   )}
@@ -161,22 +161,13 @@ export default function App() {
             })}
           </div>
 
-          {/* Right Action Trigger */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center">
             <button
               onClick={() => scrollToSection('booking-section')}
-              className={`px-5 py-2.5 rounded-xl transition font-mono uppercase text-[10px] tracking-wider cursor-pointer shadow-lg hover:scale-105 active:scale-95 ${
-                currentView === 'invite' 
-                  ? 'bg-rose-400 text-stone-950 font-black shadow-rose-500/20 ring-2 ring-rose-500/30' 
-                  : 'bg-rose-500 hover:bg-rose-400 text-stone-950 font-black shadow-rose-500/10'
-              }`}
+              className="btn-primary text-xs py-2.5 px-5"
             >
-              Inviter Bany ↗
+              Inviter Bany
             </button>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/10 rounded-full border border-rose-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">LIVE CHAT</span>
-            </div>
           </div>
 
           {/* Mobile Menu Action Icon */}
@@ -208,53 +199,53 @@ export default function App() {
               transition={{ duration: 0.5, ease: "easeInOut" }}
               className="md:hidden bg-stone-950 border-b border-stone-900 overflow-hidden shadow-2xl"
             >
-              <div className="px-5 pt-3 pb-6 space-y-3 font-bold uppercase font-mono">
+              <div className="px-5 pt-3 pb-6 space-y-1 font-body text-sm">
                 <button 
                   onClick={() => scrollToSection('hero-section')} 
-                  className={`block w-full text-left py-2.5 border-b border-stone-900/40 transition duration-150 ${
-                    currentView === 'home' ? 'text-rose-500 font-extrabold' : 'text-stone-400 hover:text-rose-500'
+                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
+                    currentView === 'home' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
                   }`}
                 >
                   Accueil
                 </button>
                 <button 
                   onClick={() => scrollToSection('about-bany')} 
-                  className={`block w-full text-left py-2.5 border-b border-stone-900/40 transition duration-150 ${
-                    currentView === 'about' ? 'text-rose-500 font-extrabold' : 'text-stone-400 hover:text-rose-500'
+                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
+                    currentView === 'about' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
                   }`}
                 >
                   À Propos
                 </button>
                 <button 
                   onClick={() => scrollToSection('episodes-section')} 
-                  className={`block w-full text-left py-2.5 border-b border-stone-900/40 transition duration-150 ${
-                    currentView === 'episodes' || currentView === 'episode-detail' ? 'text-rose-500 font-extrabold' : 'text-stone-400 hover:text-rose-500'
+                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
+                    currentView === 'episodes' || currentView === 'episode-detail' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
                   }`}
                 >
                   Émissions
                 </button>
                 <button 
                   onClick={() => navigateToView('books')} 
-                  className={`block w-full text-left py-2.5 border-b border-stone-900/40 transition duration-150 ${
-                    currentView === 'books' ? 'text-rose-500 font-extrabold' : 'text-stone-400 hover:text-rose-500'
+                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
+                    currentView === 'books' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
                   }`}
                 >
                   Livres
                 </button>
                 <button 
                   onClick={() => scrollToSection('audience-hub')} 
-                  className={`block w-full text-left py-2.5 border-b border-stone-900/40 transition duration-150 ${
-                    currentView === 'hub' ? 'text-rose-500 font-extrabold' : 'text-stone-400 hover:text-rose-500'
+                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
+                    currentView === 'hub' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
                   }`}
                 >
                   Audience Hub
                 </button>
-                <div className="pt-2">
+                <div className="pt-4">
                   <button 
                     onClick={() => scrollToSection('booking-section')} 
-                    className="w-full text-center py-3 bg-rose-500 hover:bg-rose-400 text-stone-950 rounded-xl font-black text-xs uppercase tracking-wider block transition shadow-lg shadow-rose-500/15"
+                    className="w-full btn-primary justify-center text-xs"
                   >
-                    Inviter Bany ↗
+                    Inviter Bany
                   </button>
                 </div>
               </div>
@@ -278,23 +269,12 @@ export default function App() {
                 onExploreEpisodes={() => navigateToView('episodes')}
                 onInviteBany={() => navigateToView('invite')}
               />
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                <div className="bg-stone-900 border border-stone-850 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 text-left">
-                  <div className="space-y-2">
-                    <span className="text-[10px] font-mono text-rose-500 uppercase tracking-widest font-black">Nouveau</span>
-                    <h2 className="text-xl md:text-2xl font-black text-white">Prêt à explorer les émissions phares ?</h2>
-                    <p className="text-xs text-stone-400 font-sans max-w-xl">
-                      Découvrez sans filtre nos 120+ épisodes avec des leaders du CAC40, négociateurs de haut niveau et experts de hyper-croissance.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => navigateToView('episodes')}
-                    className="px-6 py-3 bg-rose-500 hover:bg-rose-400 text-stone-950 font-mono font-black text-xs uppercase tracking-wider rounded-xl transition shrink-0 cursor-pointer"
-                  >
-                    Découvrir les émissions ↗
-                  </button>
-                </div>
-              </div>
+              <HomeShowcase
+                onExploreEpisodes={() => navigateToView('episodes')}
+                onAbout={() => navigateToView('about')}
+                onBooks={() => navigateToView('books')}
+                onHub={() => navigateToView('hub')}
+              />
               <Newsletter />
             </motion.div>
           )}
@@ -405,7 +385,7 @@ export default function App() {
         <button
           onClick={jumpToTop}
           aria-label="Scroll back to top"
-          className="fixed bottom-8 right-6 z-40 p-3 bg-rose-500 hover:bg-rose-400 active:scale-95 text-stone-950 rounded-full shadow-lg transition duration-200 cursor-pointer"
+          className="fixed bottom-8 right-6 z-40 p-3 bg-stone-900 border border-white/10 hover:border-rose-500/40 text-stone-400 hover:text-stone-100 transition duration-200 cursor-pointer"
         >
           <ArrowUp className="w-4 h-4" />
         </button>

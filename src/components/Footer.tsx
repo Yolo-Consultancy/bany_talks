@@ -1,7 +1,7 @@
 import React from 'react';
 import { HOST_DETAILS } from '../data';
 import { NAV_ITEMS } from '../data/navItems';
-import { Youtube, Instagram, Radio, Send, MessageCircle, Moon, Disc } from 'lucide-react';
+import { Youtube, Instagram, Radio, MessageCircle } from 'lucide-react';
 import logoBany from '../assets/logos/logo_bany.png';
 
 interface FooterProps {
@@ -13,122 +13,77 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-stone-950 border-t border-stone-900 pt-16 pb-24 text-left font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        
-        {/* Upper Column Links */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-          
-          {/* Column Brand Story / 5 cols */}
-          <div className="md:col-span-5 space-y-4">
-            <div className="flex items-center gap-2">
-              <img 
-                src={logoBany}
-                alt="BANY TALKS"
-                className="h-10 w-auto"
-              />
-            </div>
-            
-            <p className="text-xs text-stone-400 font-sans leading-relaxed max-w-sm">
-              Des conversations vraies, des histoires inédites et des experts engagés à décoder l’excellence. Écoutez, apprenez et transformez votre vision du monde.
+    <footer className="bg-stone-950 border-t border-white/5 pt-16 pb-10 text-left">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+          <div className="md:col-span-5 space-y-6">
+            <img src={logoBany} alt="Bany Talks" className="h-10 w-auto" />
+            <p className="text-sm text-stone-500 font-body leading-relaxed max-w-sm">
+              Des conversations vraies avec ceux qui construisent l'Afrique. Podcast, émissions et média indépendant.
             </p>
-
-            {/* Social channels icons */}
-            <div className="flex items-center gap-3.5 pt-2">
-              <a 
-                href={HOST_DETAILS.socialLinks.youtube} 
-                target="_blank" 
-                rel="noreferrer"
-                aria-label="YouTube Channel"
-                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-rose-500 rounded-lg text-stone-400 transition border border-stone-850"
-              >
-                <Youtube className="w-4 h-4" />
-              </a>
-
-              <a 
-                href={HOST_DETAILS.socialLinks.spotify} 
-                target="_blank" 
-                rel="noreferrer"
-                aria-label="Spotify Podcast"
-                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-rose-500 rounded-lg text-stone-400 transition border border-stone-850"
-              >
-                <Radio className="w-4 h-4" />
-              </a>
-
-              <a 
-                href={HOST_DETAILS.socialLinks.instagram} 
-                target="_blank" 
-                rel="noreferrer"
-                aria-label="Instagram Profile"
-                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-rose-500 rounded-lg text-stone-400 transition border border-stone-850"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-
-              <a 
-                href={HOST_DETAILS.socialLinks.whatsapp} 
-                target="_blank" 
-                rel="noreferrer"
-                aria-label="WhatsApp direct contact"
-                className="p-2 bg-stone-900 hover:bg-stone-850 hover:text-rose-500 rounded-lg text-stone-400 transition border border-stone-850"
-              >
-                <MessageCircle className="w-4 h-4" />
-              </a>
-            </div>
-
-          </div>
-
-          {/* Navigation / Col 2 / 3 cols */}
-          <div className="md:col-span-3 space-y-4 font-mono text-xs">
-            <h4 className="text-[10px] text-stone-500 uppercase font-black tracking-widest">Navigation</h4>
-            <div className="flex flex-col gap-2.5">
-                {NAV_ITEMS.map((link) => {
-                  const isLinkActive =
-                    activeView === link.value ||
-                    (activeView === 'invite' && link.value === 'booking') ||
-                    (activeView === 'episode-detail' && link.value === 'episodes');
-                  return (
-                    <button
-                      key={link.value}
-                      onClick={() => onNavigate(link.value as any)}
-                      className={`text-left hover:text-rose-400 transition cursor-pointer font-bold ${isLinkActive ? 'text-rose-500 font-extrabold' : 'text-stone-400'}`}
-                    >
-                      {link.label}
-                    </button>
-                  );
-                })}
+            <div className="flex items-center gap-4">
+              {[
+                { href: HOST_DETAILS.socialLinks.youtube, icon: Youtube, label: 'YouTube' },
+                { href: HOST_DETAILS.socialLinks.spotify, icon: Radio, label: 'Spotify' },
+                { href: HOST_DETAILS.socialLinks.instagram, icon: Instagram, label: 'Instagram' },
+                { href: HOST_DETAILS.socialLinks.whatsapp, icon: MessageCircle, label: 'WhatsApp' },
+              ].map(({ href, icon: Icon, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={label}
+                  className="text-stone-600 hover:text-rose-400 transition"
+                >
+                  <Icon className="w-4 h-4" strokeWidth={1.5} />
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Editorial quote / 4 cols */}
-          <div className="md:col-span-4 space-y-4">
-            <h4 className="text-[10px] font-mono text-stone-500 uppercase font-black tracking-widest">Inspiration</h4>
-            <div className="p-4 bg-stone-900/40 border border-stone-850 rounded-xl">
-              <p className="text-xs text-stone-300 italic font-sans leading-relaxed">
-                "{HOST_DETAILS.quote}"
-              </p>
-              <span className="text-[9px] font-mono text-rose-500 uppercase block mt-2 text-right font-bold">
-                — {HOST_DETAILS.name}
-              </span>
+          <div className="md:col-span-3 space-y-4">
+            <p className="section-label text-[0.6rem]">Navigation</p>
+            <div className="flex flex-col gap-3">
+              {NAV_ITEMS.map((link) => {
+                const isLinkActive =
+                  activeView === link.value ||
+                  (activeView === 'invite' && link.value === 'booking') ||
+                  (activeView === 'episode-detail' && link.value === 'episodes');
+                return (
+                  <button
+                    key={link.value}
+                    onClick={() => onNavigate(link.value as 'home' | 'about' | 'episodes' | 'booking' | 'hub' | 'books')}
+                    className={`text-left text-sm font-body transition cursor-pointer ${
+                      isLinkActive ? 'text-rose-400' : 'text-stone-500 hover:text-stone-300'
+                    }`}
+                  >
+                    {link.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-        </div>
-
-        {/* Lower copyright bar */}
-        <div className="pt-8 border-t border-stone-900/80 flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-[10px] text-stone-500">
-          <div>
-            © {currentYear} Bany Talks Media Group. Tous droits réservés.
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="hover:text-stone-300 transition cursor-pointer">Conditions d'utilisation</span>
-            <span>•</span>
-            <span className="hover:text-stone-300 transition cursor-pointer">Politique de Confidentialité</span>
-            <span>•</span>
-            <span className="text-stone-600">Built in Cloud Studio Premium</span>
+          <div className="md:col-span-4">
+            <p className="section-label text-[0.6rem] mb-4">Citation</p>
+            <blockquote className="font-display text-lg text-stone-400 italic leading-relaxed">
+              « {HOST_DETAILS.quote} »
+            </blockquote>
+            <cite className="block mt-3 text-xs text-stone-600 not-italic font-body">
+              — {HOST_DETAILS.fullName}
+            </cite>
           </div>
         </div>
 
+        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs text-stone-600 font-body">
+          <span>© {currentYear} Bany Talks. Tous droits réservés.</span>
+          <div className="flex items-center gap-6">
+            <span className="hover:text-stone-400 transition cursor-pointer">Conditions d'utilisation</span>
+            <span className="hover:text-stone-400 transition cursor-pointer">Confidentialité</span>
+          </div>
+        </div>
       </div>
     </footer>
   );
