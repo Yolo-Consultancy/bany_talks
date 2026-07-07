@@ -11,6 +11,27 @@ const inputClass =
 
 const labelClass = 'block text-xs text-stone-500 font-body mb-2';
 
+function FormLabel({
+  htmlFor,
+  children,
+  required = false,
+}: {
+  htmlFor?: string;
+  children: React.ReactNode;
+  required?: boolean;
+}) {
+  return (
+    <label htmlFor={htmlFor} className={labelClass}>
+      {children}
+      {required && (
+        <span className="text-rose-500 ml-0.5" aria-hidden="true">
+          *
+        </span>
+      )}
+    </label>
+  );
+}
+
 export default function InviteBany() {
   const [formData, setFormData] = useState({
     name: '',
@@ -353,7 +374,7 @@ export default function InviteBany() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div>
-                  <label htmlFor="name-input" className={labelClass}>Nom complet *</label>
+                  <FormLabel htmlFor="name-input" required>Nom complet</FormLabel>
                   <input
                     id="name-input"
                     type="text"
@@ -366,7 +387,7 @@ export default function InviteBany() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="company-input" className={labelClass}>Entreprise ou marque</label>
+                  <FormLabel htmlFor="company-input">Entreprise ou marque</FormLabel>
                   <input
                     id="company-input"
                     type="text"
@@ -380,7 +401,7 @@ export default function InviteBany() {
               </div>
 
               <div>
-                <label htmlFor="email-input" className={labelClass}>Email professionnel *</label>
+                <FormLabel htmlFor="email-input" required>Email professionnel</FormLabel>
                 <input
                   id="email-input"
                   type="email"
@@ -395,7 +416,7 @@ export default function InviteBany() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div>
-                  <label htmlFor="eventType-select" className={labelClass}>Type de demande</label>
+                  <FormLabel htmlFor="eventType-select">Type de demande</FormLabel>
                   <select
                     id="eventType-select"
                     name="eventType"
@@ -409,7 +430,7 @@ export default function InviteBany() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="date-input" className={labelClass}>Date souhaitée *</label>
+                  <FormLabel htmlFor="date-input" required>Date souhaitée</FormLabel>
                   <input
                     id="date-input"
                     type="date"
@@ -423,7 +444,7 @@ export default function InviteBany() {
               </div>
 
               <div>
-                <label className={labelClass}>Enveloppe budgétaire *</label>
+                <FormLabel required>Enveloppe budgétaire</FormLabel>
                 <div className="flex flex-col sm:flex-row gap-0 border-b border-white/10">
                   {[
                     { value: 'under-3000', label: '< 3 000 €' },
@@ -453,7 +474,7 @@ export default function InviteBany() {
               </div>
 
               <div>
-                <label htmlFor="message-textarea" className={labelClass}>Brief / objectifs</label>
+                <FormLabel htmlFor="message-textarea">Brief / objectifs</FormLabel>
                 <textarea
                   id="message-textarea"
                   name="message"
