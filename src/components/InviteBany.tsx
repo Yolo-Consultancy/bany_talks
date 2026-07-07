@@ -361,7 +361,7 @@ export default function InviteBany() {
                     required
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="Jean Dupont"
+                    placeholder="Hope Kakesa"
                     className={inputClass}
                   />
                 </div>
@@ -388,7 +388,7 @@ export default function InviteBany() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="jean@entreprise.com"
+                  placeholder="hope@entreprise.com"
                   className={inputClass}
                 />
               </div>
