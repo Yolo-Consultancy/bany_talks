@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Calendar, Send, CheckCircle2, ArrowRight } from 'lucide-react';
+import WhatsAppIcon from './WhatsAppIcon';
 import { FREQUENT_EVENT_TYPES } from '../data';
 import { SpeakerRequest } from '../types';
 import { initAuth, googleSignIn, logout } from '../firebaseAuth';
@@ -527,24 +528,41 @@ export default function InviteBany() {
 
               <hr className="editorial-rule" />
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <p className="section-label text-[0.6rem]">Contact direct</p>
-                <a
-                  href="mailto:contact@banyofficial.com"
-                  className="link-arrow text-sm block"
-                >
-                  <Mail className="w-4 h-4" />
-                  contact@banyofficial.com
-                </a>
-                <a
-                  href="https://wa.me/813622975"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="link-arrow text-sm block"
-                >
-                  WhatsApp
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
+                <div className="space-y-3">
+                  <a
+                    href="mailto:contact@banyofficial.com"
+                    className="flex items-center gap-4 p-4 border border-white/8 hover:border-rose-500/30 transition group"
+                  >
+                    <span className="flex items-center justify-center w-10 h-10 shrink-0 border border-white/10 text-rose-500/80 group-hover:border-rose-500/40 transition">
+                      <Mail className="w-4 h-4" strokeWidth={1.5} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[10px] uppercase tracking-wider text-stone-600 font-body mb-1">Email</span>
+                      <span className="block text-sm text-stone-300 font-body break-all group-hover:text-rose-400 transition">
+                        contact@banyofficial.com
+                      </span>
+                    </span>
+                  </a>
+                  <a
+                    href="https://wa.me/813622975"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-4 p-4 border border-white/8 hover:border-rose-500/30 transition group"
+                  >
+                    <span className="flex items-center justify-center w-10 h-10 shrink-0 border border-white/10 text-[#25D366] group-hover:border-[#25D366]/40 transition">
+                      <WhatsAppIcon className="w-5 h-5" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[10px] uppercase tracking-wider text-stone-600 font-body mb-1">WhatsApp</span>
+                      <span className="block text-sm text-stone-300 font-body group-hover:text-rose-400 transition">
+                        Écrire sur WhatsApp
+                      </span>
+                    </span>
+                    <ArrowRight className="w-4 h-4 text-stone-600 group-hover:text-rose-400 shrink-0 transition" />
+                  </a>
+                </div>
               </div>
             </aside>
           </div>
