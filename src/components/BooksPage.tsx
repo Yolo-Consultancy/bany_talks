@@ -1,36 +1,25 @@
 import React, { useState } from 'react';
-import { BookOpen, Search, ShoppingBag, Bookmark, Star, Calendar, Layers, ShieldCheck, Mail, ArrowRight, HeartHandshake, CheckCircle } from 'lucide-react';
+import { Search, ShoppingBag, Star, ArrowRight, CheckCircle, Mail, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BOOKS } from '../data';
-import { Book } from '../types';
 
 export default function BooksPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [expandedBookId, setExpandedBookId] = useState<string | null>('book-attention');
-  
-  // Extraction request state
+
   const [excerptEmail, setExcerptEmail] = useState('');
   const [excerptBookId, setExcerptBookId] = useState<string | null>(null);
   const [excerptSuccess, setExcerptSuccess] = useState(false);
 
-  // Community recommendation state
-  const [recTitle, setRecTitle] = useState('');
-  const [recAuthor, setRecAuthor] = useState('');
-  const [recReason, setRecReason] = useState('');
-  const [recSuccess, setRecSuccess] = useState(false);
-  const [communityRecs, setCommunityRecs] = useState<any[]>(() => {
-    const saved = localStorage.getItem('bany_book_recommendations');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const categories = ['All', ...Array.from(new Set(BOOKS.map((b) => b.category)))];
 
-  // Unique categories
-  const categories = ['All', ...Array.from(new Set(BOOKS.map(b => b.category)))];
-
-  const filteredBooks = BOOKS.filter(book => {
-    const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          book.subtitle.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredBooks = BOOKS.filter((book) => {
+    const q = searchQuery.toLowerCase();
+    const matchesSearch =
+      book.title.toLowerCase().includes(q) ||
+      book.author.toLowerCase().includes(q) ||
+      book.subtitle.toLowerCase().includes(q);
     const matchesCategory = selectedCategory === 'All' || book.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -47,315 +36,242 @@ export default function BooksPage() {
     }, 4500);
   };
 
-  const handleRecommendBook = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!recTitle.trim() || !recAuthor.trim()) return;
-    
-    const newRec = {
-      id: `rec-${Date.now()}`,
-      title: recTitle,
-      author: recAuthor,
-      reason: recReason || 'Pas de motif renseigné',
-      createdAt: new Date().toLocaleDateString('fr-FR')
-    };
-
-    const updated = [newRec, ...communityRecs];
-    setCommunityRecs(updated);
-    localStorage.setItem('bany_book_recommendations', JSON.stringify(updated));
-
-    setRecTitle('');
-    setRecAuthor('');
-    setRecReason('');
-    setRecSuccess(true);
-    setTimeout(() => setRecSuccess(false), 4000);
-  };
-
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.4 }}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 text-left"
+      className="bg-stone-950 min-h-screen"
     >
-      {/* Page Hero Header */}
-      <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0f0f0f] p-8 md:p-12">
-        <div className="absolute inset-0 bg-linear-to-r from-stone-950 via-stone-950/70 to-transparent z-10" />
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1513001900722-370f803f498d?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center opacity-10 filter grayscale brightness-50" />
-        
-        <div className="relative z-20 max-w-2xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/10 rounded-full border border-rose-500/25">
-            <BookOpen className="w-3.5 h-3.5 text-rose-500" />
-            <span className="text-[10px] font-mono font-black uppercase tracking-widest text-rose-500">Bibliothèque</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
-            Mes <span className="text-rose-500 italic">Livres</span>
-          </h1>
-          <p className="text-sm md:text-base text-stone-400 leading-relaxed font-sans">
-            Je me limite pas seulement à des discussions. Retrouvez ici la collection exclusive de mes ouvrages phares sur le monde du business, de la négociation, du leadership et de l’indépendance de l’esprit.
-          </p>
-          
-          {/* Quick numbers bar */}
-          <div className="pt-4 grid grid-cols-3 gap-4 border-t border-white/5 max-w-md">
-            <div>
-              <span className="block text-xl font-bold text-rose-500">2 Livres</span>
-              <span className="text-[9px] font-mono uppercase tracking-widest text-stone-500">Écrits par Bany</span>
-            </div>
-            <div>
-              <span className="block text-xl font-bold text-rose-500">100%</span>
-              <span className="text-[9px] font-mono uppercase tracking-widest text-stone-500">Auteur Unique</span>
-            </div>
-            <div>
-              <span className="block text-xl font-bold text-rose-500">4.9/5</span>
-              <span className="text-[9px] font-mono uppercase tracking-widest text-stone-500">Moyenne Critique</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 space-y-16 lg:space-y-20 text-left">
 
-      {/* Interface and Grid section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* Sidebar inputs & filter panel */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="bg-stone-900 border border-stone-850 p-5 rounded-2xl space-y-4">
-            <h3 className="text-xs font-mono font-black uppercase tracking-widest text-stone-400 border-b border-stone-850 pb-2">
-              Filtres & Recherche
-            </h3>
-            
-            {/* Search inputs */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Rechercher un livre, auteur..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-stone-950 border border-stone-800 focus:border-rose-500 text-xs rounded-xl text-stone-200 focus:outline-none placeholder-stone-600 font-sans"
-              />
-              <Search className="w-4 h-4 text-stone-600 absolute left-3 top-1/2 -translate-y-1/2" />
-            </div>
-
-            {/* Category tabs vertical list */}
-            <div className="space-y-1.5 pt-2">
-              <span className="block text-[9px] font-mono text-stone-550 font-bold uppercase tracking-widest">Catégories</span>
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-mono uppercase tracking-wider transition ${
-                    selectedCategory === cat
-                      ? 'bg-rose-500 text-stone-950 font-black'
-                      : 'bg-stone-950 hover:bg-stone-850 text-stone-450 hover:text-stone-200 border border-stone-850'
-                  }`}
-                >
-                  {cat === 'All' ? '📚 Tous les Livres' : cat}
-                </button>
+        {/* Header */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-7 space-y-5">
+            <p className="section-label">Bibliothèque</p>
+            <h1 className="font-display text-4xl sm:text-5xl text-stone-100 font-medium leading-tight">
+              Les livres de Bany
+            </h1>
+            <p className="text-stone-500 font-body text-base leading-relaxed max-w-lg">
+              Business, négociation, leadership et indépendance de l'esprit — les ouvrages qui prolongent les conversations du podcast.
+            </p>
+          </div>
+          <div className="lg:col-span-5 flex items-end">
+            <div className="grid grid-cols-3 gap-6 w-full border-t border-white/5 pt-6">
+              {[
+                { value: '2', label: 'Ouvrages publiés' },
+                { value: '4.9', label: 'Note moyenne' },
+                { value: '584', label: 'Pages au total' },
+              ].map(({ value, label }) => (
+                <div key={label}>
+                  <span className="block font-display text-2xl text-rose-400">{value}</span>
+                  <span className="block text-xs text-stone-600 font-body mt-1">{label}</span>
+                </div>
               ))}
             </div>
           </div>
-
         </div>
 
-        {/* Core Books display list */}
-        <div className="lg:col-span-8 space-y-8">
-          {filteredBooks.length === 0 ? (
-            <div className="bg-stone-900 border border-stone-850 p-12 text-center rounded-2xl">
-              <BookOpen className="w-12 h-12 text-stone-600 mx-auto mb-3" />
-              <p className="text-stone-400 text-sm">Aucun livre ne correspond à vos filtres actuels.</p>
-              <button 
-                onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
-                className="mt-4 text-xs font-mono text-rose-500 hover:text-rose-400 underline"
+        <hr className="editorial-rule" />
+
+        {/* Search + filters */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+          <div className="flex items-center gap-8 border-b border-white/5 pb-4 overflow-x-auto">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`text-sm font-body pb-4 -mb-4 border-b-2 whitespace-nowrap transition cursor-pointer ${
+                  selectedCategory === cat
+                    ? 'text-stone-100 border-rose-500'
+                    : 'text-stone-600 border-transparent hover:text-stone-400'
+                }`}
               >
-                Réinitialiser les filtres
+                {cat === 'All' ? 'Tous' : cat}
               </button>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {filteredBooks.map((book) => {
-                const isExpanded = expandedBookId === book.id;
-                
-                return (
-                  <div 
-                    key={book.id}
-                    className="bg-stone-900 border border-stone-850 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-black/80 hover:scale-[1.015] hover:-translate-y-0.5 hover:border-stone-750 transition-all duration-500 ease-out"
-                  >
-                    <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8">
-                      
-                      {/* 3D Physical Mockup using master CSS styles */}
-                      <div className="shrink-0 flex justify-center items-center">
-                        <div className="relative group perspective">
-                          {/* Book spine & 3D side layout */}
-                          <div 
-                            className={`w-44 h-60 rounded-r-lg relative transition-all duration-300 transform preserve-3d group-hover:rotate-y-[-10deg] shadow-2xl bg-linear-to-br ${book.coverGradient} flex flex-col justify-between p-4 text-left border-l border-white/20`}
-                          >
-                            {/* Paper overlay textures */}
-                            <div className="absolute inset-y-0 left-0 w-2.5 bg-black/10 shadow-[inset_-1px_0_0_rgba(255,255,255,0.1)] rounded-l" />
-                            <div className="absolute inset-y-0 right-1 w-px bg-white/5" />
-                            
-                            {/* Typography of the cover */}
-                            <div className="space-y-1.5 z-10">
-                              <span className="block text-[8px] font-mono uppercase tracking-widest text-rose-400/95 font-black">
-                                {book.category}
-                              </span>
-                              <h2 className="text-base font-black tracking-tight leading-snug text-white line-clamp-3">
-                                {book.title}
-                              </h2>
-                              <p className="text-[9px] text-stone-300 font-sans italic line-clamp-2 leading-relaxed">
-                                {book.subtitle}
-                              </p>
-                            </div>
+            ))}
+          </div>
 
-                            <div className="mt-auto flex justify-between items-end z-10 border-t border-white/10 pt-2">
-                              <div>
-                                <span className="block text-[8px] font-mono uppercase text-stone-400">Auteur</span>
-                                <span className="block text-[10px] font-black font-sans text-white">{book.author}</span>
-                              </div>
-                              <span className="text-[10px] font-mono text-rose-500 font-bold uppercase tracking-tighter">Bany Ed.</span>
-                            </div>
-                          </div>
-                          
-                          {/* 3D pages effect */}
-                          <div className="absolute left-43.25 top-1 bottom-1 w-2 bg-stone-300 rounded-r border-y border-stone-400 select-none shadow-md transform rotate-y-80 z-0" />
-                        </div>
-                      </div>
+          <div className="relative w-full md:w-64 shrink-0">
+            <Search className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-600" />
+            <input
+              type="text"
+              placeholder="Rechercher…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-7 pr-4 py-3 bg-transparent border-b border-white/10 focus:border-rose-500/50 text-stone-200 placeholder-stone-600 focus:outline-none text-sm font-body transition"
+            />
+          </div>
+        </div>
 
-                      {/* Info side column */}
-                      <div className="flex-1 flex flex-col justify-between space-y-4">
-                        <div className="space-y-3">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="bg-stone-950 border border-stone-800 text-stone-400 px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider">
-                              {book.category}
-                            </span>
-                            <div className="flex items-center gap-1.5 text-rose-550 text-xs font-bold bg-rose-500/5 px-2 py-0.5 rounded border border-rose-500/10">
-                              <Star className="w-3 h-3 fill-rose-500 text-rose-500" />
-                              <span>{book.rating}/5</span>
-                            </div>
-                            <span className="text-[10px] text-stone-500 font-mono">
-                              An : {book.publishedYear} • {book.pagesCount} Pages
-                            </span>
-                          </div>
+        {/* Books list */}
+        {filteredBooks.length === 0 ? (
+          <div className="py-20 text-center space-y-4">
+            <p className="font-display text-xl text-stone-500">Aucun livre trouvé</p>
+            <button
+              onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
+              className="link-arrow text-sm mx-auto justify-center"
+            >
+              Réinitialiser <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-0 divide-y divide-white/5">
+            {filteredBooks.map((book) => {
+              const isExpanded = expandedBookId === book.id;
 
-                          <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white hover:text-rose-500 transition duration-150">
+              return (
+                <article key={book.id} className="py-12 lg:py-16 first:pt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-start">
+
+                    {/* Cover */}
+                    <div className="md:col-span-4 lg:col-span-3">
+                      <div
+                        className={`aspect-[3/4] max-w-[220px] mx-auto md:mx-0 bg-gradient-to-br ${book.coverGradient} p-6 flex flex-col justify-between relative overflow-hidden`}
+                      >
+                        <div className="absolute inset-y-0 left-0 w-1 bg-black/20" />
+                        <div className="relative z-10 space-y-2">
+                          <p className="text-[10px] text-rose-300/80 font-body tracking-widest uppercase">
+                            {book.category}
+                          </p>
+                          <h2 className="font-display text-lg text-white leading-snug font-medium">
                             {book.title}
                           </h2>
-                          
-                          <p className="text-xs text-stone-450 font-serif leading-relaxed italic border-l-2 border-stone-800 pl-3">
-                            "{book.subtitle}"
-                          </p>
-
-                          <p className="text-xs text-stone-350 leading-relaxed font-sans mt-2">
-                            {book.description}
-                          </p>
                         </div>
-
-                        {/* Interactive triggers and excerpt panel */}
-                        <div className="pt-4 border-t border-white/5 flex flex-wrap gap-3">
-                          <button
-                            onClick={() => setExpandedBookId(isExpanded ? null : book.id)}
-                            className="px-4 py-2 bg-stone-950 hover:bg-stone-850 text-stone-300 border border-stone-800 text-[10px] font-black uppercase tracking-widest rounded-xl transition flex items-center gap-2 cursor-pointer"
-                          >
-                            <Layers className="w-3.5 h-3.5 text-rose-500" />
-                            {isExpanded ? "Masquer les points clés" : "Voir les 3 points clés"}
-                          </button>
-                          
-                          <a
-                            href={book.buyUrl}
-                            className="px-4 py-2 bg-rose-500 hover:bg-rose-400 text-stone-950 text-[10px] font-black uppercase tracking-widest rounded-xl transition flex items-center gap-2"
-                          >
-                            <ShoppingBag className="w-3.5 h-3.5" />
-                            Acheter l'ouvrage
-                          </a>
+                        <div className="relative z-10 border-t border-white/10 pt-3">
+                          <p className="text-[10px] text-stone-400 font-body">{book.author}</p>
+                          <p className="text-[10px] text-rose-400/80 font-body mt-0.5">Bany Editions</p>
                         </div>
                       </div>
-
                     </div>
 
-                    {/* Expandable Key Highlights Section */}
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="bg-stone-950/70 border-t border-stone-850 text-left"
+                    {/* Info */}
+                    <div className="md:col-span-8 lg:col-span-9 space-y-6">
+                      <div className="space-y-4">
+                        <div className="flex flex-wrap items-center gap-4 text-xs text-stone-600 font-body">
+                          <span className="text-rose-500/80">{book.category}</span>
+                          <span>·</span>
+                          <span>{book.publishedYear}</span>
+                          <span>·</span>
+                          <span>{book.pagesCount} pages</span>
+                          <span>·</span>
+                          <span className="flex items-center gap-1">
+                            <Star className="w-3 h-3 fill-rose-500 text-rose-500" />
+                            {book.rating}/5
+                          </span>
+                        </div>
+
+                        <h2 className="font-display text-2xl sm:text-3xl text-stone-100 font-medium leading-snug">
+                          {book.title}
+                        </h2>
+
+                        <p className="font-display text-base text-stone-500 italic leading-relaxed">
+                          « {book.subtitle} »
+                        </p>
+
+                        <p className="text-stone-400 font-body leading-relaxed max-w-2xl">
+                          {book.description}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-4">
+                        <button
+                          onClick={() => setExpandedBookId(isExpanded ? null : book.id)}
+                          className="link-arrow text-sm cursor-pointer"
                         >
-                          <div className="p-6 md:p-8 space-y-6">
-                            <div className="space-y-1.5">
-                              <span className="text-[9px] font-mono font-black tracking-widest uppercase text-rose-500 flex items-center gap-1.5">
-                                <ShieldCheck className="w-3.5 h-3.5 text-rose-500" />
-                                Enseignements Stratégiques Clés
-                              </span>
-                              <p className="text-[11px] text-stone-400 font-sans">
-                                Voici les apprentissages clés extraits et décryptés en profondeur dans l'émission de podcast dédiée :
-                              </p>
-                            </div>
+                          {isExpanded ? 'Masquer les enseignements' : 'Voir les enseignements clés'}
+                          <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                        </button>
+                        <a href={book.buyUrl} className="btn-primary text-xs py-2.5 px-5">
+                          <ShoppingBag className="w-3.5 h-3.5" />
+                          Acheter
+                        </a>
+                      </div>
+                    </div>
+                  </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Expandable highlights */}
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pt-10 mt-10 border-t border-white/5 space-y-8 md:ml-[calc(25%+3rem)]">
+
+                          <div>
+                            <p className="section-label text-[0.6rem] mb-4">Enseignements clés</p>
+                            <ol className="space-y-4">
                               {book.highlights.map((hlt, i) => (
-                                <div key={i} className="bg-stone-900 border border-stone-850 p-4 rounded-xl space-y-2">
-                                  <div className="w-6 h-6 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 font-mono text-xs font-black flex items-center justify-center">
-                                    {i + 1}
-                                  </div>
-                                  <p className="text-[11px] text-stone-300 leading-relaxed font-sans">
-                                    {hlt}
-                                  </p>
-                                </div>
+                                <li key={i} className="flex gap-4 text-sm text-stone-400 font-body leading-relaxed">
+                                  <span className="font-display text-rose-500/60 text-lg shrink-0 w-6">
+                                    {String(i + 1).padStart(2, '0')}
+                                  </span>
+                                  {hlt}
+                                </li>
                               ))}
-                            </div>
+                            </ol>
+                          </div>
 
-                            {/* Live Free Excerpt simulator Form */}
-                            <div className="bg-stone-900/40 border border-stone-850/60 p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
-                              <div className="space-y-1">
-                                <span className="text-[10px] font-bold text-stone-250 flex items-center gap-1.5">
-                                  <Mail className="w-3.5 h-3.5 text-rose-500" /> Recevoir un chapitre offert
-                                </span>
-                                <p className="text-[10px] text-stone-500">
-                                  Laissez votre e-mail et recevez instantanément les 40 premières pages en PDF.
+                          {/* Excerpt form */}
+                          <div className="border border-white/8 p-6 lg:p-8 space-y-4">
+                            <div className="flex items-start gap-3">
+                              <Mail className="w-4 h-4 text-rose-500/70 shrink-0 mt-0.5" strokeWidth={1.5} />
+                              <div>
+                                <p className="text-sm text-stone-300 font-body font-medium">
+                                  Recevoir un chapitre offert
+                                </p>
+                                <p className="text-xs text-stone-600 font-body mt-1">
+                                  Les 40 premières pages en PDF, directement par email.
                                 </p>
                               </div>
-
-                              {excerptSuccess && excerptBookId === book.id ? (
-                                <motion.div 
-                                  initial={{ opacity: 0, scale: 0.95 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-450 text-[11px] font-mono uppercase font-bold px-4 py-2 rounded-lg flex items-center gap-2 shrink-0"
-                                >
-                                  <CheckCircle className="w-4 h-4 text-emerald-500" />
-                                  <span>Le PDF a été envoyé avec succès !</span>
-                                </motion.div>
-                              ) : (
-                                <form onSubmit={(e) => handleRequestExcerpt(e, book.id)} className="flex items-center w-full md:w-auto max-w-sm gap-2">
-                                  <input
-                                    type="email"
-                                    required
-                                    value={excerptEmail}
-                                    onChange={(e) => setExcerptEmail(e.target.value)}
-                                    placeholder="votre.email@domaine.com"
-                                    className="px-3 py-1.5 bg-stone-950 border border-stone-800 focus:border-rose-500 rounded-lg text-xs text-stone-350 focus:outline-none w-full md:w-56"
-                                  />
-                                  <button
-                                    type="submit"
-                                    className="px-4 py-1.5 bg-rose-500 text-stone-950 hover:bg-rose-400 font-bold font-mono text-[9px] uppercase rounded-lg transition shrink-0 cursor-pointer flex items-center gap-1"
-                                  >
-                                    Débloquer <ArrowRight className="w-3 h-3" />
-                                  </button>
-                                </form>
-                              )}
                             </div>
+
+                            {excerptSuccess && excerptBookId === book.id ? (
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="flex items-center gap-2 text-emerald-500 text-sm font-body"
+                              >
+                                <CheckCircle className="w-4 h-4" />
+                                PDF envoyé avec succès
+                              </motion.div>
+                            ) : (
+                              <form
+                                onSubmit={(e) => handleRequestExcerpt(e, book.id)}
+                                className="flex flex-col sm:flex-row gap-0 border-b border-white/10 focus-within:border-rose-500/40 transition max-w-md"
+                              >
+                                <input
+                                  type="email"
+                                  required
+                                  value={excerptEmail}
+                                  onChange={(e) => setExcerptEmail(e.target.value)}
+                                  placeholder="votre@email.com"
+                                  className="flex-1 py-3 bg-transparent text-stone-300 placeholder-stone-600 focus:outline-none text-sm font-body"
+                                />
+                                <button
+                                  type="submit"
+                                  className="py-3 px-5 text-rose-400 hover:text-rose-300 text-xs font-body font-medium uppercase tracking-wider transition shrink-0 cursor-pointer flex items-center gap-1"
+                                >
+                                  Débloquer <ArrowRight className="w-3.5 h-3.5" />
+                                </button>
+                              </form>
+                            )}
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </article>
+              );
+            })}
+          </div>
+        )}
       </div>
-
     </motion.div>
   );
 }
