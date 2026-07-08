@@ -26,10 +26,32 @@ export default function Stats({ onInviteClick }: StatsProps) {
               {HOST_DETAILS.longBio}
             </p>
             {onInviteClick && (
-              <button onClick={onInviteClick} className="link-arrow text-base">
-                Inviter Bany pour votre événement
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <motion.button
+                type="button"
+                onClick={onInviteClick}
+                className="link-arrow text-base group cursor-pointer"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ x: 4 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span className="relative inline-block">
+                  Inviter Bany pour votre événement
+                  <span className="absolute left-0 -bottom-1 h-px w-0 bg-rose-500 transition-all duration-300 ease-out group-hover:w-full" />
+                </span>
+                <motion.span
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                >
+                  <ArrowRight className="w-4 h-4 transition-colors group-hover:text-rose-400" />
+                </motion.span>
+              </motion.button>
             )}
           </div>
         </div>
