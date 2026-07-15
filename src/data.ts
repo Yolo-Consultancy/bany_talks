@@ -1,5 +1,10 @@
 import { Facebook } from 'lucide-react';
 import { Episode, Book } from './types';
+import bigo from './assets/images/bigo.png';
+import bigoAbout from './assets/images/bigo_about.jpg';
+import guestFounder from './assets/images/guest_founder_1779362525327.png';
+import guestCreator from './assets/images/guest_creator_1779362546167.png';
+import guestExecutive from './assets/images/guest_executive_1779362567789.png';
 
 export const HOST_DETAILS = {
   name: 'Bany Talks',
@@ -8,8 +13,8 @@ export const HOST_DETAILS = {
   tagline: 'Une voix qui inspire une génération.',
   longBio: 'Bany est un entrepreneur congolais, stratège et fondateur du Yolo Group, avec une voix forte sur le business, l\'investissement et le développement en Afrique. Il est l\'hôte de Bany Talks, un podcast et programme télé dédié à des conversations locales, audacieuses et stratégiques pour l\'avenir du continent.',
   quote: 'La vraie valeur d’une histoire ne réside pas dans son point d’arrivée, mais dans la clarté des obstacles surmontés durant la transition.',
-  avatar: '/src/assets/images/bigo.png',
-  aboutpicture: '/src/assets/images/bigo_about.jpg',
+  avatar: bigo,
+  aboutpicture: bigoAbout,
   statistics: [
     { label: 'Auditeurs Mensuels', value: '450K+' },
     { label: 'Épisodes Sortis', value: '124' },
@@ -36,7 +41,7 @@ export const EPISODES: Episode[] = [
     duration: '01:14:22',
     publishDate: '21 Mai 2026',
     category: 'Émissions',
-    thumbnail: '/src/assets/images/guest_founder_1779362525327.png',
+    thumbnail: guestFounder,
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder responsive video embed
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Functional beautiful audio tracking
     viewsCount: 14500,
@@ -49,7 +54,7 @@ export const EPISODES: Episode[] = [
       role: 'Fondatrice & Directrice Générale',
       company: 'Bloomflow',
       bio: 'Julie est une ancienne développeuse et designer convertie en entrepreneuse de choc. Diplômée de l’École Polytechnique, elle a autofinancé son SaaS marketing de 0 à 5M€ d’ARR en seulement 3 ans, en s’appuyant exclusivement sur le Product-Led Growth.',
-      avatar: '/src/assets/images/guest_founder_1779362525327.png',
+      avatar: guestFounder,
       socials: {
         linkedin: 'https://linkedin.com',
         twitter: 'https://twitter.com'
@@ -83,7 +88,7 @@ export const EPISODES: Episode[] = [
     duration: '58:45',
     publishDate: '14 Mai 2026',
     category: 'Podcasts',
-    thumbnail: '/src/assets/images/guest_creator_1779362546167.png',
+    thumbnail: guestCreator,
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
     viewsCount: 28400,
@@ -95,7 +100,7 @@ export const EPISODES: Episode[] = [
       name: 'Kélian Koffi',
       role: 'Créateur de contenu & Investisseur',
       bio: 'Kélian est l’un des créateurs les plus respectés de francophonie. Connu pour ses vlogs immersifs sur l’entrepreneuriat et le voyage de marque, il anime aujourd’hui plusieurs incubateurs d’écom-créateurs et gère un portefeuille immobilier estimé à plusieurs millions d’euros.',
-      avatar: '/src/assets/images/guest_creator_1779362546167.png',
+      avatar: guestCreator,
       socials: {
         instagram: 'https://instagram.com',
         youtube: 'https://youtube.com',
@@ -125,7 +130,7 @@ export const EPISODES: Episode[] = [
     duration: '01:28:10',
     publishDate: '07 Mai 2026',
     category: 'Podcasts',
-    thumbnail: '/src/assets/images/guest_executive_1779362567789.png',
+    thumbnail: guestExecutive,
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
     viewsCount: 38900,
@@ -138,7 +143,7 @@ export const EPISODES: Episode[] = [
       role: 'Ancien Négociateur Stratégique & Écrivain',
       company: 'Alliance Horizon',
       bio: 'Antoine Dupont a mené des cellules d’arbitrage d’affaires de haut vol. Auteur du best-seller « Le Silence Gagne Toujours », il conseille les comités exécutifs du CAC 40 sur l’alignement culturel et la gestion de crise publique.',
-      avatar: '/src/assets/images/guest_executive_1779362567789.png',
+      avatar: guestExecutive,
       socials: {
         linkedin: 'https://linkedin.com'
       }
