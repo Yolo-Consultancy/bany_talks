@@ -20,15 +20,18 @@ import {
   Star,
   LayoutList,
   LayoutGrid,
+  MessageCircle,
 } from 'lucide-react';
-import type { BlogArticle, BlogArticleStatus, BlogCategory } from '../../types';
+import type { BlogArticle, BlogArticleStatus, BlogCategory, BlogComment } from '../../types';
 import {
   adminLogin,
   createArticle,
   createCategory,
   deleteArticle,
   deleteCategory,
+  deleteComment,
   fetchAdminArticles,
+  fetchAdminComments,
   fetchCategories,
   formatBlogDate,
   mediaUrl,
@@ -46,7 +49,7 @@ interface BlogAdminProps {
   onBack: () => void;
 }
 
-type AdminTab = 'dashboard' | 'articles' | 'categories' | 'calendar';
+type AdminTab = 'dashboard' | 'articles' | 'categories' | 'calendar' | 'comments';
 
 type FormState = {
   title: string;
@@ -129,6 +132,7 @@ export default function BlogAdmin({ onBack }: BlogAdminProps) {
 
   const [articles, setArticles] = useState<BlogArticle[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
+  const [comments, setComments] = useState<BlogComment[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showFormModal, setShowFormModal] = useState(false);
@@ -154,9 +158,14 @@ export default function BlogAdmin({ onBack }: BlogAdminProps) {
   const loadData = async (authToken: string) => {
     setLoading(true);
     try {
-      const [arts, cats] = await Promise.all([fetchAdminArticles(authToken), fetchCategories()]);
+      const [arts, cats, coms] = await Promise.all([
+        fetchAdminArticles(authToken),
+        fetchCategories(),
+        fetchAdminComments(authToken).catch(() => ({ items: [] as BlogComment[] })),
+      ]);
       setArticles(arts.items);
       setCategories(cats);
+      setComments(coms.items);
       setForm((prev) => ({ ...prev, categoryId: prev.categoryId || cats[0]?.id || '' }));
     } catch (err) {
       if (err instanceof Error && err.message.toLowerCase().includes('token')) {
@@ -453,6 +462,16 @@ export default function BlogAdmin({ onBack }: BlogAdminProps) {
     }
   };
 
+  const handleDeleteComment = async (id: string) => {
+    try {
+      await deleteComment(token, id);
+      setComments((prev) => prev.filter((c) => c.id !== id));
+      setMessage('Commentaire supprimé');
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : 'Suppression impossible');
+    }
+  };
+
   const statusLabel = useMemo(
     () =>
       ({
@@ -467,6 +486,7 @@ export default function BlogAdmin({ onBack }: BlogAdminProps) {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'articles', label: 'Articles', icon: FileText },
     { id: 'categories', label: 'Catégories', icon: Tags },
+    { id: 'comments', label: 'Commentaires', icon: MessageCircle },
     { id: 'calendar', label: 'Calendrier', icon: CalendarDays },
   ];
 
@@ -643,7 +663,7 @@ export default function BlogAdmin({ onBack }: BlogAdminProps) {
                     { label: 'Articles', value: stats.total, hint: 'total' },
                     { label: 'Publiés', value: stats.published, hint: 'en ligne' },
                     { label: 'Brouillons', value: stats.drafts, hint: 'en cours' },
-                    { label: 'Programmés', value: stats.scheduled, hint: 'à venir' },
+                    { label: 'Commentaires', value: comments.length, hint: 'reçus' },
                   ].map((card) => (
                     <div key={card.label} className="bg-stone-900 border border-white/5 p-5 space-y-2">
                       <p className="text-[11px] uppercase tracking-wider text-rose-400 font-body">{card.label}</p>
@@ -1039,6 +1059,60 @@ export default function BlogAdmin({ onBack }: BlogAdminProps) {
                   })}
                   {categories.length === 0 && (
                     <p className="text-sm text-stone-500 col-span-full py-8 text-center">Aucune catégorie.</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* COMMENTS */}
+            {tab === 'comments' && (
+              <div className="space-y-6">
+                <div>
+                  <p className="section-label mb-1">Modération</p>
+                  <h1 className="font-display text-2xl sm:text-3xl text-stone-100">Commentaires</h1>
+                  <p className="text-sm text-stone-500 font-body mt-2">
+                    {comments.length} commentaire{comments.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+                <div className="bg-stone-900 border border-white/5 divide-y divide-white/5">
+                  {comments.map((comment) => (
+                    <div key={comment.id} className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-start gap-4 justify-between">
+                      <div className="space-y-2 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-stone-600 font-body">
+                          <span className="text-stone-300">{comment.author}</span>
+                          {comment.parentId && (
+                            <span className="text-rose-400/70">réponse</span>
+                          )}
+                          <span>·</span>
+                          <span>{formatBlogDate(comment.createdAt)}</span>
+                          {(comment.likes ?? 0) > 0 && (
+                            <>
+                              <span>·</span>
+                              <span>{comment.likes} j’aime</span>
+                            </>
+                          )}
+                          {comment.articleTitle && (
+                            <>
+                              <span>·</span>
+                              <span className="text-rose-400/80 truncate">{comment.articleTitle}</span>
+                            </>
+                          )}
+                        </div>
+                        <p className={`text-sm text-stone-400 font-body leading-relaxed whitespace-pre-wrap ${comment.parentId ? 'pl-3 border-l border-white/10' : ''}`}>
+                          {comment.content}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteComment(comment.id)}
+                        className="text-xs text-red-400 hover:text-red-300 inline-flex items-center gap-1.5 px-3 py-2 cursor-pointer shrink-0"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Supprimer
+                      </button>
+                    </div>
+                  ))}
+                  {comments.length === 0 && (
+                    <p className="py-12 text-center text-stone-500 text-sm">Aucun commentaire pour le moment.</p>
                   )}
                 </div>
               </div>

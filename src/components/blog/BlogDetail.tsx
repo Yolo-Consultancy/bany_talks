@@ -10,16 +10,36 @@ import {
   Copy,
   Check,
   Facebook,
+  Heart,
+  MessageCircle,
 } from 'lucide-react';
 import type { BlogArticle } from '../../types';
 import {
   applyArticleSeo,
   fetchArticleBySlug,
   formatBlogDate,
+  likeArticle,
   mediaUrl,
+  unlikeArticle,
 } from '../../services/blogService';
 import BlogArticleCard from './BlogArticleCard';
 import { BlogCardSkeleton } from './BlogSkeleton';
+import BlogComments from './BlogComments';
+
+const LIKED_ARTICLES_KEY = 'bany_liked_articles';
+
+function getLikedArticles(): Set<string> {
+  try {
+    const raw = localStorage.getItem(LIKED_ARTICLES_KEY);
+    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveLikedArticles(set: Set<string>) {
+  localStorage.setItem(LIKED_ARTICLES_KEY, JSON.stringify([...set]));
+}
 
 interface BlogDetailProps {
   slug: string;
@@ -36,6 +56,8 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [liking, setLiking] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,6 +70,7 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
         setRelated(data.related);
         setPrev(data.prev);
         setNext(data.next);
+        setLiked(getLikedArticles().has(data.article.id));
         applyArticleSeo(data.article);
       })
       .catch((err) => {
@@ -68,6 +91,24 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
     await navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleLike = async () => {
+    if (!article || liking) return;
+    setLiking(true);
+    try {
+      const updated = liked ? await unlikeArticle(article.id) : await likeArticle(article.id);
+      const nextLiked = new Set(getLikedArticles());
+      if (liked) nextLiked.delete(article.id);
+      else nextLiked.add(article.id);
+      saveLikedArticles(nextLiked);
+      setLiked(!liked);
+      setArticle(updated);
+    } catch {
+      /* ignore */
+    } finally {
+      setLiking(false);
+    }
   };
 
   if (loading) {
@@ -109,7 +150,7 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
           Retour au blog
         </button>
 
-        <div className="space-y-5 mb-10">
+        <div className="space-y-5 mb-8">
           <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-wider font-body">
             {category && (
               <button
@@ -128,20 +169,15 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
             {article.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-5 text-sm text-stone-500 font-body">
-            <span className="inline-flex items-center gap-2">
-              <User className="w-4 h-4" />
-              {article.author}
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              {article.readingTimeMinutes} min de lecture
-            </span>
-          </div>
+          {article.excerpt && (
+            <p className="text-base sm:text-lg text-stone-400 font-body leading-relaxed max-w-3xl">
+              {article.excerpt}
+            </p>
+          )}
         </div>
 
         {article.coverImage && (
-          <div className="aspect-[16/9] overflow-hidden border border-white/5 mb-12 bg-stone-900">
+          <div className="aspect-[16/9] overflow-hidden border border-white/5 mb-6 bg-stone-900">
             <img
               src={mediaUrl(article.coverImage)}
               alt={article.title}
@@ -149,6 +185,32 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
             />
           </div>
         )}
+
+        <div className="flex flex-wrap items-center gap-5 text-sm text-stone-500 font-body mb-12">
+          <span className="inline-flex items-center gap-2">
+            <User className="w-4 h-4" />
+            {article.author}
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <Clock className="w-4 h-4" />
+            {article.readingTimeMinutes} min de lecture
+          </span>
+          <button
+            type="button"
+            onClick={handleLike}
+            disabled={liking}
+            className={`inline-flex items-center gap-2 transition cursor-pointer disabled:opacity-50 ${
+              liked ? 'text-rose-500' : 'hover:text-rose-400'
+            }`}
+          >
+            <Heart className={`w-4 h-4 ${liked ? 'fill-rose-500' : ''}`} />
+            {article.likes ?? 0}
+          </button>
+          <a href="#comments" className="inline-flex items-center gap-2 hover:text-stone-300 transition">
+            <MessageCircle className="w-4 h-4" />
+            {article.commentCount ?? 0}
+          </a>
+        </div>
 
         <article
           className="prose-blog space-y-5 text-stone-400 font-body leading-relaxed text-base [&_h2]:font-display [&_h2]:text-2xl [&_h2]:text-stone-100 [&_h2]:mt-10 [&_h2]:mb-4 [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-2 [&_a]:text-rose-400"
@@ -192,6 +254,17 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
 
         {/* Share */}
         <div className="mt-12 pt-8 border-t border-white/5 flex flex-wrap items-center gap-4">
+          <button
+            type="button"
+            onClick={handleLike}
+            disabled={liking}
+            className={`inline-flex items-center gap-2 text-sm font-body transition cursor-pointer disabled:opacity-50 ${
+              liked ? 'text-rose-500' : 'text-stone-500 hover:text-rose-400'
+            }`}
+          >
+            <Heart className={`w-4 h-4 ${liked ? 'fill-rose-500' : ''}`} />
+            {liked ? 'Aimé' : "J'aime"} · {article.likes ?? 0}
+          </button>
           <span className="inline-flex items-center gap-2 text-sm text-stone-500 font-body">
             <Share2 className="w-4 h-4" /> Partager
           </span>
@@ -232,6 +305,10 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
           </button>
         </div>
 
+        <div id="comments">
+          <BlogComments articleId={article.id} articleSlug={article.slug} />
+        </div>
+
         {/* Prev / Next */}
         <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-6 border-t border-white/5 pt-10">
           {prev ? (
@@ -267,12 +344,12 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
         </div>
 
         {related.length > 0 && (
-          <div className="mt-16 pt-12 border-t border-white/5 space-y-8">
+          <div className="mt-16 pt-12 border-t border-white/5 space-y-6">
             <div>
               <p className="section-label mb-2">Continuer la lecture</p>
               <h2 className="font-display text-2xl text-stone-100 font-medium">Articles similaires</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
               {related.map((item, i) => (
                 <BlogArticleCard
                   key={item.id}

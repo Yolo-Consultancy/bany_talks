@@ -64,6 +64,14 @@ export async function fetchArticleBySlug(slug: string): Promise<BlogArticleDetai
   return request<BlogArticleDetailResponse>(`/api/articles/${encodeURIComponent(slug)}`);
 }
 
+export async function likeArticle(id: string): Promise<BlogArticle> {
+  return request<BlogArticle>(`/api/articles/${id}/like`, { method: 'POST' });
+}
+
+export async function unlikeArticle(id: string): Promise<BlogArticle> {
+  return request<BlogArticle>(`/api/articles/${id}/unlike`, { method: 'POST' });
+}
+
 export async function fetchCategories(): Promise<BlogCategory[]> {
   return request<BlogCategory[]>('/api/categories');
 }
@@ -149,6 +157,41 @@ export async function updateCategory(
 
 export async function deleteCategory(token: string, id: string): Promise<void> {
   await request(`/api/categories/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function fetchComments(articleRef: string): Promise<{ items: import('../types').BlogComment[]; total: number }> {
+  return request(`/api/comments/article/${encodeURIComponent(articleRef)}`);
+}
+
+export async function createComment(
+  articleRef: string,
+  payload: { author: string; email?: string; content: string; parentId?: string | null }
+): Promise<import('../types').BlogComment> {
+  return request(`/api/comments/article/${encodeURIComponent(articleRef)}`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function likeComment(id: string): Promise<import('../types').BlogComment> {
+  return request(`/api/comments/${id}/like`, { method: 'POST' });
+}
+
+export async function unlikeComment(id: string): Promise<import('../types').BlogComment> {
+  return request(`/api/comments/${id}/unlike`, { method: 'POST' });
+}
+
+export async function fetchAdminComments(token: string): Promise<{ items: import('../types').BlogComment[] }> {
+  return request('/api/comments/admin/all', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function deleteComment(token: string, id: string): Promise<void> {
+  await request(`/api/comments/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
   });

@@ -114,6 +114,8 @@ export interface BlogArticle {
   publishedAt: string | null;
   scheduledAt: string | null;
   readingTimeMinutes: number;
+  likes: number;
+  commentCount: number;
   featured: boolean;
   seo: BlogSeo;
   createdAt: string;
@@ -137,5 +139,20 @@ export interface BlogArticleDetailResponse {
   related: BlogArticle[];
   prev: BlogArticle | null;
   next: BlogArticle | null;
+}
+
+export interface BlogComment {
+  id: string;
+  articleId: string;
+  parentId?: string | null;
+  author: string;
+  email?: string;
+  content: string;
+  likes: number;
+  approved: boolean;
+  createdAt: string;
+  updatedAt: string;
+  articleTitle?: string;
+  articleSlug?: string;
 }
 

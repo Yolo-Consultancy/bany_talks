@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Search, ChevronLeft, ChevronRight, FilterX, Settings } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, FilterX } from 'lucide-react';
 import type { BlogArticle, BlogCategory } from '../../types';
 import { fetchArticles, fetchCategories } from '../../services/blogService';
 import BlogArticleCard from './BlogArticleCard';
@@ -9,14 +9,12 @@ import { BlogGridSkeleton } from './BlogSkeleton';
 interface BlogPageProps {
   onReadArticle: (slug: string) => void;
   onOpenCategory: (slug: string) => void;
-  onOpenAdmin?: () => void;
   initialCategory?: string;
 }
 
 export default function BlogPage({
   onReadArticle,
   onOpenCategory,
-  onOpenAdmin,
   initialCategory,
 }: BlogPageProps) {
   const [articles, setArticles] = useState<BlogArticle[]>([]);
@@ -94,6 +92,11 @@ export default function BlogPage({
     return articles;
   }, [articles, featured, latest, page, debouncedQuery, selectedCategory]);
 
+  const handleArticleUpdate = (updated: BlogArticle) => {
+    setArticles((prev) => prev.map((a) => (a.id === updated.id ? { ...a, ...updated } : a)));
+    setFeatured((prev) => prev.map((a) => (a.id === updated.id ? { ...a, ...updated } : a)));
+  };
+
   return (
     <section id="blog-section" className="bg-stone-950 py-20 lg:py-32 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 lg:space-y-20">
@@ -107,19 +110,6 @@ export default function BlogPage({
             <p className="text-stone-500 font-body text-base leading-relaxed max-w-xl">
               Analyses, interviews et coulisses — le prolongement écrit des conversations Bany Talks.
             </p>
-          </div>
-          <div className="lg:col-span-4 flex lg:justify-end gap-3">
-            {onOpenAdmin && (
-              <button
-                type="button"
-                onClick={onOpenAdmin}
-                className="btn-ghost text-xs py-2.5 px-4"
-                title="Gestion des articles"
-              >
-                <Settings className="w-3.5 h-3.5" />
-                Admin
-              </button>
-            )}
           </div>
         </div>
 
@@ -185,50 +175,41 @@ export default function BlogPage({
           <>
             {/* Featured */}
             {!debouncedQuery && !selectedCategory && featured.length > 0 && page === 1 && (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div>
-                  <p className="section-label mb-2">À la une</p>
-                  <h2 className="font-display text-2xl text-stone-100 font-medium">Articles phares</h2>
+                  <p className="section-label mb-1">À la une</p>
+                  <h2 className="font-display text-xl sm:text-2xl text-stone-100 font-medium">Articles phares</h2>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                  {featured.slice(0, 1).map((article, i) => (
-                    <BlogArticleCard
-                      key={article.id}
-                      article={article}
-                      featured
-                      index={i}
-                      onRead={onReadArticle}
-                      onCategory={onOpenCategory}
-                    />
-                  ))}
-                  <div className="grid grid-cols-1 gap-10">
-                    {featured.slice(1, 3).map((article, i) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
+                  {featured.map((article, i) => (
+                    <div key={article.id} className={i === 0 ? 'md:col-span-2 lg:col-span-2' : ''}>
                       <BlogArticleCard
-                        key={article.id}
                         article={article}
-                        index={i + 1}
+                        featured={i === 0}
+                        index={i}
                         onRead={onReadArticle}
                         onCategory={onOpenCategory}
+                        onArticleUpdate={handleArticleUpdate}
                       />
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
 
             {/* Latest / grid */}
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div className="flex items-end justify-between gap-4">
                 <div>
-                  <p className="section-label mb-2">
-                    {debouncedQuery || selectedCategory ? 'Résultats' : 'Derniers articles'}
+                  <p className="section-label mb-1">
+                    {debouncedQuery || selectedCategory ? 'Résultats' : 'Fil d’actualité'}
                   </p>
-                  <h2 className="font-display text-2xl text-stone-100 font-medium">
+                  <h2 className="font-display text-xl sm:text-2xl text-stone-100 font-medium">
                     {selectedCategory
                       ? categories.find((c) => c.slug === selectedCategory)?.name || 'Catégorie'
                       : debouncedQuery
                         ? `« ${debouncedQuery} »`
-                        : 'Lecture récente'}
+                        : 'Publications'}
                   </h2>
                 </div>
                 {(debouncedQuery || selectedCategory) && (
@@ -252,7 +233,7 @@ export default function BlogPage({
                   <p className="text-sm text-stone-600 font-body">Essayez un autre mot-clé ou une autre catégorie.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
                   {gridArticles.map((article, i) => (
                     <BlogArticleCard
                       key={article.id}
@@ -260,6 +241,7 @@ export default function BlogPage({
                       index={i}
                       onRead={onReadArticle}
                       onCategory={onOpenCategory}
+                      onArticleUpdate={handleArticleUpdate}
                     />
                   ))}
                 </div>
@@ -267,25 +249,62 @@ export default function BlogPage({
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-4 pt-4">
+            {totalPages > 1 && gridArticles.length > 0 && (
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
                 <button
                   type="button"
                   disabled={page <= 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="p-2 border border-white/10 text-stone-400 hover:text-stone-100 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
+                  onClick={() => {
+                    setPage((p) => Math.max(1, p - 1));
+                    document.getElementById('blog-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 border border-white/10 text-sm text-stone-400 hover:text-stone-100 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="w-4 h-4" />
+                  Préc.
                 </button>
-                <span className="text-sm text-stone-500 font-body">
-                  Page {page} / {totalPages}
-                </span>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
+                  .reduce<(number | '…')[]>((acc, n, idx, arr) => {
+                    if (idx > 0 && n - (arr[idx - 1] as number) > 1) acc.push('…');
+                    acc.push(n);
+                    return acc;
+                  }, [])
+                  .map((item, idx) =>
+                    item === '…' ? (
+                      <span key={`e-${idx}`} className="px-1 text-stone-600">
+                        …
+                      </span>
+                    ) : (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => {
+                          setPage(item);
+                          document.getElementById('blog-section')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className={`min-w-10 h-10 px-2 text-sm border cursor-pointer transition ${
+                          page === item
+                            ? 'border-rose-500 text-rose-400 bg-rose-500/10'
+                            : 'border-white/10 text-stone-400 hover:text-stone-100'
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    )
+                  )}
+
                 <button
                   type="button"
                   disabled={page >= totalPages}
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  className="p-2 border border-white/10 text-stone-400 hover:text-stone-100 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
+                  onClick={() => {
+                    setPage((p) => Math.min(totalPages, p + 1));
+                    document.getElementById('blog-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 border border-white/10 text-sm text-stone-400 hover:text-stone-100 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
                 >
+                  Suiv.
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>

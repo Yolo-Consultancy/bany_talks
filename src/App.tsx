@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ArrowUp } from 'lucide-react';
+import { Menu, X, ArrowUp, Lock } from 'lucide-react';
 import { EPISODES } from './data';
 import logoBany from './assets/logos/logo_bany.png';
 import { NAV_ITEMS } from './data/navItems';
@@ -248,7 +248,16 @@ export default function App() {
             })}
           </div>
 
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center gap-3">
+            <button
+              type="button"
+              onClick={openBlogAdmin}
+              className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-200 py-2 px-3 transition cursor-pointer"
+              title="Connexion admin"
+            >
+              <Lock className="w-3.5 h-3.5" />
+              Admin
+            </button>
             <button onClick={() => scrollToSection('booking-section')} className="btn-primary text-xs py-2.5 px-5">
               Inviter Bany
             </button>
@@ -314,6 +323,13 @@ export default function App() {
                   }`}
                 >
                   Blog
+                </button>
+                <button
+                  onClick={() => openBlogAdmin()}
+                  className="flex w-full items-center gap-2 text-left py-3 border-b border-white/5 text-stone-500 hover:text-stone-300 transition"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  Connexion admin
                 </button>
                 <div className="pt-4">
                   <button onClick={() => scrollToSection('booking-section')} className="w-full btn-primary justify-center text-xs">
@@ -419,7 +435,6 @@ export default function App() {
               <BlogPage
                 onReadArticle={openBlogArticle}
                 onOpenCategory={openBlogCategory}
-                onOpenAdmin={openBlogAdmin}
               />
             </motion.div>
           )}
