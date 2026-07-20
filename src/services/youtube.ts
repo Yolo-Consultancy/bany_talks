@@ -32,6 +32,34 @@ function parseISO8601Duration(isoDuration: string): string {
 const YT_NS = 'http://www.youtube.com/xml/schemas/2015';
 const MEDIA_NS = 'http://search.yahoo.com/mrss/';
 
+function getEpisodeTimestamp(episode: Episode): number {
+  if (episode.publishedAt) {
+    const time = new Date(episode.publishedAt).getTime();
+    if (!Number.isNaN(time)) return time;
+  }
+
+  const parsed = Date.parse(episode.publishDate);
+  if (!Number.isNaN(parsed)) return parsed;
+
+  return 0;
+}
+
+/** Trie les épisodes par date de publication (plus récent en premier par défaut). */
+export function sortEpisodesByPublishDate(
+  episodes: Episode[],
+  order: 'desc' | 'asc' = 'desc'
+): Episode[] {
+  const sorted = [...episodes].sort((a, b) => {
+    const diff = getEpisodeTimestamp(b) - getEpisodeTimestamp(a);
+    return order === 'desc' ? diff : -diff;
+  });
+
+  return sorted.map((episode, index) => ({
+    ...episode,
+    number: order === 'desc' ? sorted.length - index : index + 1,
+  }));
+}
+
 function mapApiItemsToEpisodes(
   items: any[],
   categoryName: 'Émissions' | 'Podcasts',
@@ -58,6 +86,7 @@ function mapApiItemsToEpisodes(
       richDescription: snippet.description || '',
       duration: stats.duration || 'Vidéo',
       publishDate: publishDateFormatted,
+      publishedAt: snippet.publishedAt || publishDateRaw.toISOString(),
       category: categoryName,
       thumbnail: thumbnailObj?.url || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
       youtubeUrl: `https://www.youtube.com/embed/${videoId}`,
@@ -127,7 +156,7 @@ export async function fetchYouTubePlaylistItems(
     }
   }
 
-  return mapApiItemsToEpisodes(items, categoryName, videoStatsMap);
+  return sortEpisodesByPublishDate(mapApiItemsToEpisodes(items, categoryName, videoStatsMap));
 }
 
 /**
@@ -168,6 +197,7 @@ function buildEpisodeFromVideoId(
     richDescription: description,
     duration: 'Vidéo',
     publishDate: publishDateFormatted,
+    publishedAt: options.publishedAt || publishDateRaw.toISOString(),
     category: categoryName,
     thumbnail: options.thumbnail || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
     youtubeUrl: `https://www.youtube.com/embed/${videoId}`,
@@ -216,7 +246,8 @@ export async function fetchYouTubePlaylistRSS(
   }
 
   const entries = Array.from(doc.getElementsByTagName('entry'));
-  return entries.map((entry, index) => {
+  return sortEpisodesByPublishDate(
+    entries.map((entry, index) => {
     const videoId =
       entry.getElementsByTagNameNS(YT_NS, 'videoId')[0]?.textContent?.trim() ||
       entry.querySelector('videoId')?.textContent?.trim() ||
@@ -235,7 +266,8 @@ export async function fetchYouTubePlaylistRSS(
       thumbnail,
       publishedAt
     });
-  }).filter((episode) => episode.id !== 'yt-');
+    }).filter((episode) => episode.id !== 'yt-')
+  );
 }
 
 /**
@@ -250,7 +282,7 @@ export async function loadPlaylistEpisodes(
   if (apiKey) {
     try {
       const items = await fetchYouTubePlaylistItems(playlistId, categoryName, apiKey);
-      if (items.length > 0) return items;
+      if (items.length > 0) return sortEpisodesByPublishDate(items);
     } catch (e) {
       console.warn(`API YouTube échouée pour ${categoryName}, fallback RSS`, e);
     }
@@ -265,13 +297,14 @@ export async function loadPlaylistEpisodes(
 
   try {
     const items = await fetchYouTubePlaylistData(playlistId, categoryName);
-    if (items.length > 0) return items;
+    if (items.length > 0) return sortEpisodesByPublishDate(items);
   } catch (e) {
     console.warn(`Scraping regex échoué pour ${categoryName}`, e);
   }
 
   try {
-    return await fetchYouTubePlaylistHTML(playlistId, categoryName);
+    const items = await fetchYouTubePlaylistHTML(playlistId, categoryName);
+    return sortEpisodesByPublishDate(items);
   } catch (e) {
     console.warn(`Scraping HTML échoué pour ${categoryName}`, e);
     return [];

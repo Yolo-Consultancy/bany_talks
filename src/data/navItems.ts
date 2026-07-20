@@ -10,5 +10,4 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'À Propos', value: 'about' },
   { label: 'Émissions', value: 'episodes' },
   { label: 'Hub Audience', value: 'hub' },
-  { label: 'Livres', value: 'books' },
 ]

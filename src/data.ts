@@ -15,6 +15,9 @@ export const HOST_DETAILS = {
   quote: 'La vraie valeur d’une histoire ne réside pas dans son point d’arrivée, mais dans la clarté des obstacles surmontés durant la transition.',
   avatar: bigo,
   aboutpicture: bigoAbout,
+  /** Vidéo hero en boucle — déposer le fichier dans public/ (ex. public/hero.mp4) */
+  heroVideo: '/hero.mp4',
+  heroPoster: bigoAbout,
   statistics: [
     { label: 'Auditeurs Mensuels', value: '450K+' },
     { label: 'Épisodes Sortis', value: '124' },

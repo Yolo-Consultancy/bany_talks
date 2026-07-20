@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Play, ArrowRight, FilterX, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { Episode } from '../types';
+import { sortEpisodesByPublishDate } from '../services/youtube';
 
 interface EpisodeGridProps {
   episodes: Episode[];
@@ -48,7 +49,7 @@ export default function EpisodeGrid({ episodes, onEpisodeClick }: EpisodeGridPro
   const categories = ['Toutes', 'Émissions', 'Podcasts'];
 
   const filteredEpisodes = useMemo(() => {
-    return episodes.filter((episode) => {
+    const filtered = episodes.filter((episode) => {
       const matchesSearch =
         episode.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         episode.guest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -58,6 +59,8 @@ export default function EpisodeGrid({ episodes, onEpisodeClick }: EpisodeGridPro
         episode.category.toLowerCase() === selectedCategory.toLowerCase();
       return matchesSearch && matchesCategory;
     });
+
+    return sortEpisodesByPublishDate(filtered);
   }, [episodes, searchQuery, selectedCategory]);
 
   useEffect(() => {

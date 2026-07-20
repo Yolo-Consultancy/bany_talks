@@ -33,6 +33,8 @@ export interface Episode {
   richDescription: string;
   duration: string;
   publishDate: string;
+  /** ISO 8601 — utilisé pour trier par date de publication */
+  publishedAt?: string;
   category: 'Émissions' | 'Podcasts';
   thumbnail: string;
   youtubeUrl: string; // embed URL or placeholder ID

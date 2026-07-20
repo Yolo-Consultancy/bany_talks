@@ -9,7 +9,7 @@ import { EPISODES } from './data';
 import logoBany from './assets/logos/logo_bany.png';
 import { NAV_ITEMS } from './data/navItems';
 import { Episode } from './types';
-import { loadPlaylistEpisodes } from './services/youtube';
+import { loadPlaylistEpisodes, sortEpisodesByPublishDate } from './services/youtube';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Importing custom brand units
@@ -22,10 +22,9 @@ import Hub from './components/Hub';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
 import HomeShowcase from './components/HomeShowcase';
-import BooksPage from './components/BooksPage';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'episodes' | 'episode-detail' | 'about' | 'invite' | 'books' | 'hub'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'episodes' | 'episode-detail' | 'about' | 'invite' | 'hub'>('home');
   const [episodes, setEpisodes] = useState<Episode[]>(EPISODES);
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
 
@@ -41,7 +40,7 @@ export default function App() {
           loadPlaylistEpisodes(podcastsPlaylistId, 'Podcasts'),
         ]);
 
-        const combined = [...emissions, ...podcasts];
+        const combined = sortEpisodesByPublishDate([...emissions, ...podcasts]);
         if (combined.length > 0) {
           setEpisodes(combined);
         } else {
@@ -71,7 +70,7 @@ export default function App() {
 
 
 
-  const navigateToView = (view: 'home' | 'episodes' | 'episode-detail' | 'about' | 'invite' | 'books' | 'hub') => {
+  const navigateToView = (view: 'home' | 'episodes' | 'episode-detail' | 'about' | 'invite' | 'hub') => {
     setMobileMenuOpen(false);
     setCurrentView(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -137,7 +136,7 @@ export default function App() {
                     link.value;
                   scrollToSection(sectionId);
                 } else {
-                  navigateToView(link.value as 'home' | 'about' | 'episodes' | 'invite' | 'books' | 'hub');
+                  navigateToView(link.value as 'home' | 'about' | 'episodes' | 'invite' | 'hub');
                 }
               };
               return (
@@ -225,14 +224,6 @@ export default function App() {
                   Émissions
                 </button>
                 <button 
-                  onClick={() => navigateToView('books')} 
-                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
-                    currentView === 'books' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
-                  }`}
-                >
-                  Livres
-                </button>
-                <button 
                   onClick={() => scrollToSection('audience-hub')} 
                   className={`block w-full text-left py-3 border-b border-white/5 transition ${
                     currentView === 'hub' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
@@ -265,14 +256,10 @@ export default function App() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35 }}
             >
-              <Hero 
-                onExploreEpisodes={() => navigateToView('episodes')}
-                onInviteBany={() => navigateToView('invite')}
-              />
+              <Hero />
               <HomeShowcase
                 onExploreEpisodes={() => navigateToView('episodes')}
                 onAbout={() => navigateToView('about')}
-                onBooks={() => navigateToView('books')}
                 onHub={() => navigateToView('hub')}
               />
               <Newsletter />
@@ -325,18 +312,6 @@ export default function App() {
                 onPlayClick={(ep) => handlePlayEpisode(ep)}
                 onSeekTo={(sec) => handleTimestampSeek(sec)}
               />
-            </motion.div>
-          )}
-
-          {currentView === 'books' && (
-            <motion.div
-              key="books"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.35 }}
-            >
-              <BooksPage />
             </motion.div>
           )}
 

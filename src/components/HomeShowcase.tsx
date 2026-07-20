@@ -1,10 +1,9 @@
 import React from 'react';
-import { ArrowRight, Mic2, BookOpen, Users, Radio } from 'lucide-react';
+import { ArrowRight, Mic2, Users, Radio } from 'lucide-react';
 
 interface HomeShowcaseProps {
   onExploreEpisodes: () => void;
   onAbout: () => void;
-  onBooks: () => void;
   onHub: () => void;
 }
 
@@ -24,13 +23,6 @@ const PLATFORMS = [
     icon: Users,
   },
   {
-    id: 'books',
-    label: 'Bibliothèque',
-    subtitle: 'Livres & Ressources',
-    desc: 'Les lectures qui inspirent chaque épisode et chaque conversation.',
-    icon: BookOpen,
-  },
-  {
     id: 'hub',
     label: 'Audience Hub',
     subtitle: 'Communauté',
@@ -39,11 +31,10 @@ const PLATFORMS = [
   },
 ];
 
-export default function HomeShowcase({ onExploreEpisodes, onAbout, onBooks, onHub }: HomeShowcaseProps) {
+export default function HomeShowcase({ onExploreEpisodes, onAbout, onHub }: HomeShowcaseProps) {
   const handlers: Record<string, () => void> = {
     episodes: onExploreEpisodes,
     about: onAbout,
-    books: onBooks,
     hub: onHub,
   };
 
@@ -64,7 +55,7 @@ export default function HomeShowcase({ onExploreEpisodes, onAbout, onBooks, onHu
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5">
           {PLATFORMS.map((platform) => {
             const Icon = platform.icon;
             return (
