@@ -1,10 +1,10 @@
 import React from 'react';
-import { ArrowRight, Mic2, Users, Radio } from 'lucide-react';
+import { ArrowRight, Mic2, Users, BookOpen } from 'lucide-react';
 
 interface HomeShowcaseProps {
   onExploreEpisodes: () => void;
   onAbout: () => void;
-  onHub: () => void;
+  onBlog: () => void;
 }
 
 const PLATFORMS = [
@@ -17,25 +17,25 @@ const PLATFORMS = [
   },
   {
     id: 'about',
-    label: 'L\'histoire de Bany',
+    label: "L'histoire de Bany",
     subtitle: 'À propos',
-    desc: 'Du Congo au studio : le parcours d\'un entrepreneur média.',
+    desc: "Du Congo au studio : le parcours d'un entrepreneur média.",
     icon: Users,
   },
   {
-    id: 'hub',
-    label: 'Audience Hub',
-    subtitle: 'Communauté',
-    desc: 'Posez vos questions, partagez vos idées, rejoignez le dialogue.',
-    icon: Radio,
+    id: 'blog',
+    label: 'Blog',
+    subtitle: 'Articles & analyses',
+    desc: 'Leadership, business et coulisses — le prolongement écrit des conversations.',
+    icon: BookOpen,
   },
 ];
 
-export default function HomeShowcase({ onExploreEpisodes, onAbout, onHub }: HomeShowcaseProps) {
+export default function HomeShowcase({ onExploreEpisodes, onAbout, onBlog }: HomeShowcaseProps) {
   const handlers: Record<string, () => void> = {
     episodes: onExploreEpisodes,
     about: onAbout,
-    hub: onHub,
+    blog: onBlog,
   };
 
   return (

@@ -5,7 +5,7 @@ import { Youtube, Instagram, Radio, MessageCircle } from 'lucide-react';
 import logoBany from '../assets/logos/logo_bany.png';
 
 interface FooterProps {
-  onNavigate: (view: 'home' | 'about' | 'episodes' | 'booking' | 'hub') => void;
+  onNavigate: (view: 'home' | 'about' | 'episodes' | 'booking' | 'blog') => void;
   activeView: string;
 }
 
@@ -50,11 +50,12 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
                 const isLinkActive =
                   activeView === link.value ||
                   (activeView === 'invite' && link.value === 'booking') ||
-                  (activeView === 'episode-detail' && link.value === 'episodes');
+                  (activeView === 'episode-detail' && link.value === 'episodes') ||
+                  (activeView.startsWith('blog') && link.value === 'blog');
                 return (
                   <button
                     key={link.value}
-                    onClick={() => onNavigate(link.value as 'home' | 'about' | 'episodes' | 'booking' | 'hub')}
+                    onClick={() => onNavigate(link.value as 'home' | 'about' | 'episodes' | 'booking' | 'blog')}
                     className={`text-left text-sm font-body transition cursor-pointer ${
                       isLinkActive ? 'text-rose-400' : 'text-stone-500 hover:text-stone-300'
                     }`}

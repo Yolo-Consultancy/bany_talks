@@ -65,24 +65,6 @@ export interface NewsletterSubscription {
   joinedAt: string;
 }
 
-export interface RatingQuestion {
-  id: string;
-  author: string;
-  question: string;
-  upvotes: number;
-  isUpvoted?: boolean;
-  replies?: string[];
-  createdAt: string;
-}
-
-export interface VoiceAsk {
-  id: string;
-  author: string;
-  duration: number;
-  audioBlobUrl: string; // Simulated recording url
-  createdAt: string;
-}
-
 export interface Book {
   id: string;
   title: string;
@@ -96,5 +78,64 @@ export interface Book {
   rating: number; // e.g., 4.9
   buyUrl: string;
   highlights: string[];
+}
+
+export type BlogArticleStatus = 'draft' | 'scheduled' | 'published';
+
+export interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  articleCount?: number;
+}
+
+export interface BlogSeo {
+  metaTitle: string;
+  metaDescription: string;
+  ogImage?: string;
+  canonicalUrl?: string;
+}
+
+export interface BlogArticle {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  coverImage: string;
+  gallery: string[];
+  youtubeUrl?: string;
+  author: string;
+  categoryId: string;
+  category?: BlogCategory | null;
+  tags: string[];
+  status: BlogArticleStatus;
+  publishedAt: string | null;
+  scheduledAt: string | null;
+  readingTimeMinutes: number;
+  featured: boolean;
+  seo: BlogSeo;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BlogPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface BlogListResponse {
+  items: BlogArticle[];
+  pagination: BlogPagination;
+}
+
+export interface BlogArticleDetailResponse {
+  article: BlogArticle;
+  related: BlogArticle[];
+  prev: BlogArticle | null;
+  next: BlogArticle | null;
 }
 

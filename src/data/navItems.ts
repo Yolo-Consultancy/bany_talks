@@ -9,5 +9,5 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Accueil', value: 'home' },
   { label: 'À Propos', value: 'about' },
   { label: 'Émissions', value: 'episodes' },
-  { label: 'Hub Audience', value: 'hub' },
-]
+  { label: 'Blog', value: 'blog' },
+];

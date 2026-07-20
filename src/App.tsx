@@ -12,22 +12,53 @@ import { Episode } from './types';
 import { loadPlaylistEpisodes, sortEpisodesByPublishDate } from './services/youtube';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Importing custom brand units
 import Hero from './components/Hero';
 import Stats from './components/Stats';
 import EpisodeGrid from './components/EpisodeGrid';
 import EpisodeDetail from './components/EpisodeDetail';
 import InviteBany from './components/InviteBany';
-import Hub from './components/Hub';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
 import HomeShowcase from './components/HomeShowcase';
+import BlogPage from './components/blog/BlogPage';
+import BlogDetail from './components/blog/BlogDetail';
+import BlogCategoryPage from './components/blog/BlogCategoryPage';
+import BlogAdmin from './components/blog/BlogAdmin';
+
+type AppView =
+  | 'home'
+  | 'episodes'
+  | 'episode-detail'
+  | 'about'
+  | 'invite'
+  | 'blog'
+  | 'blog-detail'
+  | 'blog-category'
+  | 'blog-admin';
+
+function parseBlogHash(): { view: AppView; slug?: string } | null {
+  const hash = window.location.hash.replace(/^#/, '');
+  if (!hash.startsWith('/blog')) return null;
+  if (hash === '/blog' || hash === '/blog/') return { view: 'blog' };
+  if (hash === '/blog/admin') return { view: 'blog-admin' };
+  const categoryMatch = hash.match(/^\/blog\/category\/([^/]+)/);
+  if (categoryMatch) return { view: 'blog-category', slug: decodeURIComponent(categoryMatch[1]) };
+  const articleMatch = hash.match(/^\/blog\/([^/]+)/);
+  if (articleMatch && articleMatch[1] !== 'admin' && articleMatch[1] !== 'category') {
+    return { view: 'blog-detail', slug: decodeURIComponent(articleMatch[1]) };
+  }
+  return { view: 'blog' };
+}
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'episodes' | 'episode-detail' | 'about' | 'invite' | 'hub'>('home');
+  const initialHash = typeof window !== 'undefined' ? parseBlogHash() : null;
+  const [currentView, setCurrentView] = useState<AppView>(initialHash?.view || 'home');
   const [episodes, setEpisodes] = useState<Episode[]>(EPISODES);
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
-
+  const [blogSlug, setBlogSlug] = useState<string | null>(initialHash?.view === 'blog-detail' ? initialHash.slug || null : null);
+  const [blogCategorySlug, setBlogCategorySlug] = useState<string | null>(
+    initialHash?.view === 'blog-category' ? initialHash.slug || null : null
+  );
 
   useEffect(() => {
     async function loadEpisodes() {
@@ -53,12 +84,10 @@ export default function App() {
     loadEpisodes();
   }, []);
 
-  // Layout navigation states
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // Monitor scroll height to make navbar opaque & toggle scroll-to-top button
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -68,20 +97,63 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const onHashChange = () => {
+      const parsed = parseBlogHash();
+      if (!parsed) return;
+      setCurrentView(parsed.view);
+      if (parsed.view === 'blog-detail') setBlogSlug(parsed.slug || null);
+      if (parsed.view === 'blog-category') setBlogCategorySlug(parsed.slug || null);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
+  const setBlogHash = (path: string) => {
+    const next = path.startsWith('#') ? path : `#${path}`;
+    if (window.location.hash !== next) {
+      window.location.hash = next;
+    }
+  };
 
-  const navigateToView = (view: 'home' | 'episodes' | 'episode-detail' | 'about' | 'invite' | 'hub') => {
+  const navigateToView = (view: AppView) => {
     setMobileMenuOpen(false);
     setCurrentView(view);
+    if (!view.startsWith('blog')) {
+      if (window.location.hash.startsWith('#/blog')) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Scroll smoothly to layout element ID anchor
+  const openBlog = () => {
+    setBlogHash('/blog');
+    navigateToView('blog');
+  };
+
+  const openBlogArticle = (slug: string) => {
+    setBlogSlug(slug);
+    setBlogHash(`/blog/${slug}`);
+    navigateToView('blog-detail');
+  };
+
+  const openBlogCategory = (slug: string) => {
+    setBlogCategorySlug(slug);
+    setBlogHash(`/blog/category/${slug}`);
+    navigateToView('blog-category');
+  };
+
+  const openBlogAdmin = () => {
+    setBlogHash('/blog/admin');
+    navigateToView('blog-admin');
+  };
+
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
     if (id === 'episodes-section') navigateToView('episodes');
     else if (id === 'booking-section') navigateToView('invite');
-    else if (id === 'audience-hub') navigateToView('hub');
+    else if (id === 'blog-section' || id === 'audience-hub') openBlog();
     else if (id === 'about-bany') navigateToView('about');
     else navigateToView('home');
   };
@@ -90,17 +162,25 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  function handlePlayEpisode(ep: Episode): void {
+  function handlePlayEpisode(_ep: Episode): void {
     throw new Error('Function not implemented.');
   }
 
-  function handleTimestampSeek(sec: number): void {
+  function handleTimestampSeek(_sec: number): void {
     throw new Error('Function not implemented.');
   }
+
+  const isBlogView =
+    currentView === 'blog' ||
+    currentView === 'blog-detail' ||
+    currentView === 'blog-category' ||
+    currentView === 'blog-admin';
+
+  const isAdminView = currentView === 'blog-admin';
 
   return (
     <div id="brand-layout-root" className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-body antialiased selection:bg-rose-500 selection:text-stone-950">
-      
+      {!isAdminView && (
       <nav
         id="main-navigation"
         className={`fixed top-0 inset-x-0 z-40 transition-all duration-500 border-b ${
@@ -110,33 +190,41 @@ export default function App() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          
-          {/* Logo brand */}
-          <button 
-            onClick={() => { setCurrentView('home'); jumpToTop(); }}
+          <button
+            onClick={() => {
+              navigateToView('home');
+              jumpToTop();
+            }}
             className="flex items-center gap-2 text-stone-100 hover:opacity-80 transition cursor-pointer"
           >
-            <img 
-              src={logoBany}
-              alt="BANY TALKS"
-              className="h-12 w-auto"
-            />
+            <img src={logoBany} alt="BANY TALKS" className="h-12 w-auto" />
           </button>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-body relative">
             {NAV_ITEMS.map((link) => {
-              const isActive = currentView === link.value || (currentView === 'episode-detail' && link.value === 'episodes');
+              const isActive =
+                currentView === link.value ||
+                (currentView === 'episode-detail' && link.value === 'episodes') ||
+                (isBlogView && link.value === 'blog');
               const handleClick = () => {
-                if (['home','about','episodes','hub','contact'].includes(link.value)) {
-                  const sectionId = link.value === 'contact' ? 'contact-section' :
-                    link.value === 'home' ? 'hero-section' :
-                    link.value === 'about' ? 'about-bany' :
-                    link.value === 'episodes' ? 'episodes-section' :
-                    link.value === 'hub' ? 'audience-hub' :
-                    link.value;
+                if (link.value === 'blog') {
+                  openBlog();
+                  return;
+                }
+                if (['home', 'about', 'episodes', 'contact'].includes(link.value)) {
+                  const sectionId =
+                    link.value === 'contact'
+                      ? 'contact-section'
+                      : link.value === 'home'
+                        ? 'hero-section'
+                        : link.value === 'about'
+                          ? 'about-bany'
+                          : link.value === 'episodes'
+                            ? 'episodes-section'
+                            : link.value;
                   scrollToSection(sectionId);
                 } else {
-                  navigateToView(link.value as 'home' | 'about' | 'episodes' | 'invite' | 'hub');
+                  navigateToView(link.value as AppView);
                 }
               };
               return (
@@ -152,7 +240,7 @@ export default function App() {
                     <motion.span
                       layoutId="activeHeaderUnderline"
                       className="absolute -bottom-1 left-0 right-0 h-px bg-rose-500"
-                      transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 28 }}
                     />
                   )}
                 </button>
@@ -161,15 +249,11 @@ export default function App() {
           </div>
 
           <div className="hidden md:flex items-center">
-            <button
-              onClick={() => scrollToSection('booking-section')}
-              className="btn-primary text-xs py-2.5 px-5"
-            >
+            <button onClick={() => scrollToSection('booking-section')} className="btn-primary text-xs py-2.5 px-5">
               Inviter Bany
             </button>
           </div>
 
-          {/* Mobile Menu Action Icon */}
           <motion.button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle mobile menu"
@@ -179,63 +263,60 @@ export default function App() {
           >
             <motion.div
               animate={{ rotate: mobileMenuOpen ? 180 : 0, scale: mobileMenuOpen ? 1.1 : 1 }}
-              transition={{ type: "spring", stiffness: 250, damping: 20 }}
+              transition={{ type: 'spring', stiffness: 250, damping: 20 }}
               className="flex items-center justify-center"
             >
               {mobileMenuOpen ? <X className="w-5 h-5 text-rose-500" /> : <Menu className="w-5 h-5" />}
             </motion.div>
           </motion.button>
-
         </div>
 
-        {/* Mobile Navigation Drawer Overlay */}
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div 
+            <motion.div
               initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
+              animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
               className="md:hidden bg-stone-950 border-b border-stone-900 overflow-hidden shadow-2xl"
             >
               <div className="px-5 pt-3 pb-6 space-y-1 font-body text-sm">
-                <button 
-                  onClick={() => scrollToSection('hero-section')} 
+                <button
+                  onClick={() => scrollToSection('hero-section')}
                   className={`block w-full text-left py-3 border-b border-white/5 transition ${
                     currentView === 'home' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
                   }`}
                 >
                   Accueil
                 </button>
-                <button 
-                  onClick={() => scrollToSection('about-bany')} 
+                <button
+                  onClick={() => scrollToSection('about-bany')}
                   className={`block w-full text-left py-3 border-b border-white/5 transition ${
                     currentView === 'about' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
                   }`}
                 >
                   À Propos
                 </button>
-                <button 
-                  onClick={() => scrollToSection('episodes-section')} 
+                <button
+                  onClick={() => scrollToSection('episodes-section')}
                   className={`block w-full text-left py-3 border-b border-white/5 transition ${
-                    currentView === 'episodes' || currentView === 'episode-detail' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
+                    currentView === 'episodes' || currentView === 'episode-detail'
+                      ? 'text-stone-100'
+                      : 'text-stone-500 hover:text-stone-300'
                   }`}
                 >
                   Émissions
                 </button>
-                <button 
-                  onClick={() => scrollToSection('audience-hub')} 
+                <button
+                  onClick={() => openBlog()}
                   className={`block w-full text-left py-3 border-b border-white/5 transition ${
-                    currentView === 'hub' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
+                    isBlogView ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
                   }`}
                 >
-                  Audience Hub
+                  Blog
                 </button>
                 <div className="pt-4">
-                  <button 
-                    onClick={() => scrollToSection('booking-section')} 
-                    className="w-full btn-primary justify-center text-xs"
-                  >
+                  <button onClick={() => scrollToSection('booking-section')} className="w-full btn-primary justify-center text-xs">
                     Inviter Bany
                   </button>
                 </div>
@@ -244,9 +325,9 @@ export default function App() {
           )}
         </AnimatePresence>
       </nav>
+      )}
 
-      {/* Main Container Content */}
-      <main id="main-content-flow" className="flex-1 pt-16">
+      <main id="main-content-flow" className={`flex-1 ${isAdminView ? 'pt-0' : 'pt-16'}`}>
         <AnimatePresence mode="wait">
           {currentView === 'home' && (
             <motion.div
@@ -260,7 +341,7 @@ export default function App() {
               <HomeShowcase
                 onExploreEpisodes={() => navigateToView('episodes')}
                 onAbout={() => navigateToView('about')}
-                onHub={() => navigateToView('hub')}
+                onBlog={openBlog}
               />
               <Newsletter />
             </motion.div>
@@ -286,7 +367,7 @@ export default function App() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35 }}
             >
-              <EpisodeGrid 
+              <EpisodeGrid
                 episodes={episodes}
                 onEpisodeClick={(ep) => {
                   setSelectedEpisode(ep);
@@ -306,7 +387,7 @@ export default function App() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35 }}
             >
-              <EpisodeDetail 
+              <EpisodeDetail
                 episode={selectedEpisode}
                 onBackToList={() => setCurrentView('episodes')}
                 onPlayClick={(ep) => handlePlayEpisode(ep)}
@@ -327,36 +408,82 @@ export default function App() {
             </motion.div>
           )}
 
-          {currentView === 'hub' && (
+          {currentView === 'blog' && (
             <motion.div
-              key="hub"
+              key="blog"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35 }}
             >
-              <Hub />
+              <BlogPage
+                onReadArticle={openBlogArticle}
+                onOpenCategory={openBlogCategory}
+                onOpenAdmin={openBlogAdmin}
+              />
+            </motion.div>
+          )}
+
+          {currentView === 'blog-detail' && blogSlug && (
+            <motion.div
+              key={`blog-detail-${blogSlug}`}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.35 }}
+            >
+              <BlogDetail
+                slug={blogSlug}
+                onBack={openBlog}
+                onReadArticle={openBlogArticle}
+                onOpenCategory={openBlogCategory}
+              />
+            </motion.div>
+          )}
+
+          {currentView === 'blog-category' && blogCategorySlug && (
+            <motion.div
+              key={`blog-category-${blogCategorySlug}`}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.35 }}
+            >
+              <BlogCategoryPage
+                categorySlug={blogCategorySlug}
+                onBack={openBlog}
+                onReadArticle={openBlogArticle}
+                onOpenCategory={openBlogCategory}
+              />
+            </motion.div>
+          )}
+
+          {currentView === 'blog-admin' && (
+            <motion.div
+              key="blog-admin"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.35 }}
+            >
+              <BlogAdmin onBack={openBlog} />
             </motion.div>
           )}
         </AnimatePresence>
       </main>
 
-      {/* Footer module */}
-      <Footer 
-        onNavigate={(view) => {
-          if (view === 'booking') {
-            navigateToView('invite');
-          } else if (view === 'hub') {
-            navigateToView('hub');
-          } else {
-            navigateToView(view as any);
-          }
-        }}
-        activeView={currentView}
-      />
+      {!isAdminView && (
+        <Footer
+          onNavigate={(view) => {
+            if (view === 'booking') navigateToView('invite');
+            else if (view === 'blog') openBlog();
+            else navigateToView(view as AppView);
+          }}
+          activeView={isBlogView ? 'blog' : currentView}
+        />
+      )}
 
-      {/* Scroll to Top Hover Action */}
-      {showScrollTop && (
+      {!isAdminView && showScrollTop && (
         <button
           onClick={jumpToTop}
           aria-label="Scroll back to top"
@@ -365,7 +492,6 @@ export default function App() {
           <ArrowUp className="w-4 h-4" />
         </button>
       )}
-
     </div>
   );
 }
