@@ -98,25 +98,21 @@ export default function BlogPage({
   };
 
   return (
-    <section id="blog-section" className="bg-stone-950 py-20 lg:py-32 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 lg:space-y-20">
-        {/* Hero */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
-          <div className="lg:col-span-8 space-y-5">
-            <p className="section-label">Bany Officiel</p>
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-stone-100 font-medium leading-tight">
-              Blog
-            </h1>
-            <p className="text-stone-500 font-body text-base leading-relaxed max-w-xl">
-              Analyses, interviews et coulisses — le prolongement écrit des conversations Bany Talks.
-            </p>
-          </div>
+    <section id="blog-section" className="bg-stone-950 py-10 sm:py-14 lg:py-16 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 lg:space-y-10">
+        {/* Header compact */}
+        <div className="space-y-2">
+          <p className="section-label mb-0">Bany Officiel</p>
+          <h1 className="font-display text-3xl sm:text-4xl text-stone-100 font-medium leading-tight">
+            Blog
+          </h1>
+          <p className="text-stone-500 font-body text-sm leading-relaxed max-w-xl">
+            Analyses, interviews et coulisses — le prolongement écrit des conversations Bany Talks.
+          </p>
         </div>
 
-        <hr className="editorial-rule" />
-
         {/* Search + categories */}
-        <div className="space-y-8">
+        <div className="space-y-4">
           <div className="relative max-w-xl">
             <Search className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-600" />
             <input
@@ -124,15 +120,15 @@ export default function BlogPage({
               placeholder="Rechercher par titre, catégorie, auteur, mot-clé…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-7 pr-4 py-3 bg-transparent border-b border-white/10 focus:border-rose-500/50 text-stone-200 placeholder-stone-600 focus:outline-none transition text-sm font-body"
+              className="w-full pl-7 pr-4 py-2 bg-transparent border-b border-white/10 focus:border-rose-500/50 text-stone-200 placeholder-stone-600 focus:outline-none transition text-sm font-body"
             />
           </div>
 
-          <div className="flex items-center gap-6 border-b border-white/5 pb-4 overflow-x-auto custom-scrollbar">
+          <div className="flex items-center gap-4 border-b border-white/5 pb-2 overflow-x-auto custom-scrollbar">
             <button
               type="button"
               onClick={() => setSelectedCategory('')}
-              className={`text-sm font-body pb-4 -mb-4 border-b-2 whitespace-nowrap transition cursor-pointer ${
+              className={`text-sm font-body pb-2 -mb-2 border-b-2 whitespace-nowrap transition cursor-pointer ${
                 !selectedCategory
                   ? 'text-stone-100 border-rose-500'
                   : 'text-stone-600 border-transparent hover:text-stone-400'
@@ -145,7 +141,7 @@ export default function BlogPage({
                 key={cat.id}
                 type="button"
                 onClick={() => setSelectedCategory(cat.slug)}
-                className={`text-sm font-body pb-4 -mb-4 border-b-2 whitespace-nowrap transition cursor-pointer ${
+                className={`text-sm font-body pb-2 -mb-2 border-b-2 whitespace-nowrap transition cursor-pointer ${
                   selectedCategory === cat.slug
                     ? 'text-stone-100 border-rose-500'
                     : 'text-stone-600 border-transparent hover:text-stone-400'
@@ -158,7 +154,7 @@ export default function BlogPage({
         </div>
 
         {error && (
-          <div className="py-12 text-center space-y-4">
+          <div className="py-8 text-center space-y-3">
             <p className="text-stone-500 font-body">{error}</p>
             <p className="text-xs text-stone-600">
               Vérifiez que le backend tourne sur le port 4000 (`npm run dev` dans bany-backend).
@@ -175,11 +171,8 @@ export default function BlogPage({
           <>
             {/* Featured */}
             {!debouncedQuery && !selectedCategory && featured.length > 0 && page === 1 && (
-              <div className="space-y-6">
-                <div>
-                  <p className="section-label mb-1">À la une</p>
-                  <h2 className="font-display text-xl sm:text-2xl text-stone-100 font-medium">Articles phares</h2>
-                </div>
+              <div className="space-y-4">
+                <h2 className="font-display text-lg text-stone-100 font-medium">À la une</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
                   {featured.map((article, i) => (
                     <div key={article.id} className={i === 0 ? 'md:col-span-2 lg:col-span-2' : ''}>
@@ -198,20 +191,15 @@ export default function BlogPage({
             )}
 
             {/* Latest / grid */}
-            <div className="space-y-6">
-              <div className="flex items-end justify-between gap-4">
-                <div>
-                  <p className="section-label mb-1">
-                    {debouncedQuery || selectedCategory ? 'Résultats' : 'Fil d’actualité'}
-                  </p>
-                  <h2 className="font-display text-xl sm:text-2xl text-stone-100 font-medium">
-                    {selectedCategory
-                      ? categories.find((c) => c.slug === selectedCategory)?.name || 'Catégorie'
-                      : debouncedQuery
-                        ? `« ${debouncedQuery} »`
-                        : 'Publications'}
-                  </h2>
-                </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <h2 className="font-display text-lg text-stone-100 font-medium">
+                  {selectedCategory
+                    ? categories.find((c) => c.slug === selectedCategory)?.name || 'Catégorie'
+                    : debouncedQuery
+                      ? `Résultats · « ${debouncedQuery} »`
+                      : 'Publications'}
+                </h2>
                 {(debouncedQuery || selectedCategory) && (
                   <button
                     type="button"
@@ -228,7 +216,7 @@ export default function BlogPage({
               </div>
 
               {gridArticles.length === 0 ? (
-                <div className="py-20 text-center space-y-3">
+                <div className="py-12 text-center space-y-2">
                   <p className="font-display text-xl text-stone-500">Aucun article trouvé</p>
                   <p className="text-sm text-stone-600 font-body">Essayez un autre mot-clé ou une autre catégorie.</p>
                 </div>

@@ -3,7 +3,7 @@ import { ArrowDown } from 'lucide-react';
 import { HOST_DETAILS } from '../data';
 import { motion, useAnimation } from 'framer-motion';
 
-const HERO_TITLE = 'Bany';
+const HERO_TITLE = 'BANY';
 const LETTER_STAGGER = 0.14;
 const ENTRANCE_DELAY = 0.1;
 
@@ -119,9 +119,9 @@ export default function Hero() {
       </div>
 
       {/* Title — Bany */}
-      <div className="relative z-10 flex items-center justify-center w-full px-4 sm:px-6">
-        <h1 className="hero-title hero-title-glow font-display font-black tracking-tight text-rose-500 text-center">
-          <span className="inline-flex justify-center" aria-label={HERO_TITLE}>
+      <div className="relative z-10 flex items-center justify-center w-full px-2 sm:px-4">
+        <h1 className="hero-title hero-title-glow font-display font-black tracking-tight text-rose-500 text-center w-full">
+          <span className="inline-flex justify-center scale-100" aria-label={HERO_TITLE}>
             {HERO_TITLE.split('').map((char, index) => (
               <AnimatedLetter key={`${char}-${index}`} char={char} index={index} />
             ))}

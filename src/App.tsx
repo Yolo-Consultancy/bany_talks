@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ArrowUp, Lock } from 'lucide-react';
+import { Menu, X, ArrowUp } from 'lucide-react';
 import { EPISODES } from './data';
 import logoBany from './assets/logos/logo_bany.png';
 import { NAV_ITEMS } from './data/navItems';
@@ -23,7 +23,6 @@ import HomeShowcase from './components/HomeShowcase';
 import BlogPage from './components/blog/BlogPage';
 import BlogDetail from './components/blog/BlogDetail';
 import BlogCategoryPage from './components/blog/BlogCategoryPage';
-import BlogAdmin from './components/blog/BlogAdmin';
 
 type AppView =
   | 'home'
@@ -33,14 +32,14 @@ type AppView =
   | 'invite'
   | 'blog'
   | 'blog-detail'
-  | 'blog-category'
-  | 'blog-admin';
+  | 'blog-category';
 
 function parseBlogHash(): { view: AppView; slug?: string } | null {
   const hash = window.location.hash.replace(/^#/, '');
   if (!hash.startsWith('/blog')) return null;
-  if (hash === '/blog' || hash === '/blog/') return { view: 'blog' };
-  if (hash === '/blog/admin') return { view: 'blog-admin' };
+  if (hash === '/blog' || hash === '/blog/' || hash === '/blog/admin' || hash.startsWith('/blog/admin/')) {
+    return { view: 'blog' };
+  }
   const categoryMatch = hash.match(/^\/blog\/category\/([^/]+)/);
   if (categoryMatch) return { view: 'blog-category', slug: decodeURIComponent(categoryMatch[1]) };
   const articleMatch = hash.match(/^\/blog\/([^/]+)/);
@@ -99,6 +98,11 @@ export default function App() {
 
   useEffect(() => {
     const onHashChange = () => {
+      const raw = window.location.hash.replace(/^#/, '');
+      if (raw === '/blog/admin' || raw.startsWith('/blog/admin/')) {
+        window.location.hash = '#/blog';
+        return;
+      }
       const parsed = parseBlogHash();
       if (!parsed) return;
       setCurrentView(parsed.view);
@@ -107,6 +111,13 @@ export default function App() {
     };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  useEffect(() => {
+    const raw = window.location.hash.replace(/^#/, '');
+    if (raw === '/blog/admin' || raw.startsWith('/blog/admin/')) {
+      window.location.hash = '#/blog';
+    }
   }, []);
 
   const setBlogHash = (path: string) => {
@@ -144,11 +155,6 @@ export default function App() {
     navigateToView('blog-category');
   };
 
-  const openBlogAdmin = () => {
-    setBlogHash('/blog/admin');
-    navigateToView('blog-admin');
-  };
-
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
     if (id === 'episodes-section') navigateToView('episodes');
@@ -173,14 +179,10 @@ export default function App() {
   const isBlogView =
     currentView === 'blog' ||
     currentView === 'blog-detail' ||
-    currentView === 'blog-category' ||
-    currentView === 'blog-admin';
-
-  const isAdminView = currentView === 'blog-admin';
+    currentView === 'blog-category';
 
   return (
     <div id="brand-layout-root" className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-body antialiased selection:bg-rose-500 selection:text-stone-950">
-      {!isAdminView && (
       <nav
         id="main-navigation"
         className={`fixed top-0 inset-x-0 z-40 transition-all duration-500 border-b ${
@@ -249,15 +251,6 @@ export default function App() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <button
-              type="button"
-              onClick={openBlogAdmin}
-              className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-200 py-2 px-3 transition cursor-pointer"
-              title="Connexion admin"
-            >
-              <Lock className="w-3.5 h-3.5" />
-              Admin
-            </button>
             <button onClick={() => scrollToSection('booking-section')} className="btn-primary text-xs py-2.5 px-5">
               Inviter Bany
             </button>
@@ -324,13 +317,6 @@ export default function App() {
                 >
                   Blog
                 </button>
-                <button
-                  onClick={() => openBlogAdmin()}
-                  className="flex w-full items-center gap-2 text-left py-3 border-b border-white/5 text-stone-500 hover:text-stone-300 transition"
-                >
-                  <Lock className="w-3.5 h-3.5" />
-                  Connexion admin
-                </button>
                 <div className="pt-4">
                   <button onClick={() => scrollToSection('booking-section')} className="w-full btn-primary justify-center text-xs">
                     Inviter Bany
@@ -341,9 +327,8 @@ export default function App() {
           )}
         </AnimatePresence>
       </nav>
-      )}
 
-      <main id="main-content-flow" className={`flex-1 ${isAdminView ? 'pt-0' : 'pt-16'}`}>
+      <main id="main-content-flow" className="flex-1 pt-16">
         <AnimatePresence mode="wait">
           {currentView === 'home' && (
             <motion.div
@@ -472,33 +457,19 @@ export default function App() {
               />
             </motion.div>
           )}
-
-          {currentView === 'blog-admin' && (
-            <motion.div
-              key="blog-admin"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.35 }}
-            >
-              <BlogAdmin onBack={openBlog} />
-            </motion.div>
-          )}
         </AnimatePresence>
       </main>
 
-      {!isAdminView && (
-        <Footer
-          onNavigate={(view) => {
-            if (view === 'booking') navigateToView('invite');
-            else if (view === 'blog') openBlog();
-            else navigateToView(view as AppView);
-          }}
-          activeView={isBlogView ? 'blog' : currentView}
-        />
-      )}
+      <Footer
+        onNavigate={(view) => {
+          if (view === 'booking') navigateToView('invite');
+          else if (view === 'blog') openBlog();
+          else navigateToView(view as AppView);
+        }}
+        activeView={isBlogView ? 'blog' : currentView}
+      />
 
-      {!isAdminView && showScrollTop && (
+      {showScrollTop && (
         <button
           onClick={jumpToTop}
           aria-label="Scroll back to top"

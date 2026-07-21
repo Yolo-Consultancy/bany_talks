@@ -89,79 +89,6 @@ export async function subscribeBlogNewsletter(email: string): Promise<{ success:
   });
 }
 
-export async function adminLogin(email: string, password: string): Promise<{ token: string; email: string }> {
-  return request('/api/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ email, password }),
-  });
-}
-
-export async function fetchAdminArticles(token: string): Promise<{ items: BlogArticle[] }> {
-  return request('/api/articles/admin/all', {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-}
-
-export async function createArticle(
-  token: string,
-  payload: Partial<BlogArticle> & { publishNow?: boolean }
-): Promise<BlogArticle> {
-  return request('/api/articles', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
-    body: JSON.stringify(payload),
-  });
-}
-
-export async function updateArticle(
-  token: string,
-  id: string,
-  payload: Partial<BlogArticle> & { publishNow?: boolean }
-): Promise<BlogArticle> {
-  return request(`/api/articles/${id}`, {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${token}` },
-    body: JSON.stringify(payload),
-  });
-}
-
-export async function deleteArticle(token: string, id: string): Promise<void> {
-  await request(`/api/articles/${id}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-}
-
-export async function createCategory(
-  token: string,
-  payload: { name: string; slug?: string; description?: string }
-): Promise<BlogCategory> {
-  return request('/api/categories', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
-    body: JSON.stringify(payload),
-  });
-}
-
-export async function updateCategory(
-  token: string,
-  id: string,
-  payload: { name?: string; slug?: string; description?: string }
-): Promise<BlogCategory> {
-  return request(`/api/categories/${id}`, {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${token}` },
-    body: JSON.stringify(payload),
-  });
-}
-
-export async function deleteCategory(token: string, id: string): Promise<void> {
-  await request(`/api/categories/${id}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-}
-
 export async function fetchComments(articleRef: string): Promise<{ items: import('../types').BlogComment[]; total: number }> {
   return request(`/api/comments/article/${encodeURIComponent(articleRef)}`);
 }
@@ -182,35 +109,6 @@ export async function likeComment(id: string): Promise<import('../types').BlogCo
 
 export async function unlikeComment(id: string): Promise<import('../types').BlogComment> {
   return request(`/api/comments/${id}/unlike`, { method: 'POST' });
-}
-
-export async function fetchAdminComments(token: string): Promise<{ items: import('../types').BlogComment[] }> {
-  return request('/api/comments/admin/all', {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-}
-
-export async function deleteComment(token: string, id: string): Promise<void> {
-  await request(`/api/comments/${id}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-}
-
-export async function uploadImage(token: string, file: File): Promise<string> {
-  const form = new FormData();
-  form.append('file', file);
-  const res = await fetch(`${API_BASE}/api/upload`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
-    body: form,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || 'Échec du téléversement');
-  }
-  const data = await res.json();
-  return mediaUrl(data.url);
 }
 
 export { mediaUrl };
@@ -261,3 +159,4 @@ export function applyArticleSeo(article: BlogArticle) {
   }
   canonical.href = url;
 }
+

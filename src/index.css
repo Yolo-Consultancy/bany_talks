@@ -233,9 +233,10 @@
 }
 
 .hero-title {
-  font-size: clamp(3.25rem, 16vw, 10.5rem);
-  line-height: 0.88;
-  letter-spacing: -0.04em;
+  font-size: clamp(6.5rem, 32vw, 22rem);
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
 }
 
 @keyframes heroTitleGlow {
