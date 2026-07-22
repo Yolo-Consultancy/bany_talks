@@ -13,6 +13,8 @@ import { loadPlaylistEpisodes, sortEpisodesByPublishDate } from './services/yout
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Hero from './components/Hero';
+import AboutHero from './components/AboutHero';
+import EpisodesHero from './components/EpisodesHero';
 import Stats from './components/Stats';
 import EpisodeGrid from './components/EpisodeGrid';
 import EpisodeDetail from './components/EpisodeDetail';
@@ -23,6 +25,7 @@ import HomeShowcase from './components/HomeShowcase';
 import BlogPage from './components/blog/BlogPage';
 import BlogDetail from './components/blog/BlogDetail';
 import BlogCategoryPage from './components/blog/BlogCategoryPage';
+import ContactPage from './components/ContactPage';
 
 type AppView =
   | 'home'
@@ -32,7 +35,8 @@ type AppView =
   | 'invite'
   | 'blog'
   | 'blog-detail'
-  | 'blog-category';
+  | 'blog-category'
+  | 'contact';
 
 function parseBlogHash(): { view: AppView; slug?: string } | null {
   const hash = window.location.hash.replace(/^#/, '');
@@ -161,6 +165,7 @@ export default function App() {
     else if (id === 'booking-section') navigateToView('invite');
     else if (id === 'blog-section' || id === 'audience-hub') openBlog();
     else if (id === 'about-bany') navigateToView('about');
+    else if (id === 'contact-section') navigateToView('contact');
     else navigateToView('home');
   };
 
@@ -213,17 +218,19 @@ export default function App() {
                   openBlog();
                   return;
                 }
-                if (['home', 'about', 'episodes', 'contact'].includes(link.value)) {
+                if (link.value === 'contact') {
+                  navigateToView('contact');
+                  return;
+                }
+                if (['home', 'about', 'episodes'].includes(link.value)) {
                   const sectionId =
-                    link.value === 'contact'
-                      ? 'contact-section'
-                      : link.value === 'home'
-                        ? 'hero-section'
-                        : link.value === 'about'
-                          ? 'about-bany'
-                          : link.value === 'episodes'
-                            ? 'episodes-section'
-                            : link.value;
+                    link.value === 'home'
+                      ? 'hero-section'
+                      : link.value === 'about'
+                        ? 'about-bany'
+                        : link.value === 'episodes'
+                          ? 'episodes-section'
+                          : link.value;
                   scrollToSection(sectionId);
                 } else {
                   navigateToView(link.value as AppView);
@@ -317,6 +324,14 @@ export default function App() {
                 >
                   Blog
                 </button>
+                <button
+                  onClick={() => navigateToView('contact')}
+                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
+                    currentView === 'contact' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
+                  }`}
+                >
+                  Contact
+                </button>
                 <div className="pt-4">
                   <button onClick={() => scrollToSection('booking-section')} className="w-full btn-primary justify-center text-xs">
                     Inviter Bany
@@ -356,6 +371,7 @@ export default function App() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35 }}
             >
+              <AboutHero />
               <Stats onInviteClick={() => navigateToView('invite')} />
             </motion.div>
           )}
@@ -368,6 +384,7 @@ export default function App() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35 }}
             >
+              <EpisodesHero episodes={episodes} />
               <EpisodeGrid
                 episodes={episodes}
                 onEpisodeClick={(ep) => {
@@ -457,6 +474,18 @@ export default function App() {
               />
             </motion.div>
           )}
+
+          {currentView === 'contact' && (
+            <motion.div
+              key="contact"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.35 }}
+            >
+              <ContactPage onInvite={() => navigateToView('invite')} />
+            </motion.div>
+          )}
         </AnimatePresence>
       </main>
 
@@ -464,6 +493,7 @@ export default function App() {
         onNavigate={(view) => {
           if (view === 'booking') navigateToView('invite');
           else if (view === 'blog') openBlog();
+          else if (view === 'contact') navigateToView('contact');
           else navigateToView(view as AppView);
         }}
         activeView={isBlogView ? 'blog' : currentView}

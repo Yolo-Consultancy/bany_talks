@@ -1,7 +1,7 @@
 import { Facebook } from 'lucide-react';
 import { Episode, Book } from './types';
 import bigo from './assets/images/bigo.png';
-import bigoAbout from './assets/images/bigo_about.jpg';
+import banyAbout from './assets/images/bigo_about.jpg';
 import guestFounder from './assets/images/guest_founder_1779362525327.png';
 import guestCreator from './assets/images/guest_creator_1779362546167.png';
 import guestExecutive from './assets/images/guest_executive_1779362567789.png';
@@ -14,10 +14,10 @@ export const HOST_DETAILS = {
   longBio: 'Bany est un entrepreneur congolais, stratège et fondateur du Yolo Group, avec une voix forte sur le business, l\'investissement et le développement en Afrique. Il est l\'hôte de Bany Talks, un podcast et programme télé dédié à des conversations locales, audacieuses et stratégiques pour l\'avenir du continent.',
   quote: 'La vraie valeur d’une histoire ne réside pas dans son point d’arrivée, mais dans la clarté des obstacles surmontés durant la transition.',
   avatar: bigo,
-  aboutpicture: bigoAbout,
+  aboutpicture: banyAbout,
   /** Vidéo hero en boucle — déposer le fichier dans public/ (ex. public/hero.mp4) */
   heroVideo: '/hero.mp4',
-  heroPoster: bigoAbout,
+  heroPoster: banyAbout,
   statistics: [
     { label: 'Auditeurs Mensuels', value: '450K+' },
     { label: 'Épisodes Sortis', value: '124' },

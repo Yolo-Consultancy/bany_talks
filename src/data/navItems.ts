@@ -10,4 +10,5 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'À Propos', value: 'about' },
   { label: 'Émissions', value: 'episodes' },
   { label: 'Blog', value: 'blog' },
+  { label: 'Contact', value: 'contact' },
 ];
