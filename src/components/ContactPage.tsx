@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Mail, ArrowRight, Send, Check, Youtube, Instagram, Radio, MessageCircle } from 'lucide-react';
 import { HOST_DETAILS } from '../data';
 import WhatsAppIcon from './WhatsAppIcon';
+import { sendContactMail } from '../services/contactMailService';
 
 const CONTACT_EMAIL = 'contact@banyofficial.com';
 const WHATSAPP_URL = 'https://wa.me/813622975';
@@ -16,18 +17,33 @@ export default function ContactPage({ onInvite }: ContactPageProps) {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const body = [
-      `Nom : ${name}`,
-      `Email : ${email}`,
-      '',
-      message,
-    ].join('\n');
-    const mailto = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject || 'Contact Bany Talks')}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
-    setSent(true);
+    setLoading(true);
+    setError(null);
+
+    try {
+      await sendContactMail({
+        type: 'contact',
+        name,
+        email,
+        subject,
+        message,
+      });
+      setSent(true);
+      setName('');
+      setEmail('');
+      setSubject('');
+      setMessage('');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -54,13 +70,13 @@ export default function ContactPage({ onInvite }: ContactPageProps) {
                 <div className="w-10 h-10 rounded-full bg-rose-500/15 flex items-center justify-center">
                   <Check className="w-5 h-5 text-rose-500" />
                 </div>
-                <p className="font-display text-lg text-stone-100">Votre client mail s’ouvre…</p>
+                <p className="font-display text-lg text-stone-100">Message envoyé</p>
                 <p className="text-sm text-stone-500 font-body leading-relaxed">
-                  Si rien ne s’affiche, écrivez directement à{' '}
+                  Merci. Votre message a bien été transmis à{' '}
                   <a href={`mailto:${CONTACT_EMAIL}`} className="text-rose-400 hover:text-rose-300">
                     {CONTACT_EMAIL}
                   </a>
-                  .
+                  . L’équipe vous répond sous peu.
                 </p>
                 <button
                   type="button"
@@ -116,9 +132,16 @@ export default function ContactPage({ onInvite }: ContactPageProps) {
                     placeholder="Votre message…"
                   />
                 </label>
-                <button type="submit" className="btn-primary text-xs">
-                  <Send className="w-3.5 h-3.5" />
-                  Envoyer
+
+                {error && <p className="text-sm text-rose-400 font-body">{error}</p>}
+
+                <button type="submit" disabled={loading} className="btn-primary text-xs">
+                  {loading ? (
+                    <span className="w-3.5 h-3.5 rounded-full border-2 border-stone-950 border-t-transparent animate-spin" />
+                  ) : (
+                    <Send className="w-3.5 h-3.5" />
+                  )}
+                  {loading ? 'Envoi…' : 'Envoyer'}
                 </button>
               </form>
             )}

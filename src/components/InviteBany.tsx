@@ -6,6 +6,7 @@ import { SpeakerRequest } from '../types';
 import { initAuth, googleSignIn, logout } from '../firebaseAuth';
 import { createNewSpreadsheet, getFirstSheetTitle, appendRowToSheet, extractSpreadsheetId } from '../sheetsService';
 import { User as FirebaseUser } from 'firebase/auth';
+import { sendContactMail } from '../services/contactMailService';
 
 const inputClass =
   'w-full px-0 py-3 bg-transparent border-b border-white/10 focus:border-rose-500/60 text-stone-200 placeholder-stone-600 focus:outline-none transition text-sm font-body';
@@ -340,18 +341,22 @@ export default function InviteBany() {
     localStorage.setItem('bany_speaker_requests', JSON.stringify(list));
 
     try {
-      const response = await fetch('https://formspree.io/f/xykvdqnd', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(liveBooking),
+      await sendContactMail({
+        type: 'invite',
+        name: liveBooking.name,
+        email: liveBooking.email,
+        company: liveBooking.company,
+        eventType: liveBooking.eventType,
+        date: liveBooking.date,
+        formule: budgetDisplay(liveBooking.budgetRange),
+        message: liveBooking.message,
       });
-      if (!response.ok) {
-        throw new Error(`Formspree responded with ${response.status}`);
-      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
-      console.error('Formspree submission failed:', err);
+      console.error('Contact mail submission failed:', err);
       setSheetsError(`Échec d'envoi : ${message}`);
+      setLoading(false);
+      return;
     }
 
     if (spreadsheetId && accessToken) {
