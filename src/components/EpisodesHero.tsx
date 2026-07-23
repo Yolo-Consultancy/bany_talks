@@ -3,7 +3,7 @@ import { ArrowDown } from 'lucide-react';
 import { motion, useAnimation } from 'framer-motion';
 import { Episode } from '../types';
 
-const HERO_TITLE = 'LIVE';
+const HERO_TITLE = 'BTX';
 const LETTER_STAGGER = 0.12;
 const ENTRANCE_DELAY = 0.2;
 const MIN_TILES = 36;
@@ -115,7 +115,7 @@ export default function EpisodesHero({ episodes }: EpisodesHeroProps) {
         />
       </div>
 
-      <div className="relative z-10 flex items-center justify-center w-full px-2 sm:px-4">
+      <div className="relative z-10 flex flex-col items-center justify-center w-full px-2 sm:px-4 gap-3 sm:gap-4">
         <h1 className="hero-title hero-title-glow font-display font-black tracking-tight text-rose-500 text-center w-full">
           <span className="inline-flex justify-center" aria-label={HERO_TITLE}>
             {HERO_TITLE.split('').map((char, index) => (
@@ -123,6 +123,9 @@ export default function EpisodesHero({ episodes }: EpisodesHeroProps) {
             ))}
           </span>
         </h1>
+        <p className="font-display text-sm sm:text-base md:text-lg tracking-[0.35em] uppercase text-stone-200/90">
+          Live
+        </p>
       </div>
 
       <div className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-stone-500">

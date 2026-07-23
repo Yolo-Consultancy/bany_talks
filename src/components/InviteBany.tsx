@@ -40,7 +40,7 @@ export default function InviteBany() {
     email: '',
     eventType: FREQUENT_EVENT_TYPES[0],
     date: '',
-    budgetRange: '3000-5000',
+    budgetRange: 'standard',
     message: '',
   });
 
@@ -179,20 +179,29 @@ export default function InviteBany() {
   };
 
   const calculatePackage = (budget: string) => {
-    if (budget === 'under-3000') {
+    if (budget === 'essentiel' || budget === 'under-3000') {
       return {
-        tier: 'Bronze Spark',
+        tier: 'Essentiel',
         features: [
           "Séance d'interview de 30 min",
           "Intégration logo d'entreprise",
           'Diffusion sur les réseaux sociaux',
         ],
         estHours: '1–2 heures',
+        accent: {
+          text: 'text-stone-300',
+          textMuted: 'text-stone-500',
+          border: 'border-stone-500',
+          borderSoft: 'border-stone-500/45',
+          icon: 'text-stone-400',
+          label: 'text-stone-500',
+          underline: 'border-stone-400',
+        },
       };
     }
-    if (budget === '3000-5000') {
+    if (budget === 'standard' || budget === '3000-5000') {
       return {
-        tier: 'Silver Momentum',
+        tier: 'Standard',
         features: [
           'Conférence Keynote de 45 min',
           'Table ronde interactive de 30 min',
@@ -200,10 +209,19 @@ export default function InviteBany() {
           'Pack photos professionnelles',
         ],
         estHours: '3–4 heures',
+        accent: {
+          text: 'text-rose-400',
+          textMuted: 'text-rose-400/70',
+          border: 'border-rose-500',
+          borderSoft: 'border-rose-500/45',
+          icon: 'text-rose-500/80',
+          label: 'text-rose-400/80',
+          underline: 'border-rose-500',
+        },
       };
     }
     return {
-      tier: 'Gold Sovereign Elite',
+      tier: 'Premium',
       features: [
         'Animation exclusive demi-journée',
         'Interview enregistrée au studio Bany Talks',
@@ -211,10 +229,87 @@ export default function InviteBany() {
         'Newsletter dédiée (40K abonnés)',
       ],
       estHours: '6+ heures',
+      accent: {
+        text: 'text-rose-300',
+        textMuted: 'text-rose-300/70',
+        border: 'border-rose-300',
+        borderSoft: 'border-rose-300/50',
+        icon: 'text-rose-300',
+        label: 'text-rose-300/90',
+        underline: 'border-rose-300',
+      },
     };
   };
 
   const currentPackage = calculatePackage(formData.budgetRange);
+  const accent = currentPackage.accent;
+
+  const FORMULA_OPTIONS = [
+    {
+      value: 'essentiel',
+      label: 'Essentiel',
+      bg: 'bg-white/[0.06]',
+      bgActive: 'bg-stone-200',
+      text: 'text-stone-400',
+      textActive: 'text-stone-950',
+      border: 'border-white/10',
+      borderActive: 'border-stone-200',
+    },
+    {
+      value: 'standard',
+      label: 'Standard',
+      bg: 'bg-rose-500/15',
+      bgActive: 'bg-rose-500',
+      text: 'text-rose-400/80',
+      textActive: 'text-stone-950',
+      border: 'border-rose-500/25',
+      borderActive: 'border-rose-500',
+    },
+    {
+      value: 'premium',
+      label: 'Premium',
+      bg: 'bg-rose-300/15',
+      bgActive: 'bg-rose-300',
+      text: 'text-rose-300/90',
+      textActive: 'text-stone-950',
+      border: 'border-rose-300/25',
+      borderActive: 'border-rose-300',
+    },
+  ] as const;
+
+  const packagePanelBg =
+    formData.budgetRange === 'essentiel' || formData.budgetRange === 'under-3000'
+      ? 'bg-white/[0.04] border-white/10'
+      : formData.budgetRange === 'standard' || formData.budgetRange === '3000-5000'
+        ? 'bg-rose-500/10 border-rose-500/25'
+        : 'bg-rose-300/10 border-rose-300/25';
+
+  const packageDetails = (
+    <div
+      className={`border ${packagePanelBg} border-l-4 ${accent.border} p-5 sm:p-6 space-y-5 sm:space-y-6 transition-colors duration-300`}
+    >
+      <div>
+        <p className={`text-[0.6rem] font-display font-semibold tracking-[0.18em] uppercase mb-3 ${accent.label}`}>
+          Formule sélectionnée
+        </p>
+        <h3 className={`font-display text-xl sm:text-2xl font-medium ${accent.text}`}>
+          {currentPackage.tier}
+        </h3>
+        <p className={`text-sm font-body mt-2 ${accent.textMuted}`}>
+          Durée conseillée : {currentPackage.estHours}
+        </p>
+      </div>
+
+      <ul className="space-y-3">
+        {currentPackage.features.map((feat, idx) => (
+          <li key={idx} className="flex gap-3 text-sm text-stone-400 font-body">
+            <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${accent.icon}`} strokeWidth={1.5} />
+            {feat}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -269,7 +364,6 @@ export default function InviteBany() {
           liveBooking.eventType,
           liveBooking.date,
           budgetDisplay(liveBooking.budgetRange),
-          currentPackage.tier,
           liveBooking.message || 'Aucun message',
           new Date().toISOString(),
         ];
@@ -289,10 +383,17 @@ export default function InviteBany() {
 
   const budgetDisplay = (val: string) => {
     switch (val) {
-      case 'under-3000': return 'Moins de 3 000 €';
-      case '3000-5000': return '3 000 € – 5 000 €';
-      case 'above-5000': return 'Plus de 5 000 €';
-      default: return 'Non défini';
+      case 'essentiel':
+      case 'under-3000':
+        return 'Essentiel';
+      case 'standard':
+      case '3000-5000':
+        return 'Standard';
+      case 'premium':
+      case 'above-5000':
+        return 'Premium';
+      default:
+        return 'Non défini';
     }
   };
 
@@ -304,7 +405,7 @@ export default function InviteBany() {
       email: '',
       eventType: FREQUENT_EVENT_TYPES[0],
       date: '',
-      budgetRange: '3000-5000',
+      budgetRange: 'standard',
       message: '',
     });
   };
@@ -332,7 +433,7 @@ export default function InviteBany() {
         </div>
 
         {submitted && bookingSummary ? (
-          <div className="max-w-xl mx-auto border border-white/8 p-10 space-y-8 animate-fade-in-up text-center">
+          <div className="max-w-xl mx-auto border border-white/8 p-6 sm:p-10 space-y-8 animate-fade-in-up text-center">
             <CheckCircle2 className="w-10 h-10 text-rose-500 mx-auto" strokeWidth={1.5} />
             <div className="space-y-3">
               <h3 className="font-display text-2xl text-stone-100 font-medium">
@@ -349,8 +450,7 @@ export default function InviteBany() {
                 ['Organisme', bookingSummary.company],
                 ['Type', bookingSummary.eventType],
                 ['Date', bookingSummary.date],
-                ['Budget', budgetDisplay(bookingSummary.budgetRange)],
-                ['Formule', currentPackage.tier],
+                ['Formule', budgetDisplay(bookingSummary.budgetRange)],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between gap-4">
                   <span className="text-stone-600">{label}</span>
@@ -445,32 +545,39 @@ export default function InviteBany() {
               </div>
 
               <div>
-                <FormLabel required>Enveloppe budgétaire</FormLabel>
-                <div className="flex flex-col sm:flex-row gap-0 border-b border-white/10">
-                  {[
-                    { value: 'under-3000', label: '< 3 000 €' },
-                    { value: '3000-5000', label: '3k – 5k €' },
-                    { value: 'above-5000', label: '> 5 000 €' },
-                  ].map((elem) => (
-                    <label
-                      key={elem.value}
-                      className={`flex-1 py-3 text-sm font-body text-center cursor-pointer border-b-2 -mb-px transition ${
-                        formData.budgetRange === elem.value
-                          ? 'text-stone-100 border-rose-500'
-                          : 'text-stone-600 border-transparent hover:text-stone-400'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="budgetRange"
-                        value={elem.value}
-                        checked={formData.budgetRange === elem.value}
-                        onChange={handleInputChange}
-                        className="sr-only"
-                      />
-                      {elem.label}
-                    </label>
-                  ))}
+                <FormLabel required>Formule</FormLabel>
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                  {FORMULA_OPTIONS.map((elem) => {
+                    const active = formData.budgetRange === elem.value;
+                    return (
+                      <label
+                        key={elem.value}
+                        className={`flex items-center justify-center py-3 sm:py-3.5 px-1 sm:px-2 text-xs sm:text-sm font-body font-medium text-center cursor-pointer border transition duration-200 ${
+                          active
+                            ? `${elem.bgActive} ${elem.textActive} ${elem.borderActive}`
+                            : `${elem.bg} ${elem.text} ${elem.border} hover:brightness-110`
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="budgetRange"
+                          value={elem.value}
+                          checked={active}
+                          onChange={handleInputChange}
+                          className="sr-only"
+                        />
+                        {elem.label}
+                      </label>
+                    );
+                  })}
+                </div>
+
+                {/* Mobile: détails visibles juste sous le choix */}
+                <div
+                  key={formData.budgetRange}
+                  className="lg:hidden mt-6 animate-fade-in-up"
+                >
+                  {packageDetails}
                 </div>
               </div>
 
@@ -503,30 +610,11 @@ export default function InviteBany() {
               </button>
             </form>
 
-            {/* Package sidebar */}
+            {/* Package sidebar — desktop */}
             <aside className="lg:col-span-5 lg:sticky lg:top-32 space-y-10">
-              <div className="border-l-2 border-rose-500/40 pl-8 space-y-6">
-                <div>
-                  <p className="section-label text-[0.6rem] mb-3">Formule recommandée</p>
-                  <h3 className="font-display text-2xl text-stone-100 font-medium">
-                    {currentPackage.tier}
-                  </h3>
-                  <p className="text-sm text-stone-600 font-body mt-2">
-                    Durée conseillée : {currentPackage.estHours}
-                  </p>
-                </div>
+              <div className="hidden lg:block">{packageDetails}</div>
 
-                <ul className="space-y-3">
-                  {currentPackage.features.map((feat, idx) => (
-                    <li key={idx} className="flex gap-3 text-sm text-stone-400 font-body">
-                      <CheckCircle2 className="w-4 h-4 text-rose-500/70 shrink-0 mt-0.5" strokeWidth={1.5} />
-                      {feat}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <hr className="editorial-rule" />
+              <hr className="editorial-rule hidden lg:block" />
 
               <div className="space-y-5">
                 <p className="section-label text-[0.6rem]">Contact direct</p>

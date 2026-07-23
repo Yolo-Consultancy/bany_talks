@@ -19,6 +19,7 @@ import Stats from './components/Stats';
 import EpisodeGrid from './components/EpisodeGrid';
 import EpisodeDetail from './components/EpisodeDetail';
 import InviteBany from './components/InviteBany';
+import InviteHero from './components/InviteHero';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
 import HomeShowcase from './components/HomeShowcase';
@@ -422,6 +423,7 @@ export default function App() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35 }}
             >
+              <InviteHero />
               <InviteBany />
             </motion.div>
           )}

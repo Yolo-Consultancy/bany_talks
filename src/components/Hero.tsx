@@ -1,65 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowDown } from 'lucide-react';
 import { HOST_DETAILS } from '../data';
-import { motion, useAnimation } from 'framer-motion';
-
-const HERO_TITLE = 'BANY';
-const LETTER_STAGGER = 0.14;
-const ENTRANCE_DELAY = 0.1;
-
-function AnimatedLetter({ char, index }: { char: string; index: number }) {
-  const controls = useAnimation();
-  const letterDelay = index * LETTER_STAGGER + ENTRANCE_DELAY;
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const run = async () => {
-      await new Promise((resolve) => window.setTimeout(resolve, letterDelay * 1000));
-      if (cancelled) return;
-
-      await controls.start({
-        opacity: 1,
-        y: 0,
-        filter: 'blur(0px)',
-        scale: 1,
-        transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] },
-      });
-      if (cancelled) return;
-
-      controls.start({
-        y: [0, -14, 0, 8, 0],
-        scale: [1, 1.07, 1, 0.97, 1],
-        transition: {
-          duration: 3.2,
-          repeat: Infinity,
-          ease: 'easeInOut',
-          times: [0, 0.25, 0.5, 0.75, 1],
-        },
-      });
-    };
-
-    run();
-    return () => {
-      cancelled = true;
-    };
-  }, [controls, letterDelay]);
-
-  return (
-    <motion.span
-      className="inline-block hero-letter"
-      initial={{
-        opacity: 0,
-        y: 56,
-        filter: 'blur(12px)',
-        scale: 0.8,
-      }}
-      animate={controls}
-    >
-      {char}
-    </motion.span>
-  );
-}
+import BanyTypewriterTitle from './BanyTypewriterTitle';
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -85,7 +27,6 @@ export default function Hero() {
       id="hero-section"
       className="relative -mt-16 min-h-[100svh] flex flex-col items-center justify-center overflow-hidden bg-stone-950"
     >
-      {/* Background video or poster fallback */}
       <div className="absolute inset-0 z-0">
         {!showPoster && (
           <video
@@ -118,18 +59,10 @@ export default function Hero() {
         <div className="absolute inset-0 bg-stone-950/20" aria-hidden />
       </div>
 
-      {/* Title — Bany */}
       <div className="relative z-10 flex items-center justify-center w-full px-2 sm:px-4">
-        <h1 className="hero-title hero-title-glow font-display font-black tracking-tight text-rose-500 text-center w-full">
-          <span className="inline-flex justify-center scale-100" aria-label={HERO_TITLE}>
-            {HERO_TITLE.split('').map((char, index) => (
-              <AnimatedLetter key={`${char}-${index}`} char={char} index={index} />
-            ))}
-          </span>
-        </h1>
+        <BanyTypewriterTitle />
       </div>
 
-      {/* Scroll cue */}
       <div className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-stone-500">
         <span className="text-[10px] tracking-[0.2em] uppercase font-body">Scroll</span>
         <div className="w-px h-8 bg-stone-600 scroll-indicator" />
