@@ -1,3 +1,5 @@
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 export type ContactMailPayload =
   | {
       type: 'contact';
@@ -18,7 +20,7 @@ export type ContactMailPayload =
     };
 
 export async function sendContactMail(payload: ContactMailPayload): Promise<void> {
-  const res = await fetch('/api/contact', {
+  const res = await fetch(`${API_BASE}/api/contact`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
