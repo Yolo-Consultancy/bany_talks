@@ -27,6 +27,7 @@ import BlogPage from './components/blog/BlogPage';
 import BlogDetail from './components/blog/BlogDetail';
 import BlogCategoryPage from './components/blog/BlogCategoryPage';
 import ContactPage from './components/ContactPage';
+import NewsletterUnsubscribe from './components/NewsletterUnsubscribe';
 
 type AppView =
   | 'home'
@@ -37,7 +38,16 @@ type AppView =
   | 'blog'
   | 'blog-detail'
   | 'blog-category'
-  | 'contact';
+  | 'contact'
+  | 'newsletter-unsubscribe';
+
+function parseNewsletterUnsubHash(): { view: 'newsletter-unsubscribe'; token: string | null } | null {
+  const hash = window.location.hash.replace(/^#/, '');
+  if (!hash.startsWith('/newsletter/unsubscribe')) return null;
+  const query = hash.includes('?') ? hash.slice(hash.indexOf('?') + 1) : '';
+  const token = new URLSearchParams(query).get('token');
+  return { view: 'newsletter-unsubscribe', token };
+}
 
 function parseBlogHash(): { view: AppView; slug?: string } | null {
   const hash = window.location.hash.replace(/^#/, '');
@@ -55,13 +65,19 @@ function parseBlogHash(): { view: AppView; slug?: string } | null {
 }
 
 export default function App() {
+  const initialUnsub = typeof window !== 'undefined' ? parseNewsletterUnsubHash() : null;
   const initialHash = typeof window !== 'undefined' ? parseBlogHash() : null;
-  const [currentView, setCurrentView] = useState<AppView>(initialHash?.view || 'home');
+  const [currentView, setCurrentView] = useState<AppView>(
+    initialUnsub?.view || initialHash?.view || 'home'
+  );
   const [episodes, setEpisodes] = useState<Episode[]>(EPISODES);
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
   const [blogSlug, setBlogSlug] = useState<string | null>(initialHash?.view === 'blog-detail' ? initialHash.slug || null : null);
   const [blogCategorySlug, setBlogCategorySlug] = useState<string | null>(
     initialHash?.view === 'blog-category' ? initialHash.slug || null : null
+  );
+  const [newsletterUnsubToken, setNewsletterUnsubToken] = useState<string | null>(
+    initialUnsub?.token || null
   );
 
   useEffect(() => {
@@ -106,6 +122,12 @@ export default function App() {
       const raw = window.location.hash.replace(/^#/, '');
       if (raw === '/blog/admin' || raw.startsWith('/blog/admin/')) {
         window.location.hash = '#/blog';
+        return;
+      }
+      const unsub = parseNewsletterUnsubHash();
+      if (unsub) {
+        setNewsletterUnsubToken(unsub.token);
+        setCurrentView('newsletter-unsubscribe');
         return;
       }
       const parsed = parseBlogHash();
@@ -486,6 +508,24 @@ export default function App() {
               transition={{ duration: 0.35 }}
             >
               <ContactPage onInvite={() => navigateToView('invite')} />
+            </motion.div>
+          )}
+
+          {currentView === 'newsletter-unsubscribe' && (
+            <motion.div
+              key="newsletter-unsubscribe"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.35 }}
+            >
+              <NewsletterUnsubscribe
+                token={newsletterUnsubToken}
+                onHome={() => {
+                  window.location.hash = '';
+                  navigateToView('home');
+                }}
+              />
             </motion.div>
           )}
         </AnimatePresence>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, ArrowRight, CheckCircle2, Youtube, Library, Radio, Send, FileText, Download, Sparkles, AlertCircle } from 'lucide-react';
+import { Mail, ArrowRight, CheckCircle2, Youtube, Library, Radio, AlertCircle } from 'lucide-react';
 import { subscribeToNewsletter } from '../services/mailchimpService';
 
 export default function Newsletter() {
@@ -35,7 +35,6 @@ export default function Newsletter() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-
           <div className="lg:col-span-7 space-y-8">
             <div className="space-y-4">
               <p className="section-label">Newsletter</p>
@@ -43,64 +42,22 @@ export default function Newsletter() {
                 Restez informé des prochains épisodes
               </h2>
               <p className="text-stone-500 font-body leading-relaxed max-w-lg">
-                Synthèses d'épisodes, ressources exclusives de nos invités et invitations aux enregistrements studio à Kinshasa.
+                Synthèses d&apos;épisodes, ressources exclusives de nos invités et invitations aux
+                enregistrements studio à Kinshasa. Vous serez notifié par email à chaque nouveauté.
               </p>
             </div>
 
             {isSubscribed ? (
-              /* Success State with Gated Resource Download panel */
-              <div className="p-8 border border-white/8 space-y-4 animate-fade-in-up">
+              <div className="p-8 border border-white/8 space-y-4 animate-fade-in-up max-w-lg">
                 <div className="flex items-center gap-2 text-emerald-500 text-sm font-body">
                   <CheckCircle2 className="w-5 h-5" /> Inscription confirmée
                 </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-stone-205 uppercase tracking-wide">Espace de téléchargement débloqué :</h4>
-                  <p className="text-xs text-stone-400 font-sans leading-relaxed">
-                    Félicitations pour votre engagement. Voici la synthèse premium débloquée par notre communauté.
-                  </p>
-                </div>
-
-                {/* Download links */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                  <a
-                    href="#download"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert("Téléchargement du plan d'action de l'épisode 124 démarré !");
-                    }}
-                    className="flex items-center justify-between p-3.5 bg-stone-900 border border-stone-800 rounded-xl hover:border-rose-500 hover:text-rose-400 transition text-stone-200"
-                  >
-                    <div className="flex items-center gap-2 overflow-hidden">
-                      <FileText className="w-4 h-4 text-rose-500 shrink-0" />
-                      <div className="text-left font-mono truncate w-36">
-                        <span className="text-xs font-bold block">Plan_Action_Bloomflow.pdf</span>
-                        <span className="text-[10px] text-stone-500">1.2 MB • PDF</span>
-                      </div>
-                    </div>
-                    <Download className="w-4 h-4 shrink-0 text-stone-500" />
-                  </a>
-
-                  <a
-                    href="#download"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert("Téléchargement de la checklist de négociation d'Antoine Dupont démarré !");
-                    }}
-                    className="flex items-center justify-between p-3.5 bg-stone-900 border border-stone-800 rounded-xl hover:border-rose-500 hover:text-rose-400 transition text-stone-200"
-                  >
-                    <div className="flex items-center gap-2 overflow-hidden">
-                      <FileText className="w-4 h-4 text-rose-500 shrink-0" />
-                      <div className="text-left font-mono truncate w-36">
-                        <span className="text-xs font-bold block">Checklist_Negociation.pdf</span>
-                        <span className="text-[10px] text-stone-500">840 KB • PDF</span>
-                      </div>
-                    </div>
-                    <Download className="w-4 h-4 shrink-0 text-stone-500" />
-                  </a>
-                </div>
+                <p className="text-sm text-stone-400 font-body leading-relaxed">
+                  Merci. Vous recevrez un email dès qu’un nouvel article est publié, et pour les
+                  annonces (épisodes, studio, ressources).
+                </p>
               </div>
             ) : (
-              /* Input Form */
               <form onSubmit={handleSubscribe} className="space-y-4 max-w-lg">
                 <div className="flex flex-col sm:flex-row gap-0 border-b border-white/15 focus-within:border-rose-500/50 transition">
                   <div className="relative flex-1">
@@ -123,27 +80,26 @@ export default function Newsletter() {
                     {loading ? (
                       <span className="w-4 h-4 rounded-full border-2 border-stone-950 border-t-transparent animate-spin" />
                     ) : (
-                      <>S'abonner <ArrowRight className="w-3.5 h-3.5" /></>
+                      <>
+                        S&apos;abonner <ArrowRight className="w-3.5 h-3.5" />
+                      </>
                     )}
                   </button>
                 </div>
-                
+
                 {error && (
                   <div className="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-mono animate-fade-in-up">
                     <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold">Erreur lors de l'inscription</p>
+                      <p className="font-bold">Erreur lors de l&apos;inscription</p>
                       <p className="text-red-300 mt-1">{error}</p>
                     </div>
                   </div>
                 )}
-                
-                <p className="text-xs text-stone-600 font-body">
-                  Pas de spam. Désabonnement en un clic.
-                </p>
+
+                <p className="text-xs text-stone-600 font-body">Pas de spam. Désabonnement en un clic.</p>
               </form>
             )}
-
           </div>
 
           <div className="lg:col-span-5 space-y-6 lg:pt-12">
@@ -162,7 +118,6 @@ export default function Newsletter() {
               </div>
             ))}
           </div>
-
         </div>
       </div>
     </section>
