@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Mail, ArrowRight, Send, Check, Youtube, Instagram, Radio, MessageCircle } from 'lucide-react';
+import { Mail, ArrowRight, Send, Check } from 'lucide-react';
 import { HOST_DETAILS } from '../data';
 import WhatsAppIcon from './WhatsAppIcon';
+import SocialLinks from './SocialLinks';
 import { sendContactMail } from '../services/contactMailService';
 
 const CONTACT_EMAIL = 'contact@banyofficial.com';
-const WHATSAPP_URL = 'https://wa.me/813622975';
+const WHATSAPP_URL = HOST_DETAILS.socialLinks.whatsapp;
 
 interface ContactPageProps {
   onInvite?: () => void;
@@ -185,25 +186,7 @@ export default function ContactPage({ onInvite }: ContactPageProps) {
 
             <div className="space-y-4">
               <p className="section-label text-[0.6rem]">Réseaux</p>
-              <div className="flex items-center gap-4">
-                {[
-                  { href: HOST_DETAILS.socialLinks.youtube, icon: Youtube, label: 'YouTube' },
-                  { href: HOST_DETAILS.socialLinks.spotify, icon: Radio, label: 'Spotify' },
-                  { href: HOST_DETAILS.socialLinks.instagram, icon: Instagram, label: 'Instagram' },
-                  { href: HOST_DETAILS.socialLinks.whatsapp, icon: MessageCircle, label: 'WhatsApp' },
-                ].map(({ href, icon: Icon, label }) => (
-                  <a
-                    key={label}
-                    href={href.startsWith('http') ? href : `https://${href}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={label}
-                    className="text-stone-600 hover:text-rose-400 transition"
-                  >
-                    <Icon className="w-5 h-5" strokeWidth={1.5} />
-                  </a>
-                ))}
-              </div>
+              <SocialLinks size="md" />
             </div>
 
             {onInvite && (

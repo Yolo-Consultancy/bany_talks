@@ -8,7 +8,7 @@ export type NavItem = {
 export const NAV_ITEMS: NavItem[] = [
   { label: 'Accueil', value: 'home' },
   { label: 'À Propos', value: 'about' },
-  { label: 'Émissions', value: 'episodes' },
+  { label: 'Btx', value: 'episodes' },
   { label: 'Blog', value: 'blog' },
   { label: 'Contact', value: 'contact' },
 ];

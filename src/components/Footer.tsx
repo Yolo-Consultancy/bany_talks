@@ -1,7 +1,7 @@
 import React from 'react';
 import { HOST_DETAILS } from '../data';
 import { NAV_ITEMS } from '../data/navItems';
-import { Youtube, Instagram, Radio, MessageCircle } from 'lucide-react';
+import SocialLinks from './SocialLinks';
 import logoBany from '../assets/logos/logo_bany.png';
 
 interface FooterProps {
@@ -22,25 +22,7 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
             <p className="text-sm text-stone-500 font-body leading-relaxed max-w-sm">
               Des conversations vraies avec ceux qui construisent l'Afrique. Podcast, émissions et média indépendant.
             </p>
-            <div className="flex items-center gap-4">
-              {[
-                { href: HOST_DETAILS.socialLinks.youtube, icon: Youtube, label: 'YouTube' },
-                { href: HOST_DETAILS.socialLinks.spotify, icon: Radio, label: 'Spotify' },
-                { href: HOST_DETAILS.socialLinks.instagram, icon: Instagram, label: 'Instagram' },
-                { href: HOST_DETAILS.socialLinks.whatsapp, icon: MessageCircle, label: 'WhatsApp' },
-              ].map(({ href, icon: Icon, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={label}
-                  className="text-stone-600 hover:text-rose-400 transition"
-                >
-                  <Icon className="w-4 h-4" strokeWidth={1.5} />
-                </a>
-              ))}
-            </div>
+            <SocialLinks size="sm" />
           </div>
 
           <div className="md:col-span-3 space-y-4">

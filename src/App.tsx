@@ -337,7 +337,7 @@ export default function App() {
                       : 'text-stone-500 hover:text-stone-300'
                   }`}
                 >
-                  Émissions
+                  Btx
                 </button>
                 <button
                   onClick={() => openBlog()}

@@ -1,4 +1,3 @@
-import { Facebook } from 'lucide-react';
 import { Episode, Book } from './types';
 import bigo from './assets/images/bigo.png';
 import banyAbout from './assets/images/bigo_about.jpg';
@@ -26,11 +25,10 @@ export const HOST_DETAILS = {
   ],
   socialLinks: {
     youtube: 'https://youtube.com/@banybanyabo',
-    spotify: 'https://spotify.com',
-    apple: 'https://podcasts.apple.com',
-    instagram: 'www.instagram.com/banyofficial',
-    tiktok: 'https://tiktok.com',
-    whatsapp: 'https://wa.me/1234567890',
+    instagram: 'https://www.instagram.com/banyofficial',
+    linkedin: 'https://www.linkedin.com/in/bigomokero-banyabo?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
+    tiktok: 'https://www.tiktok.com/@bany_officiel?_r=1&_t=ZS-98POYe9ZAKQ',
+    whatsapp: 'https://wa.me/813622975',
   }
 };
 
