@@ -186,10 +186,16 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
           </div>
         )}
 
-        <div className="flex flex-wrap items-center gap-5 text-sm text-stone-500 font-body mb-12">
-          <span className="inline-flex items-center gap-2">
-            <User className="w-4 h-4" />
-            {article.author}
+        <div className="flex flex-wrap items-start gap-5 text-sm text-stone-500 font-body mb-12">
+          <span className="inline-flex items-start gap-2 max-w-xl">
+            <User className="w-4 h-4 mt-0.5 shrink-0" />
+            <span>
+              <span className="block text-stone-200 font-medium">{article.author}</span>
+              <span className="block text-xs text-stone-500 mt-0.5 leading-snug">
+                {article.authorTitle ||
+                  'Founder & CEO – Yolo Group | Honorary Doctor (Entrepreneurship & Host of Bany Talks)'}
+              </span>
+            </span>
           </span>
           <span className="inline-flex items-center gap-2">
             <Clock className="w-4 h-4" />

@@ -1,13 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { HOST_DETAILS, TIMELINE_MILESTONES } from '../data';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { fetchSiteStatistics, type SiteStatistic } from '../services/siteContentService';
 
 interface StatsProps {
   onInviteClick?: () => void;
 }
 
 export default function Stats({ onInviteClick }: StatsProps) {
+  const [statistics, setStatistics] = useState<SiteStatistic[]>(HOST_DETAILS.statistics);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchSiteStatistics()
+      .then((stats) => {
+        if (!cancelled && stats.length > 0) setStatistics(stats);
+      })
+      .catch(() => {
+        /* keep static fallback */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <section id="about-bany" className="bg-stone-950 py-20 lg:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,8 +81,8 @@ export default function Stats({ onInviteClick }: StatsProps) {
             <div>
               <p className="section-label mb-4">Chiffres clés</p>
               <div className="grid grid-cols-2 gap-8">
-                {HOST_DETAILS.statistics.map((stat, idx) => (
-                  <div key={idx} className="space-y-1">
+                {statistics.map((stat, idx) => (
+                  <div key={`${stat.label}-${idx}`} className="space-y-1">
                     <span className="block font-display text-4xl sm:text-5xl text-rose-400 font-medium">
                       {stat.value}
                     </span>

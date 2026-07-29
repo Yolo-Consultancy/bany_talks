@@ -138,7 +138,11 @@ export default function BlogArticleCard({
               {article.author || 'Bany'}
             </button>
           </div>
-          <div className="flex flex-wrap items-center gap-1 text-[12px] text-stone-500 font-body">
+          <p className="text-[11px] text-stone-500 font-body leading-snug line-clamp-2 mt-0.5">
+            {article.authorTitle ||
+              'Founder & CEO – Yolo Group | Honorary Doctor (Entrepreneurship & Host of Bany Talks)'}
+          </p>
+          <div className="flex flex-wrap items-center gap-1 text-[12px] text-stone-500 font-body mt-1">
             {category && (
               <>
                 <button
