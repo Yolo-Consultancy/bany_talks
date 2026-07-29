@@ -192,8 +192,11 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
             <span>
               <span className="block text-stone-200 font-medium">{article.author}</span>
               <span className="block text-xs text-stone-500 mt-0.5 leading-snug">
-                {article.authorTitle ||
-                  'Founder & CEO – Yolo Group | Honorary Doctor (Entrepreneurship & Host of Bany Talks)'}
+                <span className="md:hidden">Founder &amp; CEO – Yolo Group | Honorary Doctor…</span>
+                <span className="hidden md:inline">
+                  {article.authorTitle ||
+                    'Founder & CEO – Yolo Group | Honorary Doctor (Entrepreneurship & Host of Bany Talks)'}
+                </span>
               </span>
             </span>
           </span>
