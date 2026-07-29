@@ -322,8 +322,16 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
             <p className="section-label">Galerie</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {article.gallery.map((src) => (
-                <div key={src} className="aspect-[4/3] overflow-hidden border border-white/5 bg-stone-900">
-                  <img src={mediaUrl(src)} alt="" className="w-full h-full object-cover" loading="lazy" />
+                <div
+                  key={src}
+                  className="overflow-hidden border border-white/5 bg-stone-900/80 flex items-center justify-center min-h-[180px]"
+                >
+                  <img
+                    src={mediaUrl(src)}
+                    alt=""
+                    className="w-full h-auto max-h-[70vh] object-contain"
+                    loading="lazy"
+                  />
                 </div>
               ))}
             </div>
