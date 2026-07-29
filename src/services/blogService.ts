@@ -122,6 +122,40 @@ export function formatBlogDate(iso: string | null | undefined): string {
   });
 }
 
+/** Délai relatif depuis la publication : min, h, j, mois, an. */
+export function formatRelativePublishTime(iso: string | null | undefined, now = Date.now()): string {
+  if (!iso) return '';
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return '';
+
+  const diffMs = Math.max(0, now - then);
+  const minute = 60_000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const month = 30 * day;
+  const year = 365 * day;
+
+  if (diffMs < minute) return "à l'instant";
+  if (diffMs < hour) {
+    const n = Math.floor(diffMs / minute);
+    return `il y a ${n} min`;
+  }
+  if (diffMs < day) {
+    const n = Math.floor(diffMs / hour);
+    return `il y a ${n} h`;
+  }
+  if (diffMs < month) {
+    const n = Math.floor(diffMs / day);
+    return n === 1 ? 'il y a 1 jour' : `il y a ${n} jours`;
+  }
+  if (diffMs < year) {
+    const n = Math.floor(diffMs / month);
+    return `il y a ${n} mois`;
+  }
+  const n = Math.floor(diffMs / year);
+  return n === 1 ? 'il y a 1 an' : `il y a ${n} ans`;
+}
+
 export function applyArticleSeo(article: BlogArticle) {
   const title = article.seo?.metaTitle || article.title;
   const description = article.seo?.metaDescription || article.excerpt;

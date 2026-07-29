@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { ThumbsUp, MessageCircle, Share2, Globe2, MoreHorizontal } from 'lucide-react';
+import { ThumbsUp, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { BlogArticle } from '../../types';
-import { formatBlogDate, likeArticle, mediaUrl, unlikeArticle } from '../../services/blogService';
+import {
+  formatBlogDate,
+  formatRelativePublishTime,
+  likeArticle,
+  mediaUrl,
+  unlikeArticle,
+} from '../../services/blogService';
 import BlogComments from './BlogComments';
 
 const LIKED_ARTICLES_KEY = 'bany_liked_articles';
@@ -61,12 +67,22 @@ export default function BlogArticleCard({
   const [liking, setLiking] = useState(false);
   const [sharedHint, setSharedHint] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [relativeTime, setRelativeTime] = useState(() =>
+    formatRelativePublishTime(article.publishedAt)
+  );
 
   useEffect(() => {
     setLikes(article.likes ?? 0);
     setCommentCount(article.commentCount ?? 0);
     setLiked(getLikedArticles().has(article.id));
   }, [article.id, article.likes, article.commentCount]);
+
+  useEffect(() => {
+    const refresh = () => setRelativeTime(formatRelativePublishTime(article.publishedAt));
+    refresh();
+    const id = window.setInterval(refresh, 60_000);
+    return () => window.clearInterval(id);
+  }, [article.publishedAt]);
 
   const handleLike = async (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -155,9 +171,12 @@ export default function BlogArticleCard({
               </>
             )}
             <span>{formatBlogDate(article.publishedAt)}</span>
-            <span>·</span>
-            <Globe2 className="w-3 h-3 inline" />
-            <span>{article.readingTimeMinutes} min</span>
+            {relativeTime && (
+              <>
+                <span>·</span>
+                <span>{relativeTime}</span>
+              </>
+            )}
           </div>
         </div>
         <button
