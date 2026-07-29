@@ -3,7 +3,6 @@ import { ThumbsUp, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { BlogArticle } from '../../types';
 import {
-  formatBlogDate,
   formatRelativePublishTime,
   likeArticle,
   mediaUrl,
@@ -167,16 +166,10 @@ export default function BlogArticleCard({
                 >
                   {category.name}
                 </button>
-                <span>·</span>
+                {relativeTime && <span>·</span>}
               </>
             )}
-            <span>{formatBlogDate(article.publishedAt)}</span>
-            {relativeTime && (
-              <>
-                <span>·</span>
-                <span>{relativeTime}</span>
-              </>
-            )}
+            {relativeTime && <span>{relativeTime}</span>}
           </div>
         </div>
         <button
