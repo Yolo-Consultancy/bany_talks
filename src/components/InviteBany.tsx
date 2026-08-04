@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Calendar, Send, CheckCircle2, ArrowRight } from 'lucide-react';
 import WhatsAppIcon from './WhatsAppIcon';
-import { FREQUENT_EVENT_TYPES } from '../data';
+import { FREQUENT_EVENT_TYPES, getInvitePackage, type InviteEventType } from '../data';
 import { SpeakerRequest } from '../types';
 import { initAuth, googleSignIn, logout } from '../firebaseAuth';
 import { createNewSpreadsheet, getFirstSheetTitle, appendRowToSheet, extractSpreadsheetId } from '../sheetsService';
@@ -35,7 +35,15 @@ function FormLabel({
 }
 
 export default function InviteBany() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    company: string;
+    email: string;
+    eventType: InviteEventType;
+    date: string;
+    budgetRange: string;
+    message: string;
+  }>({
     name: '',
     company: '',
     email: '',
@@ -176,73 +184,18 @@ export default function InviteBany() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => {
+      if (name === 'eventType') {
+        const nextType = (FREQUENT_EVENT_TYPES as readonly string[]).includes(value)
+          ? (value as InviteEventType)
+          : FREQUENT_EVENT_TYPES[0];
+        return { ...prev, eventType: nextType, budgetRange: 'standard' };
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
-  const calculatePackage = (budget: string) => {
-    if (budget === 'essentiel' || budget === 'under-3000') {
-      return {
-        tier: 'Essentiel',
-        features: [
-          "Séance d'interview de 30 min",
-          "Intégration logo d'entreprise",
-          'Diffusion sur les réseaux sociaux',
-        ],
-        estHours: '1–2 heures',
-        accent: {
-          text: 'text-stone-300',
-          textMuted: 'text-stone-500',
-          border: 'border-stone-500',
-          borderSoft: 'border-stone-500/45',
-          icon: 'text-stone-400',
-          label: 'text-stone-500',
-          underline: 'border-stone-400',
-        },
-      };
-    }
-    if (budget === 'standard' || budget === '3000-5000') {
-      return {
-        tier: 'Standard',
-        features: [
-          'Conférence Keynote de 45 min',
-          'Table ronde interactive de 30 min',
-          "Session Q&A avec l'audience",
-          'Pack photos professionnelles',
-        ],
-        estHours: '3–4 heures',
-        accent: {
-          text: 'text-rose-400',
-          textMuted: 'text-rose-400/70',
-          border: 'border-rose-500',
-          borderSoft: 'border-rose-500/45',
-          icon: 'text-rose-500/80',
-          label: 'text-rose-400/80',
-          underline: 'border-rose-500',
-        },
-      };
-    }
-    return {
-      tier: 'Premium',
-      features: [
-        'Animation exclusive demi-journée',
-        'Interview enregistrée au studio Bany Talks',
-        'Post sponsorisé VIP sur tous les réseaux',
-        'Newsletter dédiée (40K abonnés)',
-      ],
-      estHours: '6+ heures',
-      accent: {
-        text: 'text-rose-300',
-        textMuted: 'text-rose-300/70',
-        border: 'border-rose-300',
-        borderSoft: 'border-rose-300/50',
-        icon: 'text-rose-300',
-        label: 'text-rose-300/90',
-        underline: 'border-rose-300',
-      },
-    };
-  };
-
-  const currentPackage = calculatePackage(formData.budgetRange);
+  const currentPackage = getInvitePackage(formData.eventType, formData.budgetRange);
   const accent = currentPackage.accent;
 
   const FORMULA_OPTIONS = [
@@ -291,7 +244,7 @@ export default function InviteBany() {
     >
       <div>
         <p className={`text-[0.6rem] font-display font-semibold tracking-[0.18em] uppercase mb-3 ${accent.label}`}>
-          Formule sélectionnée
+          Formule · {formData.eventType}
         </p>
         <h3 className={`font-display text-xl sm:text-2xl font-medium ${accent.text}`}>
           {currentPackage.tier}
@@ -579,7 +532,7 @@ export default function InviteBany() {
 
                 {/* Mobile: détails visibles juste sous le choix */}
                 <div
-                  key={formData.budgetRange}
+                  key={`${formData.eventType}-${formData.budgetRange}`}
                   className="lg:hidden mt-6 animate-fade-in-up"
                 >
                   {packageDetails}

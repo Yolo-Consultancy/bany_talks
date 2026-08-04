@@ -178,12 +178,185 @@ export const TIMELINE_MILESTONES = [
 ];
 
 export const FREQUENT_EVENT_TYPES = [
-  'Conférence Keynote d’Inspiration',
-  'Animation de Table Ronde / Masterclass',
-  'Interview Live Publique sur Scène',
-  'Consulting de Marque & Direction Artistique Média',
-  'Épisode Podcast Sponsorisé Sur Mesure'
-];
+  'Episode BTX',
+  'Interviews',
+  'Conference',
+] as const;
+
+export type InviteEventType = (typeof FREQUENT_EVENT_TYPES)[number];
+export type InviteFormulaTier = 'essentiel' | 'standard' | 'premium';
+
+export type InvitePackageAccent = {
+  text: string;
+  textMuted: string;
+  border: string;
+  borderSoft: string;
+  icon: string;
+  label: string;
+  underline: string;
+};
+
+export type InvitePackage = {
+  tier: string;
+  features: string[];
+  estHours: string;
+  accent: InvitePackageAccent;
+};
+
+const ACCENT_ESSENTIEL: InvitePackageAccent = {
+  text: 'text-stone-300',
+  textMuted: 'text-stone-500',
+  border: 'border-stone-500',
+  borderSoft: 'border-stone-500/45',
+  icon: 'text-stone-400',
+  label: 'text-stone-500',
+  underline: 'border-stone-400',
+};
+
+const ACCENT_STANDARD: InvitePackageAccent = {
+  text: 'text-rose-400',
+  textMuted: 'text-rose-400/70',
+  border: 'border-rose-500',
+  borderSoft: 'border-rose-500/45',
+  icon: 'text-rose-500/80',
+  label: 'text-rose-400/80',
+  underline: 'border-rose-500',
+};
+
+const ACCENT_PREMIUM: InvitePackageAccent = {
+  text: 'text-rose-300',
+  textMuted: 'text-rose-300/70',
+  border: 'border-rose-300',
+  borderSoft: 'border-rose-300/50',
+  icon: 'text-rose-300',
+  label: 'text-rose-300/90',
+  underline: 'border-rose-300',
+};
+
+/** Formules distinctes par type de demande */
+export const INVITE_PACKAGES_BY_EVENT: Record<
+  InviteEventType,
+  Record<InviteFormulaTier, InvitePackage>
+> = {
+  'Episode BTX': {
+    essentiel: {
+      tier: 'Essentiel',
+      features: [
+        'Enregistrement podcast de 30 min',
+        'Mention de votre marque en intro/outro',
+        'Diffusion sur les plateformes audio',
+      ],
+      estHours: '1–2 heures',
+      accent: ACCENT_ESSENTIEL,
+    },
+    standard: {
+      tier: 'Standard',
+      features: [
+        'Épisode complet de 45–60 min',
+        'Montage & habillage sonore Bany Talks',
+        'Clips courts pour Instagram / TikTok',
+        'Publication multi-plateformes',
+      ],
+      estHours: '3–4 heures',
+      accent: ACCENT_STANDARD,
+    },
+    premium: {
+      tier: 'Premium',
+      features: [
+        'Épisode exclusif tourné en studio',
+        'Série de 3 clips vidéo prêts à publier',
+        'Post sponsorisé sur les réseaux Bany',
+        'Mise en avant newsletter (audience Bany)',
+      ],
+      estHours: '6+ heures',
+      accent: ACCENT_PREMIUM,
+    },
+  },
+  Interviews: {
+    essentiel: {
+      tier: 'Essentiel',
+      features: [
+        "Interview filmée de 20–30 min",
+        'Une question brand / produit intégrée',
+        'Partage sur les réseaux sociaux',
+      ],
+      estHours: '1–2 heures',
+      accent: ACCENT_ESSENTIEL,
+    },
+    standard: {
+      tier: 'Standard',
+      features: [
+        'Interview live ou studio de 45 min',
+        "Session Q&A avec l'audience",
+        'Pack photos professionnelles',
+        'Diffusion replay sur YouTube',
+      ],
+      estHours: '3–4 heures',
+      accent: ACCENT_STANDARD,
+    },
+    premium: {
+      tier: 'Premium',
+      features: [
+        'Interview exclusive longue durée',
+        'Direction artistique & storytelling marque',
+        'Campagne multi-posts VIP',
+        'Newsletter dédiée à votre prise de parole',
+      ],
+      estHours: '6+ heures',
+      accent: ACCENT_PREMIUM,
+    },
+  },
+  Conference: {
+    essentiel: {
+      tier: 'Essentiel',
+      features: [
+        'Keynote inspirante de 30 min',
+        'Présence sur scène / événement',
+        'Mention dans les supports de communication',
+      ],
+      estHours: '1–2 heures',
+      accent: ACCENT_ESSENTIEL,
+    },
+    standard: {
+      tier: 'Standard',
+      features: [
+        'Conférence Keynote de 45 min',
+        'Table ronde interactive de 30 min',
+        "Session Q&A avec l'audience",
+        'Pack photos professionnelles',
+      ],
+      estHours: '3–4 heures',
+      accent: ACCENT_STANDARD,
+    },
+    premium: {
+      tier: 'Premium',
+      features: [
+        'Animation exclusive demi-journée',
+        'Keynote + masterclass sur mesure',
+        'Interview studio Bany Talks associée',
+        'Couverture média & posts VIP',
+      ],
+      estHours: '6+ heures',
+      accent: ACCENT_PREMIUM,
+    },
+  },
+};
+
+export function getInvitePackage(
+  eventType: string,
+  budgetRange: string
+): InvitePackage {
+  const type = (FREQUENT_EVENT_TYPES as readonly string[]).includes(eventType)
+    ? (eventType as InviteEventType)
+    : FREQUENT_EVENT_TYPES[0];
+
+  let tier: InviteFormulaTier = 'standard';
+  if (budgetRange === 'essentiel' || budgetRange === 'under-3000') tier = 'essentiel';
+  else if (budgetRange === 'premium' || budgetRange === 'above-5000') tier = 'premium';
+  else tier = 'standard';
+
+  return INVITE_PACKAGES_BY_EVENT[type][tier];
+}
 
 export const BOOKS: Book[] = [
   {
