@@ -2,15 +2,18 @@ import React from 'react';
 import { HOST_DETAILS } from '../data';
 import { NAV_ITEMS } from '../data/navItems';
 import SocialLinks from './SocialLinks';
+import InviteCta from './InviteCta';
 import logoBany from '../assets/logos/logo_bany.png';
 
 interface FooterProps {
   onNavigate: (view: 'home' | 'about' | 'episodes' | 'booking' | 'blog' | 'contact') => void;
   activeView: string;
+  onInvite?: () => void;
 }
 
-export default function Footer({ onNavigate, activeView }: FooterProps) {
+export default function Footer({ onNavigate, activeView, onInvite }: FooterProps) {
   const currentYear = new Date().getFullYear();
+  const showInvite = Boolean(onInvite) && activeView !== 'invite';
 
   return (
     <footer className="bg-stone-950 border-t border-white/5 pt-16 pb-10 text-left">
@@ -23,6 +26,13 @@ export default function Footer({ onNavigate, activeView }: FooterProps) {
               Des conversations vraies avec ceux qui construisent l'Afrique. Podcast, émissions et média indépendant.
             </p>
             <SocialLinks size="sm" />
+            {showInvite && (
+              <InviteCta
+                variant="button"
+                onInvite={onInvite!}
+                label="Inviter Bany"
+              />
+            )}
           </div>
 
           <div className="md:col-span-3 space-y-4">

@@ -3,10 +3,12 @@ import { Search, Play, ArrowRight, FilterX, ChevronLeft, ChevronRight, X } from 
 import { motion, Variants } from 'framer-motion';
 import { Episode } from '../types';
 import { sortEpisodesByPublishDate } from '../services/youtube';
+import InviteCta from './InviteCta';
 
 interface EpisodeGridProps {
   episodes: Episode[];
   onEpisodeClick: (episode: Episode) => void;
+  onInvite?: () => void;
 }
 
 const containerVariants: Variants = {
@@ -29,7 +31,7 @@ const cardVariants: Variants = {
 const ITEMS_PER_PAGE_MOBILE = 3;
 const ITEMS_PER_PAGE_DESKTOP = 6;
 
-export default function EpisodeGrid({ episodes, onEpisodeClick }: EpisodeGridProps) {
+export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: EpisodeGridProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Toutes');
   const [currentPage, setCurrentPage] = useState(1);
@@ -256,6 +258,16 @@ export default function EpisodeGrid({ episodes, onEpisodeClick }: EpisodeGridPro
                   </button>
                 </div>
               </div>
+            )}
+
+            {onInvite && (
+              <InviteCta
+                className="mt-16 lg:mt-20"
+                onInvite={onInvite}
+                title="Envie d’une édition en live ?"
+                subtitle="Panels, tables rondes ou enregistrement public — Bany peut animer votre prochaine édition."
+                label="Organiser une édition live"
+              />
             )}
           </>
         )}

@@ -195,8 +195,9 @@ export default function ContactPage({ onInvite }: ContactPageProps) {
                 <p className="text-sm text-stone-500 font-body leading-relaxed">
                   Pour une conférence, un événement ou un enregistrement, utilisez le formulaire d’invitation.
                 </p>
-                <button type="button" onClick={onInvite} className="link-arrow text-sm cursor-pointer">
-                  Demander une invitation <ArrowRight className="w-3.5 h-3.5" />
+                <button type="button" onClick={onInvite} className="btn-primary text-xs">
+                  Réserver une intervention
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             )}

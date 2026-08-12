@@ -21,6 +21,7 @@ import {
 import BlogArticleCard from './BlogArticleCard';
 import { BlogCardSkeleton } from './BlogSkeleton';
 import BlogComments from './BlogComments';
+import InviteCta from '../InviteCta';
 
 const LIKED_ARTICLES_KEY = 'bany_liked_articles';
 
@@ -50,9 +51,10 @@ interface BlogDetailProps {
   onBack: () => void;
   onReadArticle: (slug: string) => void;
   onOpenCategory: (slug: string) => void;
+  onInvite?: () => void;
 }
 
-export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory }: BlogDetailProps) {
+export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory, onInvite }: BlogDetailProps) {
   const [article, setArticle] = useState<BlogArticle | null>(null);
   const [related, setRelated] = useState<BlogArticle[]>([]);
   const [prev, setPrev] = useState<BlogArticle | null>(null);
@@ -382,6 +384,17 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
           )}
         </div>
       </div>
+
+      {onInvite && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+          <InviteCta
+            onInvite={onInvite}
+            title="Passer de la lecture à la scène"
+            subtitle="Leadership, business, médias — Bany intervient en conférence pour prolonger ces idées en live."
+            label="Recevoir Bany en conférence"
+          />
+        </div>
+      )}
 
       {related.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 pt-12 border-t border-white/5 space-y-6">

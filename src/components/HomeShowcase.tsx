@@ -1,10 +1,13 @@
 import React from 'react';
 import { ArrowRight, Mic2, Users, BookOpen } from 'lucide-react';
 
+import InviteCta from './InviteCta';
+
 interface HomeShowcaseProps {
   onExploreEpisodes: () => void;
   onAbout: () => void;
   onBlog: () => void;
+  onInvite: () => void;
 }
 
 const PLATFORMS = [
@@ -31,7 +34,7 @@ const PLATFORMS = [
   },
 ];
 
-export default function HomeShowcase({ onExploreEpisodes, onAbout, onBlog }: HomeShowcaseProps) {
+export default function HomeShowcase({ onExploreEpisodes, onAbout, onBlog, onInvite }: HomeShowcaseProps) {
   const handlers: Record<string, () => void> = {
     episodes: onExploreEpisodes,
     about: onAbout,
@@ -83,6 +86,14 @@ export default function HomeShowcase({ onExploreEpisodes, onAbout, onBlog }: Hom
             );
           })}
         </div>
+
+        <InviteCta
+          className="mt-14 lg:mt-16"
+          onInvite={onInvite}
+          title="Conférences, panels & keynotes"
+          subtitle="Faites intervenir Bany pour animer, inspirer ou clôturer votre événement."
+          label="Faire venir Bany"
+        />
       </div>
     </section>
   );

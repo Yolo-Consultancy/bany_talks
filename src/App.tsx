@@ -388,6 +388,7 @@ export default function App() {
                 onExploreEpisodes={() => navigateToView('episodes')}
                 onAbout={() => navigateToView('about')}
                 onBlog={openBlog}
+                onInvite={() => navigateToView('invite')}
               />
               <Newsletter />
             </motion.div>
@@ -417,6 +418,7 @@ export default function App() {
               <EpisodesHero episodes={episodes} />
               <EpisodeGrid
                 episodes={episodes}
+                onInvite={() => navigateToView('invite')}
                 onEpisodeClick={(ep) => {
                   setSelectedEpisode(ep);
                   setCurrentView('episode-detail');
@@ -440,6 +442,7 @@ export default function App() {
                 onBackToList={() => setCurrentView('episodes')}
                 onPlayClick={(ep) => handlePlayEpisode(ep)}
                 onSeekTo={(sec) => handleTimestampSeek(sec)}
+                onInvite={() => navigateToView('invite')}
               />
             </motion.div>
           )}
@@ -485,6 +488,7 @@ export default function App() {
                 onBack={openBlog}
                 onReadArticle={openBlogArticle}
                 onOpenCategory={openBlogCategory}
+                onInvite={() => navigateToView('invite')}
               />
             </motion.div>
           )}
@@ -546,6 +550,7 @@ export default function App() {
           else navigateToView(view as AppView);
         }}
         activeView={isBlogView ? 'blog' : currentView}
+        onInvite={() => navigateToView('invite')}
       />
 
       {showScrollTop && (

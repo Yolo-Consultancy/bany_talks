@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Play, Clock, Share2, Linkedin, Twitter, MessageSquare, Copy, Check, Heart } from 'lucide-react';
 import { Episode, Timestamp } from '../types';
+import InviteCta from './InviteCta';
 
 interface EpisodeDetailProps {
   episode: Episode;
   onBackToList: () => void;
   onPlayClick: (episode: Episode) => void;
   onSeekTo: (seconds: number) => void;
+  onInvite?: () => void;
 }
 
 export default function EpisodeDetail({
@@ -14,6 +16,7 @@ export default function EpisodeDetail({
   onBackToList,
   onPlayClick,
   onSeekTo,
+  onInvite,
 }: EpisodeDetailProps) {
   const [copied, setCopied] = useState(false);
   const [likes, setLikes] = useState(episode.likesCount);
@@ -279,6 +282,16 @@ export default function EpisodeDetail({
           </div>
 
         </div>
+
+        {onInvite && (
+          <InviteCta
+            className="mt-16 lg:mt-20"
+            onInvite={onInvite}
+            title="Ce format, en vrai, sur votre scène"
+            subtitle="Conférence, masterclass ou entretien public — invitez Bany pour votre prochain événement."
+            label="Inviter Bany sur votre scène"
+          />
+        )}
 
       </div>
     </section>
