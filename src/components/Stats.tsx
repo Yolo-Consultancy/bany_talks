@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { HOST_DETAILS, TIMELINE_MILESTONES } from '../data';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { fetchSiteStatistics, type SiteStatistic } from '../services/siteContentService';
+import {
+  fetchSiteContent,
+  formatMilestoneDate,
+  type SiteStatistic,
+  type TimelineMilestone,
+} from '../services/siteContentService';
 
 interface StatsProps {
   onInviteClick?: () => void;
@@ -10,12 +15,15 @@ interface StatsProps {
 
 export default function Stats({ onInviteClick }: StatsProps) {
   const [statistics, setStatistics] = useState<SiteStatistic[]>(HOST_DETAILS.statistics);
+  const [timeline, setTimeline] = useState<TimelineMilestone[]>(TIMELINE_MILESTONES);
 
   useEffect(() => {
     let cancelled = false;
-    fetchSiteStatistics()
-      .then((stats) => {
-        if (!cancelled && stats.length > 0) setStatistics(stats);
+    fetchSiteContent()
+      .then((data) => {
+        if (cancelled) return;
+        if (data.statistics?.length) setStatistics(data.statistics);
+        if (data.timeline?.length) setTimeline(data.timeline);
       })
       .catch(() => {
         /* keep static fallback */
@@ -124,9 +132,9 @@ export default function Stats({ onInviteClick }: StatsProps) {
           </div>
 
           <div className="space-y-0">
-            {TIMELINE_MILESTONES.map((milestone, idx) => (
+            {timeline.map((milestone, idx) => (
               <motion.div
-                key={idx}
+                key={`${milestone.year}-${milestone.month ?? 'y'}-${milestone.title}-${idx}`}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
@@ -134,8 +142,8 @@ export default function Stats({ onInviteClick }: StatsProps) {
                 className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 py-10 border-b border-white/5 group"
               >
                 <div className="md:col-span-2">
-                  <span className="font-display text-3xl sm:text-4xl text-rose-500/80 font-medium group-hover:text-rose-400 transition">
-                    {milestone.year}
+                  <span className="font-display text-2xl sm:text-3xl lg:text-4xl text-rose-500/80 font-medium group-hover:text-rose-400 transition leading-tight">
+                    {formatMilestoneDate(milestone.year, milestone.month)}
                   </span>
                 </div>
                 <div className="md:col-span-4">
