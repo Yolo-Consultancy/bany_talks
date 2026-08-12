@@ -141,12 +141,12 @@ export default function Stats({ onInviteClick }: StatsProps) {
                 transition={{ duration: 0.5, delay: idx * 0.08 }}
                 className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 py-10 border-b border-white/5 group"
               >
-                <div className="md:col-span-2">
-                  <span className="font-display text-2xl sm:text-3xl lg:text-4xl text-rose-500/80 font-medium group-hover:text-rose-400 transition leading-tight">
-                    {formatMilestoneDate(milestone.year, milestone.month)}
+                <div className="md:col-span-3">
+                  <span className="font-display text-sm sm:text-base lg:text-lg text-rose-500/80 font-medium group-hover:text-rose-400 transition leading-snug">
+                    {formatMilestoneDate(milestone)}
                   </span>
                 </div>
-                <div className="md:col-span-4">
+                <div className="md:col-span-3">
                   <h4 className="font-display text-xl sm:text-2xl text-stone-100 font-medium">
                     {milestone.title}
                   </h4>

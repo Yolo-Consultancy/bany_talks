@@ -170,11 +170,11 @@ export const EPISODES: Episode[] = [
 ];
 
 export const TIMELINE_MILESTONES = [
-  { year: '2021', title: 'Le Premier Micro', desc: 'Bany lance les émissions de sa propre chambre avec des invités locaux branchés.' },
-  { year: '2022', title: 'Audience Explosive', desc: 'Le cap des 100K téléchargements cumulés est franchi grâce à des interviews franches de créateurs.' },
-  { year: '2023', title: 'Studio Bany Talks', desc: 'Inauguration du studio professionnel à Paris et passage aux diffusions de haute qualité sur YouTube.' },
+  { year: '2025', title: 'Référence Européenne', desc: 'Bany Talks élue l’une des émissions de podcasts francophones les plus décisives de la décennie.' },
   { year: '2024', title: 'Invités de Prestige', desc: 'Entrée des PDG fondateurs du CAC40 et d’investisseurs légendaires de la tech dans l’émission.' },
-  { year: '2025', title: 'Référence Européenne', desc: 'Bany Talks élue l’une des émissions de podcasts francophones les plus décisives de la décennie.' }
+  { year: '2023', title: 'Studio Bany Talks', desc: 'Inauguration du studio professionnel à Paris et passage aux diffusions de haute qualité sur YouTube.' },
+  { year: '2022', title: 'Audience Explosive', desc: 'Le cap des 100K téléchargements cumulés est franchi grâce à des interviews franches de créateurs.' },
+  { year: '2021', title: 'Le Premier Micro', desc: 'Bany lance les émissions de sa propre chambre avec des invités locaux branchés.' },
 ];
 
 export const FREQUENT_EVENT_TYPES = [

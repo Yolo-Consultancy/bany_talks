@@ -8,6 +8,8 @@ export type SiteStatistic = {
 export type TimelineMilestone = {
   year: string;
   month?: number | null;
+  endYear?: string | null;
+  endMonth?: number | null;
   title: string;
   desc: string;
 };
@@ -34,11 +36,31 @@ const MONTH_LABELS = [
   'Décembre',
 ];
 
-export function formatMilestoneDate(year: string, month?: number | null): string {
+function formatPart(year: string, month?: number | null): string {
   if (month && month >= 1 && month <= 12) {
     return `${MONTH_LABELS[month - 1]} ${year}`;
   }
   return year;
+}
+
+/** Affiche `Janvier 2025`, `2025`, ou `Janvier 2025 - Avril 2025`. */
+export function formatMilestoneDate(milestone: {
+  year: string;
+  month?: number | null;
+  endYear?: string | null;
+  endMonth?: number | null;
+}): string {
+  const start = formatPart(milestone.year, milestone.month);
+  const endYear = milestone.endYear?.trim();
+  const hasEnd =
+    Boolean(endYear) ||
+    (milestone.endMonth != null && milestone.endMonth >= 1 && milestone.endMonth <= 12);
+
+  if (!hasEnd) return start;
+
+  const end = formatPart(endYear || milestone.year, milestone.endMonth);
+  if (end === start) return start;
+  return `${start} - ${end}`;
 }
 
 export async function fetchSiteContent(): Promise<SiteContent> {
