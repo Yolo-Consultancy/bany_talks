@@ -301,7 +301,7 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
         </div>
 
         <article
-          className="prose-blog space-y-5 text-stone-400 font-body leading-relaxed text-base [&_h2]:font-display [&_h2]:text-2xl [&_h2]:text-stone-100 [&_h2]:mt-10 [&_h2]:mb-4 [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-2 [&_a]:text-rose-400"
+          className="prose-blog space-y-5 text-stone-400 font-body leading-relaxed text-base [&_h2]:font-display [&_h2]:text-2xl [&_h2]:text-stone-100 [&_h2]:mt-10 [&_h2]:mb-4 [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-2 [&_a]:text-rose-400 [&_img]:max-w-full [&_img]:h-auto [&_img]:my-8 [&_img]:mx-auto [&_img]:block [&_img]:border [&_img]:border-white/5"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
 
