@@ -15,17 +15,43 @@ app.get('/api/youtube/playlist', async (req, res) => {
 
   try {
     const rssRes = await fetch(
-      `https://www.youtube.com/feeds/videos.xml?playlist_id=${encodeURIComponent(playlistId)}`
+      `https://www.youtube.com/feeds/videos.xml?playlist_id=${encodeURIComponent(playlistId)}`,
+      { headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' }, cache: 'no-store' }
     );
     if (!rssRes.ok) {
       return res.status(rssRes.status).send('Failed to fetch YouTube RSS');
     }
     const xml = await rssRes.text();
     res.set('Content-Type', 'application/xml; charset=utf-8');
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
     res.send(xml);
   } catch (error) {
     console.error('YouTube RSS proxy error:', error);
     res.status(502).send('Failed to fetch YouTube RSS');
+  }
+});
+
+app.get('/api/youtube/channel', async (req, res) => {
+  const channelId = req.query.channel_id;
+  if (!channelId || typeof channelId !== 'string') {
+    return res.status(400).send('Missing channel_id');
+  }
+
+  try {
+    const rssRes = await fetch(
+      `https://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`,
+      { headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' }, cache: 'no-store' }
+    );
+    if (!rssRes.ok) {
+      return res.status(rssRes.status).send('Failed to fetch YouTube channel RSS');
+    }
+    const xml = await rssRes.text();
+    res.set('Content-Type', 'application/xml; charset=utf-8');
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.send(xml);
+  } catch (error) {
+    console.error('YouTube channel RSS proxy error:', error);
+    res.status(502).send('Failed to fetch YouTube channel RSS');
   }
 });
 

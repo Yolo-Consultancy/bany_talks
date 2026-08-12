@@ -221,6 +221,56 @@ function buildEpisodeFromVideoId(
   };
 }
 
+function parseYouTubeRssXml(
+  xml: string,
+  categoryName: 'Émissions' | 'Podcasts'
+): Episode[] {
+  const doc = new DOMParser().parseFromString(xml, 'text/xml');
+  if (doc.querySelector('parsererror')) {
+    throw new Error('Invalid RSS response');
+  }
+
+  const entries = Array.from(doc.getElementsByTagName('entry'));
+  return sortEpisodesByPublishDate(
+    entries
+      .map((entry, index) => {
+        const videoId =
+          entry.getElementsByTagNameNS(YT_NS, 'videoId')[0]?.textContent?.trim() ||
+          entry.querySelector('videoId')?.textContent?.trim() ||
+          '';
+        const title = entry.getElementsByTagName('title')[0]?.textContent?.trim() || 'Sans titre';
+        const publishedAt = entry.getElementsByTagName('published')[0]?.textContent?.trim();
+        const mediaGroup = entry.getElementsByTagNameNS(MEDIA_NS, 'group')[0];
+        const thumbnail =
+          mediaGroup?.getElementsByTagNameNS(MEDIA_NS, 'thumbnail')[0]?.getAttribute('url') ||
+          `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+        const description =
+          mediaGroup?.getElementsByTagNameNS(MEDIA_NS, 'description')[0]?.textContent?.trim() ||
+          title;
+
+        return buildEpisodeFromVideoId(videoId, title, categoryName, index, {
+          description,
+          thumbnail,
+          publishedAt,
+        });
+      })
+      .filter((episode) => episode.id !== 'yt-')
+  );
+}
+
+async function fetchRssViaProxy(proxyPath: string): Promise<string> {
+  const separator = proxyPath.includes('?') ? '&' : '?';
+  const url = `${proxyPath}${separator}_t=${Date.now()}`;
+  const response = await fetch(url, {
+    cache: 'no-store',
+    headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' },
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch RSS: ${response.status}`);
+  }
+  return response.text();
+}
+
 /**
  * Method 2 (No API key): Fetches a playlist RSS feed via local proxy (/api/youtube/playlist)
  */
@@ -233,41 +283,75 @@ export async function fetchYouTubePlaylistRSS(
     throw new Error('Playlist ID is required');
   }
 
-  const rssUrl = `/api/youtube/playlist?playlist_id=${encodeURIComponent(cleanId)}`;
-  const response = await fetch(rssUrl);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch playlist RSS: ${response.status}`);
-  }
-
-  const xml = await response.text();
-  const doc = new DOMParser().parseFromString(xml, 'text/xml');
-  if (doc.querySelector('parsererror')) {
-    throw new Error('Invalid RSS response');
-  }
-
-  const entries = Array.from(doc.getElementsByTagName('entry'));
-  return sortEpisodesByPublishDate(
-    entries.map((entry, index) => {
-    const videoId =
-      entry.getElementsByTagNameNS(YT_NS, 'videoId')[0]?.textContent?.trim() ||
-      entry.querySelector('videoId')?.textContent?.trim() ||
-      '';
-    const title = entry.getElementsByTagName('title')[0]?.textContent?.trim() || 'Sans titre';
-    const publishedAt = entry.getElementsByTagName('published')[0]?.textContent?.trim();
-    const mediaGroup = entry.getElementsByTagNameNS(MEDIA_NS, 'group')[0];
-    const thumbnail =
-      mediaGroup?.getElementsByTagNameNS(MEDIA_NS, 'thumbnail')[0]?.getAttribute('url') ||
-      `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-    const description =
-      mediaGroup?.getElementsByTagNameNS(MEDIA_NS, 'description')[0]?.textContent?.trim() || title;
-
-    return buildEpisodeFromVideoId(videoId, title, categoryName, index, {
-      description,
-      thumbnail,
-      publishedAt
-    });
-    }).filter((episode) => episode.id !== 'yt-')
+  const xml = await fetchRssViaProxy(
+    `/api/youtube/playlist?playlist_id=${encodeURIComponent(cleanId)}`
   );
+  return parseYouTubeRssXml(xml, categoryName);
+}
+
+/**
+ * Method 2b (No API key): Latest uploads from the channel RSS feed
+ */
+export async function fetchYouTubeChannelRSS(
+  channelId: string,
+  categoryName: 'Émissions' | 'Podcasts' = 'Émissions'
+): Promise<Episode[]> {
+  const cleanId = channelId.trim();
+  if (!cleanId) {
+    throw new Error('Channel ID is required');
+  }
+
+  const xml = await fetchRssViaProxy(
+    `/api/youtube/channel?channel_id=${encodeURIComponent(cleanId)}`
+  );
+  return parseYouTubeRssXml(xml, categoryName);
+}
+
+/** Fusionne des listes d'épisodes en dédoublonnant par id vidéo. */
+export function mergeEpisodesById(...lists: Episode[][]): Episode[] {
+  const byId = new Map<string, Episode>();
+  for (const list of lists) {
+    for (const episode of list) {
+      if (!byId.has(episode.id)) {
+        byId.set(episode.id, episode);
+      }
+    }
+  }
+  return sortEpisodesByPublishDate(Array.from(byId.values()));
+}
+
+/**
+ * Loads latest channel uploads (API uploads playlist → channel RSS)
+ */
+export async function loadChannelEpisodes(
+  channelId?: string,
+  categoryName: 'Émissions' | 'Podcasts' = 'Émissions'
+): Promise<Episode[]> {
+  const actualChannelId =
+    channelId ||
+    import.meta.env.VITE_YOUTUBE_CHANNEL_ID ||
+    DEFAULT_YOUTUBE_CHANNEL_ID;
+  const apiKey = import.meta.env.VITE_YOUTUBE_API_KEY || DEFAULT_YOUTUBE_API_KEY;
+
+  if (apiKey) {
+    try {
+      const items = await fetchYouTubeVideos(actualChannelId, apiKey);
+      if (items.length > 0) {
+        return sortEpisodesByPublishDate(
+          items.map((ep) => ({ ...ep, category: categoryName }))
+        );
+      }
+    } catch (e) {
+      console.warn('API YouTube chaîne échouée, fallback RSS', e);
+    }
+  }
+
+  try {
+    return await fetchYouTubeChannelRSS(actualChannelId, categoryName);
+  } catch (e) {
+    console.warn('RSS chaîne YouTube échoué', e);
+    return [];
+  }
 }
 
 /**

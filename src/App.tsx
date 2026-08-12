@@ -9,7 +9,11 @@ import { EPISODES } from './data';
 import logoBany from './assets/logos/logo_bany.png';
 import { NAV_ITEMS } from './data/navItems';
 import { Episode } from './types';
-import { loadPlaylistEpisodes, sortEpisodesByPublishDate } from './services/youtube';
+import {
+  loadChannelEpisodes,
+  loadPlaylistEpisodes,
+  mergeEpisodesById,
+} from './services/youtube';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Hero from './components/Hero';
@@ -86,12 +90,15 @@ export default function App() {
       const podcastsPlaylistId = import.meta.env.VITE_PLAYLIST_PODCASTS_ID ?? 'PLXxMao9EmHNAf_hXS8lZkWyZJA8F_Sr17';
 
       try {
-        const [emissions, podcasts] = await Promise.all([
+        const [emissions, podcasts, channelLatest] = await Promise.all([
           loadPlaylistEpisodes(emissionsPlaylistId, 'Émissions'),
           loadPlaylistEpisodes(podcastsPlaylistId, 'Podcasts'),
+          // Nouvelles vidéos de la chaîne même si pas encore ajoutées aux playlists
+          loadChannelEpisodes(undefined, 'Émissions'),
         ]);
 
-        const combined = sortEpisodesByPublishDate([...emissions, ...podcasts]);
+        // Playlists d'abord (catégorie correcte), puis compléter avec les uploads chaîne
+        const combined = mergeEpisodesById(emissions, podcasts, channelLatest);
         if (combined.length > 0) {
           setEpisodes(combined);
         } else {
