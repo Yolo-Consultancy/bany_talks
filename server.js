@@ -37,9 +37,14 @@ app.get('/api/youtube/channel', async (req, res) => {
     return res.status(400).send('Missing channel_id');
   }
 
+  const cleanId = channelId.trim().replace(/^["']|["']$/g, '');
+  const uploadsPlaylistId = cleanId.startsWith('UC')
+    ? `UU${cleanId.slice(2)}`
+    : cleanId;
+
   try {
     const rssRes = await fetch(
-      `https://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`,
+      `https://www.youtube.com/feeds/videos.xml?playlist_id=${encodeURIComponent(uploadsPlaylistId)}`,
       { headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' }, cache: 'no-store' }
     );
     if (!rssRes.ok) {

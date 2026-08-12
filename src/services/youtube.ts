@@ -290,7 +290,20 @@ export async function fetchYouTubePlaylistRSS(
 }
 
 /**
- * Method 2b (No API key): Latest uploads from the channel RSS feed
+ * Playlist « Uploads » d’une chaîne : UC… → UU…
+ * Plus fiable que le RSS channel_id (souvent 404 derrière nginx/prod).
+ */
+export function toUploadsPlaylistId(channelId: string): string {
+  const id = channelId.trim();
+  if (id.startsWith('UC') && id.length >= 2) {
+    return `UU${id.slice(2)}`;
+  }
+  if (id.startsWith('UU')) return id;
+  return id;
+}
+
+/**
+ * Method 2b: Latest uploads via the channel uploads playlist (UU…)
  */
 export async function fetchYouTubeChannelRSS(
   channelId: string,
@@ -299,6 +312,16 @@ export async function fetchYouTubeChannelRSS(
   const cleanId = channelId.trim();
   if (!cleanId) {
     throw new Error('Channel ID is required');
+  }
+
+  const uploadsPlaylistId = toUploadsPlaylistId(cleanId);
+
+  // Prefer playlist proxy (already working in prod) over /channel
+  try {
+    const items = await fetchYouTubePlaylistRSS(uploadsPlaylistId, categoryName);
+    if (items.length > 0) return items;
+  } catch (e) {
+    console.warn('RSS uploads playlist échoué, fallback channel_id', e);
   }
 
   const xml = await fetchRssViaProxy(
@@ -321,16 +344,16 @@ export function mergeEpisodesById(...lists: Episode[][]): Episode[] {
 }
 
 /**
- * Loads latest channel uploads (API uploads playlist → channel RSS)
+ * Loads latest channel uploads (API → uploads playlist UU… → channel RSS)
  */
 export async function loadChannelEpisodes(
   channelId?: string,
   categoryName: 'Émissions' | 'Podcasts' = 'Émissions'
 ): Promise<Episode[]> {
   const actualChannelId =
-    channelId ||
-    import.meta.env.VITE_YOUTUBE_CHANNEL_ID ||
-    DEFAULT_YOUTUBE_CHANNEL_ID;
+    (channelId ||
+      import.meta.env.VITE_YOUTUBE_CHANNEL_ID ||
+      DEFAULT_YOUTUBE_CHANNEL_ID).replace(/^["']|["']$/g, '');
   const apiKey = import.meta.env.VITE_YOUTUBE_API_KEY || DEFAULT_YOUTUBE_API_KEY;
 
   if (apiKey) {
