@@ -324,6 +324,121 @@ type PlaylistProxyItem = {
   publishedLabel?: string;
 };
 
+function formatLengthSeconds(total: number): string {
+  if (!Number.isFinite(total) || total <= 0) return 'Vidéo';
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  if (hours > 0) return `${hours}:${pad(minutes)}:${pad(seconds)}`;
+  return `${pad(minutes)}:${pad(seconds)}`;
+}
+
+const INVIDIOUS_INSTANCES = [
+  'https://inv.nadeko.net',
+  'https://invidious.privacyredirect.com',
+  'https://yewtu.be',
+];
+
+type InvidiousPlaylistVideo = {
+  videoId?: string;
+  title?: string;
+  lengthSeconds?: number;
+  published?: number;
+};
+
+async function fetchJsonWithTimeout(url: string, timeoutMs = 12000): Promise<any> {
+  const response = await fetch(url, {
+    cache: 'no-store',
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+
+/**
+ * Playlist complète via Invidious (fonctionne depuis le navigateur, CORS ouvert).
+ * Sert de secours quand /api/youtube/playlist-items n'est pas encore déployé.
+ */
+export async function fetchYouTubePlaylistInvidious(
+  playlistId: string,
+  categoryName: 'Émissions' | 'Podcasts'
+): Promise<Episode[]> {
+  const cleanId = playlistId.trim();
+  if (!cleanId) throw new Error('Playlist ID is required');
+
+  let videos: InvidiousPlaylistVideo[] = [];
+  let usedInstance = '';
+  let lastError: unknown;
+
+  for (const instance of INVIDIOUS_INSTANCES) {
+    try {
+      const data = await fetchJsonWithTimeout(
+        `${instance}/api/v1/playlists/${encodeURIComponent(cleanId)}`
+      );
+      const list = Array.isArray(data?.videos) ? data.videos : [];
+      if (list.length > 0) {
+        videos = list;
+        usedInstance = instance;
+        break;
+      }
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  if (videos.length === 0) {
+    throw lastError instanceof Error ? lastError : new Error('Invidious playlist empty');
+  }
+
+  const rssById = new Map<string, Episode>();
+  try {
+    const rss = await fetchYouTubePlaylistRSS(cleanId, categoryName);
+    rss.forEach((episode) => rssById.set(episode.id, episode));
+  } catch {
+    /* dates RSS optionnelles */
+  }
+
+  const missingIds = videos
+    .map((video) => video.videoId)
+    .filter((id): id is string => Boolean(id) && !rssById.has(`yt-${id}`))
+    .slice(0, 20);
+
+  const publishedById = new Map<string, string>();
+  await Promise.all(
+    missingIds.map(async (videoId) => {
+      try {
+        const info = await fetchJsonWithTimeout(`${usedInstance}/api/v1/videos/${videoId}`, 8000);
+        if (info?.published) {
+          publishedById.set(videoId, new Date(info.published * 1000).toISOString());
+        }
+      } catch {
+        /* ignore */
+      }
+    })
+  );
+
+  return sortEpisodesByPublishDate(
+    videos
+      .filter((video) => video.videoId && video.title)
+      .map((video, index) => {
+        const rss = rssById.get(`yt-${video.videoId}`);
+        const publishedAt =
+          rss?.publishedAt ||
+          publishedById.get(video.videoId as string) ||
+          (typeof video.published === 'number' && video.published > 0
+            ? new Date(video.published * 1000).toISOString()
+            : undefined);
+        return buildEpisodeFromVideoId(video.videoId as string, video.title as string, categoryName, index, {
+          thumbnail: `https://i.ytimg.com/vi/${video.videoId}/hqdefault.jpg`,
+          publishedAt,
+          description: rss?.description || video.title,
+          duration: formatLengthSeconds(video.lengthSeconds || 0),
+        });
+      })
+  );
+}
+
 /**
  * Playlist complète via le proxy serveur (pas limitée aux 15 entrées du RSS).
  */
@@ -473,7 +588,14 @@ export async function loadPlaylistEpisodes(
     const items = await fetchYouTubePlaylistFull(playlistId, categoryName);
     if (items.length > 0) return items;
   } catch (e) {
-    console.warn(`Playlist complète échouée pour ${categoryName}, fallback RSS`, e);
+    console.warn(`Playlist complète échouée pour ${categoryName}, fallback Invidious`, e);
+  }
+
+  try {
+    const items = await fetchYouTubePlaylistInvidious(playlistId, categoryName);
+    if (items.length > 0) return items;
+  } catch (e) {
+    console.warn(`Invidious échoué pour ${categoryName}, fallback RSS`, e);
   }
 
   try {

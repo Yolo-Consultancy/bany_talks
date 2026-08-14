@@ -89,26 +89,61 @@ export async function fetchYoutubePlaylistItems(playlistId) {
   const cleanId = String(playlistId || '').trim();
   if (!cleanId) throw new Error('Missing playlist_id');
 
-  const seen = new Set();
-  const items = [];
-  let tokens = [];
-  const first = await browseInnertube({ browseId: `VL${cleanId}` });
-  collectPlaylistItems(first, items, tokens);
+  try {
+    const seen = new Set();
+    const items = [];
+    let tokens = [];
+    const first = await browseInnertube({ browseId: `VL${cleanId}` });
+    collectPlaylistItems(first, items, tokens);
 
-  let guard = 0;
-  while (tokens.length && guard++ < 20) {
-    const token = tokens.shift();
-    const page = await browseInnertube({ continuation: token });
-    const extra = [];
-    const nextTokens = [];
-    collectPlaylistItems(page, extra, nextTokens);
-    items.push(...extra);
-    tokens.push(...nextTokens);
+    let guard = 0;
+    while (tokens.length && guard++ < 20) {
+      const token = tokens.shift();
+      const page = await browseInnertube({ continuation: token });
+      const extra = [];
+      const nextTokens = [];
+      collectPlaylistItems(page, extra, nextTokens);
+      items.push(...extra);
+      tokens.push(...nextTokens);
+    }
+
+    const unique = items.filter((item) => {
+      if (seen.has(item.videoId)) return false;
+      seen.add(item.videoId);
+      return true;
+    });
+    if (unique.length > 0) return unique;
+  } catch (error) {
+    console.warn('Innertube playlist failed, fallback Invidious', error);
   }
 
-  return items.filter((item) => {
-    if (seen.has(item.videoId)) return false;
-    seen.add(item.videoId);
-    return true;
-  });
+  const instances = [
+    'https://inv.nadeko.net',
+    'https://invidious.privacyredirect.com',
+    'https://yewtu.be',
+  ];
+  let lastError;
+  for (const instance of instances) {
+    try {
+      const res = await fetch(`${instance}/api/v1/playlists/${encodeURIComponent(cleanId)}`, {
+        signal: AbortSignal.timeout(12000),
+      });
+      if (!res.ok) throw new Error(`Invidious ${res.status}`);
+      const data = await res.json();
+      const videos = Array.isArray(data?.videos) ? data.videos : [];
+      const mapped = videos
+        .filter((video) => video?.videoId && video?.title)
+        .map((video) => ({
+          videoId: video.videoId,
+          title: video.title,
+          duration: '',
+          thumbnail: `https://i.ytimg.com/vi/${video.videoId}/hqdefault.jpg`,
+          publishedLabel: '',
+        }));
+      if (mapped.length > 0) return mapped;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError || new Error('Invidious playlist empty');
 }
