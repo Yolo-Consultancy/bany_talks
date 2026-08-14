@@ -10,6 +10,9 @@ import { Episode } from '../types';
 export const DEFAULT_YOUTUBE_CHANNEL_ID = 'UCVD4Xz1D5HsROhox55EwZ5A';
 export const DEFAULT_YOUTUBE_API_KEY = '';    // Optionnel : Clé API Google Cloud YouTube
 
+/** Durée minimale affichée sur BTX : Shorts et vidéos de moins de 10 min exclus. */
+const MIN_EPISODE_SECONDS = 10 * 60;
+
 
 /**
  * Parses an ISO 8601 Duration (YouTube API format e.g. PT1H14M22S) to HH:MM:SS or MM:SS
@@ -208,12 +211,14 @@ function buildEpisodeFromVideoId(
   index: number,
   options: { description?: string; thumbnail?: string; publishedAt?: string; duration?: string } = {}
 ): Episode {
-  const publishDateRaw = options.publishedAt ? new Date(options.publishedAt) : new Date();
-  const publishDateFormatted = publishDateRaw.toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  });
+  const publishDateRaw = options.publishedAt ? new Date(options.publishedAt) : null;
+  const publishDateFormatted = publishDateRaw
+    ? publishDateRaw.toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : '';
   const description = options.description || title;
 
   return {
@@ -224,7 +229,7 @@ function buildEpisodeFromVideoId(
     richDescription: description,
     duration: options.duration || 'Vidéo',
     publishDate: publishDateFormatted,
-    publishedAt: options.publishedAt || publishDateRaw.toISOString(),
+    publishedAt: options.publishedAt || '',
     category: categoryName,
     thumbnail: options.thumbnail || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
     youtubeUrl: `https://www.youtube.com/embed/${videoId}`,
@@ -420,7 +425,11 @@ export async function fetchYouTubePlaylistInvidious(
 
   return sortEpisodesByPublishDate(
     videos
-      .filter((video) => video.videoId && video.title)
+      .filter((video) => {
+        if (!video.videoId || !video.title) return false;
+        const length = Number(video.lengthSeconds) || 0;
+        return !(length > 0 && length < MIN_EPISODE_SECONDS);
+      })
       .map((video, index) => {
         const rss = rssById.get(`yt-${video.videoId}`);
         const publishedAt =
@@ -524,12 +533,169 @@ export function mergeEpisodesById(...lists: Episode[][]): Episode[] {
   const byId = new Map<string, Episode>();
   for (const list of lists) {
     for (const episode of list) {
-      if (!byId.has(episode.id)) {
+      const existing = byId.get(episode.id);
+      if (!existing) {
         byId.set(episode.id, episode);
+        continue;
       }
+      const existingTs = getEpisodeTimestamp(existing);
+      const nextTs = getEpisodeTimestamp(episode);
+      const newer = nextTs > existingTs ? episode : existing;
+      byId.set(episode.id, {
+        ...existing,
+        ...episode,
+        category: existing.category || episode.category,
+        publishedAt: newer.publishedAt,
+        publishDate: newer.publishDate || existing.publishDate,
+      });
     }
   }
   return sortEpisodesByPublishDate(Array.from(byId.values()));
+}
+
+function formatPublishDate(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
+function durationToSeconds(duration?: string): number | null {
+  if (!duration || duration === 'Vidéo') return null;
+  const parts = duration.trim().split(':').map((part) => parseInt(part, 10));
+  if (parts.length === 0 || parts.some((n) => Number.isNaN(n))) return null;
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  if (parts.length === 2) return parts[0] * 60 + parts[1];
+  return parts[0];
+}
+
+export function isYoutubeShortEpisode(episode: Pick<Episode, 'duration'> & { lengthSeconds?: number }): boolean {
+  const fromField = typeof episode.lengthSeconds === 'number' ? episode.lengthSeconds : null;
+  const fromDuration = durationToSeconds(episode.duration);
+  const seconds = fromField && fromField > 0 ? fromField : fromDuration;
+  return seconds !== null && seconds > 0 && seconds < MIN_EPISODE_SECONDS;
+}
+
+/**
+ * Retire les Shorts et les vidéos de moins de 10 minutes.
+ */
+export async function filterOutYoutubeShorts(episodes: Episode[]): Promise<Episode[]> {
+  const keep = await Promise.all(
+    episodes.map(async (episode) => {
+      if (isYoutubeShortEpisode(episode)) return false;
+
+      const seconds = durationToSeconds(episode.duration);
+      if (seconds !== null && seconds >= MIN_EPISODE_SECONDS) return true;
+
+      const videoId = episode.id.replace(/^yt-/, '');
+      for (const instance of INVIDIOUS_INSTANCES) {
+        try {
+          const info = await fetchJsonWithTimeout(`${instance}/api/v1/videos/${videoId}`, 7000);
+          const type = String(info?.type || '').toLowerCase();
+          if (type.includes('short')) return false;
+          const length = Number(info?.lengthSeconds) || 0;
+          if (length > 0 && length < MIN_EPISODE_SECONDS) return false;
+          return true;
+        } catch {
+          /* next instance */
+        }
+      }
+      return true;
+    })
+  );
+
+  return sortEpisodesByPublishDate(episodes.filter((_, index) => keep[index]));
+}
+
+/**
+ * Attache les vraies dates de publication YouTube (RSS chaîne + Invidious)
+ * puis trie du plus récent au plus ancien. Ne change pas le contenu des playlists.
+ */
+export async function applyYoutubePublishDates(episodes: Episode[]): Promise<Episode[]> {
+  if (episodes.length === 0) return episodes;
+
+  const dates = new Map<string, string>();
+  const remember = (id: string | undefined, publishedAt?: string) => {
+    if (!id || !publishedAt) return;
+    const time = new Date(publishedAt).getTime();
+    if (Number.isNaN(time) || time <= 0) return;
+    const prev = dates.get(id);
+    if (prev && new Date(prev).getTime() >= time) return;
+    dates.set(id, publishedAt);
+  };
+
+  episodes.forEach((episode) => remember(episode.id, episode.publishedAt));
+
+  const channelId = (
+    import.meta.env.VITE_YOUTUBE_CHANNEL_ID || DEFAULT_YOUTUBE_CHANNEL_ID
+  ).replace(/^["']|["']$/g, '');
+
+  try {
+    const latest = await fetchYouTubeChannelRSS(channelId);
+    latest.forEach((episode) => remember(episode.id, episode.publishedAt));
+  } catch (error) {
+    console.warn('Dates RSS chaîne indisponibles', error);
+  }
+
+  for (const instance of INVIDIOUS_INSTANCES) {
+    try {
+      const data = await fetchJsonWithTimeout(
+        `${instance}/api/v1/channels/${encodeURIComponent(channelId)}/videos?sort_by=newest`,
+        12000
+      );
+      const videos = Array.isArray(data?.videos)
+        ? data.videos
+        : Array.isArray(data?.latestVideos)
+          ? data.latestVideos
+          : [];
+      videos.forEach((video: { videoId?: string; published?: number }) => {
+        if (video.videoId && video.published) {
+          remember(`yt-${video.videoId}`, new Date(video.published * 1000).toISOString());
+        }
+      });
+      break;
+    } catch {
+      /* try next instance */
+    }
+  }
+
+  const missing = episodes
+    .map((episode) => episode.id.replace(/^yt-/, ''))
+    .filter((videoId) => videoId && !dates.has(`yt-${videoId}`))
+    .slice(0, 25);
+
+  if (missing.length > 0) {
+    await Promise.all(
+      missing.map(async (videoId) => {
+        for (const instance of INVIDIOUS_INSTANCES) {
+          try {
+            const info = await fetchJsonWithTimeout(`${instance}/api/v1/videos/${videoId}`, 8000);
+            if (info?.published) {
+              remember(`yt-${videoId}`, new Date(info.published * 1000).toISOString());
+              return;
+            }
+          } catch {
+            /* next instance */
+          }
+        }
+      })
+    );
+  }
+
+  return sortEpisodesByPublishDate(
+    episodes.map((episode) => {
+      const publishedAt = dates.get(episode.id) || episode.publishedAt;
+      if (!publishedAt) return episode;
+      return {
+        ...episode,
+        publishedAt,
+        publishDate: formatPublishDate(publishedAt) || episode.publishDate,
+      };
+    })
+  );
 }
 
 /**
@@ -558,12 +724,12 @@ export async function loadChannelEpisodes(
     }
   }
 
-  try {
-    return await fetchYouTubeChannelRSS(actualChannelId, categoryName);
-  } catch (e) {
-    console.warn('RSS chaîne YouTube échoué', e);
-    return [];
-  }
+  const uploadsPlaylistId = toUploadsPlaylistId(actualChannelId);
+  const [rssItems, playlistItems] = await Promise.all([
+    fetchYouTubeChannelRSS(actualChannelId, categoryName).catch(() => [] as Episode[]),
+    loadPlaylistEpisodes(uploadsPlaylistId, categoryName).catch(() => [] as Episode[]),
+  ]);
+  return mergeEpisodesById(rssItems, playlistItems);
 }
 
 /**

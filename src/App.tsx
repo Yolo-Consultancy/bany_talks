@@ -11,7 +11,10 @@ import { NAV_ITEMS } from './data/navItems';
 import { Episode } from './types';
 import {
   loadPlaylistEpisodes,
+  loadChannelEpisodes,
   mergeEpisodesById,
+  applyYoutubePublishDates,
+  filterOutYoutubeShorts,
 } from './services/youtube';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -117,18 +120,29 @@ export default function App() {
     const podcastsPlaylistId = import.meta.env.VITE_PLAYLIST_PODCASTS_ID ?? 'PLXxMao9EmHNAf_hXS8lZkWyZJA8F_Sr17';
 
     try {
-      const [emissions, podcasts] = await Promise.all([
+      const [emissions, podcasts, channelLatest] = await Promise.all([
         loadPlaylistEpisodes(emissionsPlaylistId, 'Émissions'),
         loadPlaylistEpisodes(podcastsPlaylistId, 'Podcasts'),
+        loadChannelEpisodes(undefined, 'Émissions'),
       ]);
 
-      const combined = mergeEpisodesById(emissions, podcasts);
+      const categoryById = new Map<string, Episode['category']>();
+      emissions.forEach((episode) => categoryById.set(episode.id, 'Émissions'));
+      podcasts.forEach((episode) => categoryById.set(episode.id, 'Podcasts'));
+
+      const dated = await applyYoutubePublishDates(
+        mergeEpisodesById(emissions, podcasts, channelLatest).map((episode) => ({
+          ...episode,
+          category: categoryById.get(episode.id) || episode.category,
+        }))
+      );
+      const combined = await filterOutYoutubeShorts(dated);
       if (combined.length > 0) {
         setEpisodes((prev) => {
           if (currentViewRef.current === 'episode-detail') return prev;
-          const prevIds = prev.map((episode) => episode.id).join('|');
-          const nextIds = combined.map((episode) => episode.id).join('|');
-          if (prevIds === nextIds) return prev;
+          const fingerprint = (items: Episode[]) =>
+            items.map((episode) => `${episode.id}:${episode.publishedAt || ''}`).join('|');
+          if (fingerprint(prev) === fingerprint(combined)) return prev;
           writeCachedEpisodes(combined);
           return combined;
         });
