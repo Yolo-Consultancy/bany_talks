@@ -6,7 +6,8 @@ import BlogArticleCard from './BlogArticleCard';
 import BlogNewsletter from './BlogNewsletter';
 import { BlogGridSkeleton } from './BlogSkeleton';
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE_MOBILE = 3;
+const PAGE_SIZE_DESKTOP = 9;
 
 interface BlogCategoryPageProps {
   categorySlug: string;
@@ -21,11 +22,22 @@ export default function BlogCategoryPage({
   onReadArticle,
   onOpenCategory,
 }: BlogCategoryPageProps) {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < 768
+  );
   const [category, setCategory] = useState<BlogCategory | null>(null);
   const [articles, setArticles] = useState<BlogArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const onChange = () => setIsMobile(mq.matches);
+    onChange();
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,11 +60,16 @@ export default function BlogCategoryPage({
     };
   }, [categorySlug]);
 
-  const totalPages = Math.max(1, Math.ceil(articles.length / PAGE_SIZE));
+  const pageSize = isMobile ? PAGE_SIZE_MOBILE : PAGE_SIZE_DESKTOP;
+  const totalPages = Math.max(1, Math.ceil(articles.length / pageSize));
   const pageArticles = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return articles.slice(start, start + PAGE_SIZE);
-  }, [articles, page]);
+    const start = (page - 1) * pageSize;
+    return articles.slice(start, start + pageSize);
+  }, [articles, page, pageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [isMobile]);
 
   const goToPage = (next: number) => {
     setPage(next);

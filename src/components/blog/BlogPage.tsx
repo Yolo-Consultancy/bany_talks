@@ -6,6 +6,9 @@ import BlogArticleCard from './BlogArticleCard';
 import BlogNewsletter from './BlogNewsletter';
 import { BlogGridSkeleton } from './BlogSkeleton';
 
+const PAGE_LIMIT_MOBILE = 3;
+const PAGE_LIMIT_DESKTOP = 9;
+
 interface BlogPageProps {
   onReadArticle: (slug: string) => void;
   onOpenCategory: (slug: string) => void;
@@ -17,6 +20,9 @@ export default function BlogPage({
   onOpenCategory,
   initialCategory,
 }: BlogPageProps) {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < 768
+  );
   const [articles, setArticles] = useState<BlogArticle[]>([]);
   const [featured, setFeatured] = useState<BlogArticle[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
@@ -27,6 +33,16 @@ export default function BlogPage({
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const pageLimit = isMobile ? PAGE_LIMIT_MOBILE : PAGE_LIMIT_DESKTOP;
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const onChange = () => setIsMobile(mq.matches);
+    onChange();
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQuery(searchQuery.trim()), 280);
@@ -47,27 +63,30 @@ export default function BlogPage({
     setLoading(true);
     setError(null);
     try {
-      const [list, featuredList] = await Promise.all([
-        fetchArticles({
-          q: debouncedQuery || undefined,
-          category: selectedCategory || undefined,
-          page,
-          limit: 9,
-        }),
-        page === 1 && !debouncedQuery && !selectedCategory
-          ? fetchArticles({ featured: true, limit: 3 })
-          : Promise.resolve({ items: [], pagination: { page: 1, limit: 3, total: 0, totalPages: 1 } }),
-      ]);
+      const listPromise = fetchArticles({
+        q: debouncedQuery || undefined,
+        category: selectedCategory || undefined,
+        page,
+        limit: pageLimit,
+      });
+      const featuredPromise =
+        page !== 1
+          ? null
+          : !debouncedQuery && !selectedCategory
+            ? fetchArticles({ featured: true, limit: isMobile ? 1 : 3 })
+            : Promise.resolve({ items: [] as BlogArticle[] });
+
+      const [list, featuredList] = await Promise.all([listPromise, featuredPromise]);
       setArticles(list.items);
       setTotalPages(list.pagination.totalPages);
-      setFeatured(featuredList.items);
+      if (featuredList) setFeatured(featuredList.items);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Impossible de charger les articles');
       setArticles([]);
     } finally {
       setLoading(false);
     }
-  }, [debouncedQuery, selectedCategory, page]);
+  }, [debouncedQuery, selectedCategory, page, pageLimit, isMobile]);
 
   useEffect(() => {
     loadArticles();
@@ -75,22 +94,31 @@ export default function BlogPage({
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedQuery, selectedCategory]);
+  }, [debouncedQuery, selectedCategory, isMobile]);
 
-  const latest = useMemo(() => {
-    if (featured.length === 0) return articles.slice(0, 3);
-    const featuredIds = new Set(featured.map((a) => a.id));
-    return articles.filter((a) => !featuredIds.has(a.id)).slice(0, 3);
-  }, [articles, featured]);
+  const featuredToShow = useMemo(() => {
+    if (page !== 1 || debouncedQuery || selectedCategory) return [];
+    if (isMobile) {
+      if (featured.length > 0) return featured.slice(0, 1);
+      return articles.slice(0, 1);
+    }
+    return featured;
+  }, [featured, articles, isMobile, page, debouncedQuery, selectedCategory]);
 
   const gridArticles = useMemo(() => {
-    if (page === 1 && !debouncedQuery && !selectedCategory && featured.length) {
-      const exclude = new Set([...featured, ...latest].map((a) => a.id));
-      const rest = articles.filter((a) => !exclude.has(a.id));
-      return [...latest, ...rest];
+    const excludeIds = new Set<string>();
+    if (isMobile && !debouncedQuery && !selectedCategory) {
+      featuredToShow.forEach((a) => excludeIds.add(a.id));
+      featured.slice(0, 1).forEach((a) => excludeIds.add(a.id));
+    } else {
+      featuredToShow.forEach((a) => excludeIds.add(a.id));
     }
-    return articles;
-  }, [articles, featured, latest, page, debouncedQuery, selectedCategory]);
+    const rest = articles.filter((a) => !excludeIds.has(a.id));
+    if (isMobile && page === 1 && featuredToShow.length && !debouncedQuery && !selectedCategory) {
+      return rest.slice(0, 2);
+    }
+    return rest;
+  }, [articles, featured, featuredToShow, isMobile, page, debouncedQuery, selectedCategory]);
 
   const handleArticleUpdate = (updated: BlogArticle) => {
     setArticles((prev) => prev.map((a) => (a.id === updated.id ? { ...a, ...updated } : a)));
@@ -166,15 +194,15 @@ export default function BlogPage({
         )}
 
         {loading ? (
-          <BlogGridSkeleton />
+          <BlogGridSkeleton count={isMobile ? 3 : 6} />
         ) : (
           <>
             {/* Featured */}
-            {!debouncedQuery && !selectedCategory && featured.length > 0 && page === 1 && (
+            {featuredToShow.length > 0 && (
               <div className="space-y-4">
                 <h2 className="font-display text-lg text-stone-100 font-medium">À la une</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
-                  {featured.map((article, i) => (
+                  {featuredToShow.map((article, i) => (
                     <div key={article.id} className={i === 0 ? 'md:col-span-2 lg:col-span-2' : ''}>
                       <BlogArticleCard
                         article={article}
@@ -191,6 +219,7 @@ export default function BlogPage({
             )}
 
             {/* Latest / grid */}
+            {(gridArticles.length > 0 || featuredToShow.length === 0) && (
             <div className="space-y-4">
               <div className="flex items-center justify-between gap-4">
                 <h2 className="font-display text-lg text-stone-100 font-medium">
@@ -235,9 +264,10 @@ export default function BlogPage({
                 </div>
               )}
             </div>
+            )}
 
             {/* Pagination */}
-            {totalPages > 1 && gridArticles.length > 0 && (
+            {totalPages > 1 && (gridArticles.length > 0 || featuredToShow.length > 0) && (
               <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
                 <button
                   type="button"
