@@ -25,14 +25,7 @@ function saveLikedArticles(set: Set<string>) {
   localStorage.setItem(LIKED_ARTICLES_KEY, JSON.stringify([...set]));
 }
 
-function authorInitials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase() || '')
-    .join('');
-}
+const AUTHOR_AVATAR = '/avatar.jpg';
 
 function formatCount(n: number) {
   if (n >= 1000) {
@@ -138,10 +131,14 @@ export default function BlogArticleCard({
         <button
           type="button"
           onClick={() => onRead(article.slug)}
-          className="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center text-white text-sm font-semibold shrink-0 cursor-pointer"
+          className="w-10 h-10 rounded-full overflow-hidden bg-stone-800 shrink-0 cursor-pointer"
           aria-label={article.author}
         >
-          {authorInitials(article.author || 'B')}
+          <img
+            src={AUTHOR_AVATAR}
+            alt={article.author || 'Bany'}
+            className="w-full h-full object-cover"
+          />
         </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
