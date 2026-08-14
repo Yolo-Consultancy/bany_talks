@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { ArrowDown } from 'lucide-react';
 import { motion, useAnimation } from 'framer-motion';
 import { Episode } from '../types';
@@ -67,18 +67,23 @@ interface EpisodesHeroProps {
 }
 
 export default function EpisodesHero({ episodes }: EpisodesHeroProps) {
+  const frozenTilesRef = useRef<string[]>([]);
   const tiles = useMemo(() => {
     const urls = episodes
       .map((ep) => ep.thumbnail)
       .filter((src): src is string => Boolean(src));
 
-    if (urls.length === 0) return [];
+    if (urls.length === 0) return frozenTilesRef.current;
 
     const filled: string[] = [];
     while (filled.length < MIN_TILES) {
       filled.push(...urls);
     }
-    return filled.slice(0, MIN_TILES);
+    const next = filled.slice(0, MIN_TILES);
+    if (frozenTilesRef.current.length === 0) {
+      frozenTilesRef.current = next;
+    }
+    return frozenTilesRef.current;
   }, [episodes]);
 
   return (

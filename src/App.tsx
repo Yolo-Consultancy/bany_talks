@@ -32,6 +32,28 @@ import BlogCategoryPage from './components/blog/BlogCategoryPage';
 import ContactPage from './components/ContactPage';
 import NewsletterUnsubscribe from './components/NewsletterUnsubscribe';
 
+const EPISODES_CACHE_KEY = 'bany_btx_episodes';
+
+function readCachedEpisodes(): Episode[] {
+  if (typeof window === 'undefined') return EPISODES;
+  try {
+    const raw = sessionStorage.getItem(EPISODES_CACHE_KEY);
+    if (!raw) return EPISODES;
+    const parsed = JSON.parse(raw) as Episode[];
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : EPISODES;
+  } catch {
+    return EPISODES;
+  }
+}
+
+function writeCachedEpisodes(items: Episode[]) {
+  try {
+    sessionStorage.setItem(EPISODES_CACHE_KEY, JSON.stringify(items));
+  } catch {
+    /* ignore quota */
+  }
+}
+
 type AppView =
   | 'home'
   | 'episodes'
@@ -73,7 +95,7 @@ export default function App() {
   const [currentView, setCurrentView] = useState<AppView>(
     initialUnsub?.view || initialHash?.view || 'home'
   );
-  const [episodes, setEpisodes] = useState<Episode[]>(EPISODES);
+  const [episodes, setEpisodes] = useState<Episode[]>(readCachedEpisodes);
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
   const [blogSlug, setBlogSlug] = useState<string | null>(initialHash?.view === 'blog-detail' ? initialHash.slug || null : null);
   const [blogCategorySlug, setBlogCategorySlug] = useState<string | null>(
@@ -83,9 +105,12 @@ export default function App() {
     initialUnsub?.token || null
   );
   const loadingEpisodesRef = useRef(false);
+  const currentViewRef = useRef(currentView);
+  currentViewRef.current = currentView;
 
   const loadEpisodes = useCallback(async () => {
     if (loadingEpisodesRef.current) return;
+    if (currentViewRef.current === 'episode-detail') return;
     loadingEpisodesRef.current = true;
 
     const emissionsPlaylistId = import.meta.env.VITE_PLAYLIST_EMISSIONS_ID ?? 'PLXxMao9EmHNDMU4n8XuVFdbGmWjXSH9LC';
@@ -100,9 +125,12 @@ export default function App() {
       const combined = mergeEpisodesById(emissions, podcasts);
       if (combined.length > 0) {
         setEpisodes((prev) => {
+          if (currentViewRef.current === 'episode-detail') return prev;
           const prevIds = prev.map((episode) => episode.id).join('|');
           const nextIds = combined.map((episode) => episode.id).join('|');
-          return prevIds === nextIds ? prev : combined;
+          if (prevIds === nextIds) return prev;
+          writeCachedEpisodes(combined);
+          return combined;
         });
       } else {
         console.warn('Aucun épisode YouTube récupéré, conservation des données locales.');
@@ -117,26 +145,14 @@ export default function App() {
   useEffect(() => {
     loadEpisodes();
 
-    const refreshIfVisible = () => {
-      if (document.visibilityState === 'visible') loadEpisodes();
-    };
-
-    const intervalId = window.setInterval(refreshIfVisible, 30_000);
-    document.addEventListener('visibilitychange', refreshIfVisible);
-    window.addEventListener('focus', refreshIfVisible);
-
-    return () => {
-      window.clearInterval(intervalId);
-      document.removeEventListener('visibilitychange', refreshIfVisible);
-      window.removeEventListener('focus', refreshIfVisible);
-    };
-  }, [loadEpisodes]);
-
-  useEffect(() => {
-    if (currentView === 'episodes' || currentView === 'home') {
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState !== 'visible') return;
+      if (currentViewRef.current === 'episode-detail') return;
       loadEpisodes();
-    }
-  }, [currentView, loadEpisodes]);
+    }, 120_000);
+
+    return () => window.clearInterval(intervalId);
+  }, [loadEpisodes]);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

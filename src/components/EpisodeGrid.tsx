@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Search, Play, ArrowRight, FilterX, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { Episode } from '../types';
@@ -37,6 +37,12 @@ export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: Epis
   const [currentPage, setCurrentPage] = useState(1);
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const frozenEpisodesRef = useRef(episodes);
+
+  if (!playingVideoId) {
+    frozenEpisodesRef.current = episodes;
+  }
+  const visibleEpisodes = playingVideoId ? frozenEpisodesRef.current : episodes;
 
   useEffect(() => {
     const handleResize = () => {
@@ -51,7 +57,7 @@ export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: Epis
   const categories = ['Toutes', 'Émissions', 'Podcasts'];
 
   const filteredEpisodes = useMemo(() => {
-    const filtered = episodes.filter((episode) => {
+    const filtered = visibleEpisodes.filter((episode) => {
       const matchesSearch =
         episode.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         episode.guest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -63,11 +69,11 @@ export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: Epis
     });
 
     return sortEpisodesByPublishDate(filtered);
-  }, [episodes, searchQuery, selectedCategory]);
+  }, [visibleEpisodes, searchQuery, selectedCategory]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory, episodes[0]?.id, episodes.length]);
+  }, [searchQuery, selectedCategory]);
 
   const totalPages = Math.ceil(filteredEpisodes.length / ITEMS_PER_PAGE);
   const paginatedEpisodes = useMemo(() => {
@@ -139,11 +145,9 @@ export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: Epis
         ) : (
           <>
             <motion.div
-              key={`${currentPage}-${selectedCategory}-${searchQuery}`}
               variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-60px' }}
+              initial={false}
+              animate="visible"
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
             >
               {paginatedEpisodes.map((episode, i) => {
@@ -153,6 +157,8 @@ export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: Epis
                 return (
                   <motion.article
                     key={episode.id}
+                    initial={false}
+                    animate="visible"
                     variants={cardVariants}
                     className={`group text-left ${isHiddenOnMobile ? 'hidden md:block' : ''}`}
                   >
