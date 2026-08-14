@@ -29,6 +29,25 @@ function parseISO8601Duration(isoDuration: string): string {
   return `${formatNum(minutes)}:${formatNum(seconds)}`;
 }
 
+function parseRelativePublishDate(label: string): string | undefined {
+  const text = (label || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  if (!text) return undefined;
+  const amount = parseInt(text.match(/(\d+)/)?.[1] || '1', 10);
+  const ms =
+    /an|year/.test(text) ? 365 * 86400000 :
+    /mois|month/.test(text) ? 30 * 86400000 :
+    /semaine|week/.test(text) ? 7 * 86400000 :
+    /jour|day/.test(text) ? 86400000 :
+    /heure|hour/.test(text) ? 3600000 :
+    /minute/.test(text) ? 60000 :
+    0;
+  if (!ms) return undefined;
+  return new Date(Date.now() - amount * ms).toISOString();
+}
+
 const YT_NS = 'http://www.youtube.com/xml/schemas/2015';
 const MEDIA_NS = 'http://search.yahoo.com/mrss/';
 
@@ -125,31 +144,39 @@ export async function fetchYouTubePlaylistItems(
   }
 
   const cleanId = playlistId.trim();
-  const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=50&playlistId=${cleanId}&key=${actualApiKey}`;
+  const items: any[] = [];
+  let pageToken = '';
 
-  const response = await fetch(url);
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || "Échec de la récupération des vidéos YouTube via l'API.");
-  }
-
-  const data = await response.json();
-  const items = data.items || [];
+  do {
+    const pageParam = pageToken ? `&pageToken=${pageToken}` : '';
+    const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=50&playlistId=${cleanId}&key=${actualApiKey}${pageParam}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData?.error?.message || "Échec de la récupération des vidéos YouTube via l'API.");
+    }
+    const data = await response.json();
+    items.push(...(data.items || []));
+    pageToken = data.nextPageToken || '';
+  } while (pageToken);
 
   const videoIds = items.map((item: any) => item.contentDetails?.videoId).filter(Boolean);
   const videoStatsMap: Record<string, { duration: string; viewCount: number }> = {};
 
   if (videoIds.length > 0) {
     try {
-      const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics&id=${videoIds.join(',')}&key=${actualApiKey}`;
-      const statsRes = await fetch(statsUrl);
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        (statsData.items || []).forEach((v: any) => {
-          const duration = parseISO8601Duration(v.contentDetails?.duration || 'PT0S');
-          const viewCount = parseInt(v.statistics?.viewCount || '0', 10);
-          videoStatsMap[v.id] = { duration, viewCount };
-        });
+      for (let i = 0; i < videoIds.length; i += 50) {
+        const batch = videoIds.slice(i, i + 50);
+        const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics&id=${batch.join(',')}&key=${actualApiKey}`;
+        const statsRes = await fetch(statsUrl);
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          (statsData.items || []).forEach((v: any) => {
+            const duration = parseISO8601Duration(v.contentDetails?.duration || 'PT0S');
+            const viewCount = parseInt(v.statistics?.viewCount || '0', 10);
+            videoStatsMap[v.id] = { duration, viewCount };
+          });
+        }
       }
     } catch (e) {
       console.warn("Impossible de récupérer les statistiques détaillées", e);
@@ -179,7 +206,7 @@ function buildEpisodeFromVideoId(
   title: string,
   categoryName: 'Émissions' | 'Podcasts',
   index: number,
-  options: { description?: string; thumbnail?: string; publishedAt?: string } = {}
+  options: { description?: string; thumbnail?: string; publishedAt?: string; duration?: string } = {}
 ): Episode {
   const publishDateRaw = options.publishedAt ? new Date(options.publishedAt) : new Date();
   const publishDateFormatted = publishDateRaw.toLocaleDateString('fr-FR', {
@@ -195,7 +222,7 @@ function buildEpisodeFromVideoId(
     title,
     description: description.length > 160 ? description.substring(0, 160) + '...' : description,
     richDescription: description,
-    duration: 'Vidéo',
+    duration: options.duration || 'Vidéo',
     publishDate: publishDateFormatted,
     publishedAt: options.publishedAt || publishDateRaw.toISOString(),
     category: categoryName,
@@ -289,6 +316,53 @@ export async function fetchYouTubePlaylistRSS(
   return parseYouTubeRssXml(xml, categoryName);
 }
 
+type PlaylistProxyItem = {
+  videoId: string;
+  title: string;
+  duration?: string;
+  thumbnail?: string;
+  publishedLabel?: string;
+};
+
+/**
+ * Playlist complète via le proxy serveur (pas limitée aux 15 entrées du RSS).
+ */
+export async function fetchYouTubePlaylistFull(
+  playlistId: string,
+  categoryName: 'Émissions' | 'Podcasts'
+): Promise<Episode[]> {
+  const cleanId = playlistId.trim();
+  if (!cleanId) {
+    throw new Error('Playlist ID is required');
+  }
+
+  const response = await fetch(
+    `/api/youtube/playlist-items?playlist_id=${encodeURIComponent(cleanId)}&_t=${Date.now()}`,
+    {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' },
+    }
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to fetch playlist items: ${response.status}`);
+  }
+  const items = (await response.json()) as PlaylistProxyItem[];
+  if (!Array.isArray(items) || items.length === 0) {
+    throw new Error('Empty playlist');
+  }
+
+  return sortEpisodesByPublishDate(
+    items.map((item, index) =>
+      buildEpisodeFromVideoId(item.videoId, item.title, categoryName, index, {
+        thumbnail: item.thumbnail,
+        publishedAt: parseRelativePublishDate(item.publishedLabel || ''),
+        description: item.title,
+        duration: item.duration,
+      })
+    )
+  );
+}
+
 /**
  * Playlist « Uploads » d’une chaîne : UC… → UU…
  * Plus fiable que le RSS channel_id (souvent 404 derrière nginx/prod).
@@ -378,7 +452,7 @@ export async function loadChannelEpisodes(
 }
 
 /**
- * Loads playlist episodes using the best available method (API → RSS → scraping)
+ * Loads playlist episodes using the best available method (API → playlist complète → RSS → scraping)
  */
 export async function loadPlaylistEpisodes(
   playlistId: string,
@@ -391,8 +465,15 @@ export async function loadPlaylistEpisodes(
       const items = await fetchYouTubePlaylistItems(playlistId, categoryName, apiKey);
       if (items.length > 0) return sortEpisodesByPublishDate(items);
     } catch (e) {
-      console.warn(`API YouTube échouée pour ${categoryName}, fallback RSS`, e);
+      console.warn(`API YouTube échouée pour ${categoryName}, fallback playlist complète`, e);
     }
+  }
+
+  try {
+    const items = await fetchYouTubePlaylistFull(playlistId, categoryName);
+    if (items.length > 0) return items;
+  } catch (e) {
+    console.warn(`Playlist complète échouée pour ${categoryName}, fallback RSS`, e);
   }
 
   try {

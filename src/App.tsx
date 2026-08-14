@@ -3,14 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Menu, X, ArrowUp } from 'lucide-react';
 import { EPISODES } from './data';
 import logoBany from './assets/logos/logo_bany.png';
 import { NAV_ITEMS } from './data/navItems';
 import { Episode } from './types';
 import {
-  loadChannelEpisodes,
   loadPlaylistEpisodes,
   mergeEpisodesById,
 } from './services/youtube';
@@ -83,33 +82,61 @@ export default function App() {
   const [newsletterUnsubToken, setNewsletterUnsubToken] = useState<string | null>(
     initialUnsub?.token || null
   );
+  const loadingEpisodesRef = useRef(false);
+
+  const loadEpisodes = useCallback(async () => {
+    if (loadingEpisodesRef.current) return;
+    loadingEpisodesRef.current = true;
+
+    const emissionsPlaylistId = import.meta.env.VITE_PLAYLIST_EMISSIONS_ID ?? 'PLXxMao9EmHNDMU4n8XuVFdbGmWjXSH9LC';
+    const podcastsPlaylistId = import.meta.env.VITE_PLAYLIST_PODCASTS_ID ?? 'PLXxMao9EmHNAf_hXS8lZkWyZJA8F_Sr17';
+
+    try {
+      const [emissions, podcasts] = await Promise.all([
+        loadPlaylistEpisodes(emissionsPlaylistId, 'Émissions'),
+        loadPlaylistEpisodes(podcastsPlaylistId, 'Podcasts'),
+      ]);
+
+      const combined = mergeEpisodesById(emissions, podcasts);
+      if (combined.length > 0) {
+        setEpisodes((prev) => {
+          const prevIds = prev.map((episode) => episode.id).join('|');
+          const nextIds = combined.map((episode) => episode.id).join('|');
+          return prevIds === nextIds ? prev : combined;
+        });
+      } else {
+        console.warn('Aucun épisode YouTube récupéré, conservation des données locales.');
+      }
+    } catch (err) {
+      console.error('Erreur lors du chargement des vidéos YouTube', err);
+    } finally {
+      loadingEpisodesRef.current = false;
+    }
+  }, []);
 
   useEffect(() => {
-    async function loadEpisodes() {
-      const emissionsPlaylistId = import.meta.env.VITE_PLAYLIST_EMISSIONS_ID ?? 'PLXxMao9EmHNDMU4n8XuVFdbGmWjXSH9LC';
-      const podcastsPlaylistId = import.meta.env.VITE_PLAYLIST_PODCASTS_ID ?? 'PLXxMao9EmHNAf_hXS8lZkWyZJA8F_Sr17';
-
-      try {
-        const [emissions, podcasts, channelLatest] = await Promise.all([
-          loadPlaylistEpisodes(emissionsPlaylistId, 'Émissions'),
-          loadPlaylistEpisodes(podcastsPlaylistId, 'Podcasts'),
-          // Nouvelles vidéos de la chaîne même si pas encore ajoutées aux playlists
-          loadChannelEpisodes(undefined, 'Émissions'),
-        ]);
-
-        // Playlists d'abord (catégorie correcte), puis compléter avec les uploads chaîne
-        const combined = mergeEpisodesById(emissions, podcasts, channelLatest);
-        if (combined.length > 0) {
-          setEpisodes(combined);
-        } else {
-          console.warn('Aucun épisode YouTube récupéré, conservation des données locales.');
-        }
-      } catch (err) {
-        console.error('Erreur lors du chargement des vidéos YouTube', err);
-      }
-    }
     loadEpisodes();
-  }, []);
+
+    const refreshIfVisible = () => {
+      if (document.visibilityState === 'visible') loadEpisodes();
+    };
+
+    const intervalId = window.setInterval(refreshIfVisible, 30_000);
+    document.addEventListener('visibilitychange', refreshIfVisible);
+    window.addEventListener('focus', refreshIfVisible);
+
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', refreshIfVisible);
+      window.removeEventListener('focus', refreshIfVisible);
+    };
+  }, [loadEpisodes]);
+
+  useEffect(() => {
+    if (currentView === 'episodes' || currentView === 'home') {
+      loadEpisodes();
+    }
+  }, [currentView, loadEpisodes]);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

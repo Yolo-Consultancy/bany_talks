@@ -2,7 +2,8 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import type { Plugin } from 'vite';
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
+import { fetchYoutubePlaylistItems } from './youtubePlaylistFetch.js';
 
 async function proxyYoutubeRss(
   res: import('http').ServerResponse,
@@ -34,7 +35,35 @@ function youtubeRssProxy(): Plugin {
   return {
     name: 'youtube-rss-proxy',
     configureServer(server) {
-      server.middlewares.use('/api/youtube/playlist', async (req, res) => {
+      server.middlewares.use('/api/youtube/playlist-items', async (req, res) => {
+        const url = new URL(req.url || '', 'http://localhost');
+        const playlistId = url.searchParams.get('playlist_id');
+        if (!playlistId) {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ message: 'Missing playlist_id' }));
+          return;
+        }
+        try {
+          const items = await fetchYoutubePlaylistItems(playlistId);
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json; charset=utf-8');
+          res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+          res.end(JSON.stringify(items));
+        } catch (error) {
+          console.error('YouTube playlist-items proxy error:', error);
+          res.statusCode = 502;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ message: 'Failed to fetch playlist items' }));
+        }
+      });
+
+      server.middlewares.use('/api/youtube/playlist', async (req, res, next) => {
+        const original = req.originalUrl || req.url || '';
+        if (original.includes('playlist-items')) {
+          next();
+          return;
+        }
         const url = new URL(req.url || '', 'http://localhost');
         const playlistId = url.searchParams.get('playlist_id');
         if (!playlistId) {

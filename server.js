@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { fetchYoutubePlaylistItems } from './youtubePlaylistFetch.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -28,6 +29,21 @@ app.get('/api/youtube/playlist', async (req, res) => {
   } catch (error) {
     console.error('YouTube RSS proxy error:', error);
     res.status(502).send('Failed to fetch YouTube RSS');
+  }
+});
+
+app.get('/api/youtube/playlist-items', async (req, res) => {
+  const playlistId = req.query.playlist_id;
+  if (!playlistId || typeof playlistId !== 'string') {
+    return res.status(400).json({ message: 'Missing playlist_id' });
+  }
+  try {
+    const items = await fetchYoutubePlaylistItems(playlistId);
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.json(items);
+  } catch (error) {
+    console.error('YouTube playlist-items error:', error);
+    res.status(502).json({ message: 'Failed to fetch playlist items' });
   }
 });
 

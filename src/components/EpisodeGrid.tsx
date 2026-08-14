@@ -67,7 +67,7 @@ export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: Epis
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, episodes[0]?.id, episodes.length]);
 
   const totalPages = Math.ceil(filteredEpisodes.length / ITEMS_PER_PAGE);
   const paginatedEpisodes = useMemo(() => {
