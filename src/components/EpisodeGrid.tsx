@@ -54,7 +54,7 @@ export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: Epis
   }, []);
 
   const ITEMS_PER_PAGE = isMobile ? ITEMS_PER_PAGE_MOBILE : ITEMS_PER_PAGE_DESKTOP;
-  const categories = ['Toutes', 'Émissions', 'Podcasts'];
+  const categories = ['Toutes', 'Émissions', 'Podcasts', 'BTX Daily'];
 
   const filteredEpisodes = useMemo(() => {
     const filtered = visibleEpisodes.filter((episode) => {

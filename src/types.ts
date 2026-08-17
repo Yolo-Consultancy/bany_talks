@@ -35,7 +35,7 @@ export interface Episode {
   publishDate: string;
   /** ISO 8601 — utilisé pour trier par date de publication */
   publishedAt?: string;
-  category: 'Émissions' | 'Podcasts';
+  category: 'Émissions' | 'Podcasts' | 'BTX Daily';
   thumbnail: string;
   youtubeUrl: string; // embed URL or placeholder ID
   audioUrl: string; // playable audio stream

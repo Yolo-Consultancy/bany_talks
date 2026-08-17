@@ -13,6 +13,60 @@ export const DEFAULT_YOUTUBE_API_KEY = '';    // Optionnel : Clé API Google Clo
 /** Durée minimale affichée sur BTX : Shorts et vidéos de moins de 10 min exclus. */
 const MIN_EPISODE_SECONDS = 10 * 60;
 
+function formatLengthSeconds(total: number): string {
+  if (!Number.isFinite(total) || total <= 0) return 'Vidéo';
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  if (hours > 0) return `${hours}:${pad(minutes)}:${pad(seconds)}`;
+  return `${pad(minutes)}:${pad(seconds)}`;
+}
+
+function durationToSeconds(duration?: string): number | null {
+  if (!duration) return null;
+  const raw = duration.trim().toLowerCase();
+  if (!raw || raw === 'vidéo' || raw === 'video') return null;
+
+  const iso = raw.toUpperCase().match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (raw.toUpperCase().startsWith('PT') && iso) {
+    const hours = parseInt(iso[1] || '0', 10);
+    const minutes = parseInt(iso[2] || '0', 10);
+    const seconds = parseInt(iso[3] || '0', 10);
+    const total = hours * 3600 + minutes * 60 + seconds;
+    return total > 0 ? total : null;
+  }
+
+  const hms = raw.match(/(?:(\d+)\s*h)?\s*(?:(\d+)\s*m(?:in)?)?\s*(?:(\d+)\s*s(?:ec)?)?/i);
+  if (hms && /[hms]/.test(raw) && !raw.includes(':')) {
+    const total =
+      parseInt(hms[1] || '0', 10) * 3600 +
+      parseInt(hms[2] || '0', 10) * 60 +
+      parseInt(hms[3] || '0', 10);
+    if (total > 0) return total;
+  }
+
+  const parts = raw.replace(/s$/, '').split(':').map((part) => parseInt(part, 10));
+  if (parts.length === 0 || parts.some((n) => Number.isNaN(n))) return null;
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  if (parts.length === 2) return parts[0] * 60 + parts[1];
+  return parts[0];
+}
+
+function pickKnownDuration(...values: Array<string | undefined>): string {
+  for (const value of values) {
+    if (durationToSeconds(value)) return value as string;
+  }
+  return values.find(Boolean) || 'Vidéo';
+}
+
+export function isYoutubeShortEpisode(episode: Pick<Episode, 'duration'> & { lengthSeconds?: number }): boolean {
+  const fromField = typeof episode.lengthSeconds === 'number' ? episode.lengthSeconds : null;
+  const fromDuration = durationToSeconds(episode.duration);
+  const seconds = fromField && fromField > 0 ? fromField : fromDuration;
+  return seconds !== null && seconds > 0 && seconds < MIN_EPISODE_SECONDS;
+}
+
 
 /**
  * Parses an ISO 8601 Duration (YouTube API format e.g. PT1H14M22S) to HH:MM:SS or MM:SS
@@ -84,7 +138,7 @@ export function sortEpisodesByPublishDate(
 
 function mapApiItemsToEpisodes(
   items: any[],
-  categoryName: 'Émissions' | 'Podcasts',
+  categoryName: Episode['category'],
   videoStatsMap: Record<string, { duration: string; viewCount: number }>
 ): Episode[] {
   return items.map((item: any, index: number): Episode => {
@@ -138,7 +192,7 @@ function mapApiItemsToEpisodes(
  */
 export async function fetchYouTubePlaylistItems(
   playlistId: string,
-  categoryName: 'Émissions' | 'Podcasts',
+  categoryName: Episode['category'],
   apiKey?: string
 ): Promise<Episode[]> {
   const actualApiKey = apiKey || import.meta.env.VITE_YOUTUBE_API_KEY || DEFAULT_YOUTUBE_API_KEY || '';
@@ -207,7 +261,7 @@ export async function fetchYouTubeVideos(
 function buildEpisodeFromVideoId(
   videoId: string,
   title: string,
-  categoryName: 'Émissions' | 'Podcasts',
+  categoryName: Episode['category'],
   index: number,
   options: { description?: string; thumbnail?: string; publishedAt?: string; duration?: string } = {}
 ): Episode {
@@ -255,7 +309,7 @@ function buildEpisodeFromVideoId(
 
 function parseYouTubeRssXml(
   xml: string,
-  categoryName: 'Émissions' | 'Podcasts'
+  categoryName: Episode['category']
 ): Episode[] {
   const doc = new DOMParser().parseFromString(xml, 'text/xml');
   if (doc.querySelector('parsererror')) {
@@ -272,6 +326,10 @@ function parseYouTubeRssXml(
           '';
         const title = entry.getElementsByTagName('title')[0]?.textContent?.trim() || 'Sans titre';
         const publishedAt = entry.getElementsByTagName('published')[0]?.textContent?.trim();
+        const linkHref = Array.from(entry.getElementsByTagName('link'))
+          .map((link) => link.getAttribute('href') || '')
+          .join(' ');
+        if (/\/shorts\//i.test(linkHref)) return null;
         const mediaGroup = entry.getElementsByTagNameNS(MEDIA_NS, 'group')[0];
         const thumbnail =
           mediaGroup?.getElementsByTagNameNS(MEDIA_NS, 'thumbnail')[0]?.getAttribute('url') ||
@@ -279,14 +337,22 @@ function parseYouTubeRssXml(
         const description =
           mediaGroup?.getElementsByTagNameNS(MEDIA_NS, 'description')[0]?.textContent?.trim() ||
           title;
+        const durationSeconds = parseInt(
+          entry.getElementsByTagNameNS(YT_NS, 'duration')[0]?.getAttribute('seconds') ||
+            mediaGroup?.getElementsByTagNameNS(YT_NS, 'duration')[0]?.getAttribute('seconds') ||
+            mediaGroup?.getElementsByTagNameNS(MEDIA_NS, 'content')[0]?.getAttribute('duration') ||
+            '0',
+          10
+        );
 
         return buildEpisodeFromVideoId(videoId, title, categoryName, index, {
           description,
           thumbnail,
           publishedAt,
+          duration: formatLengthSeconds(durationSeconds),
         });
       })
-      .filter((episode) => episode.id !== 'yt-')
+      .filter((episode): episode is Episode => Boolean(episode) && episode.id !== 'yt-' && !isYoutubeShortEpisode(episode))
   );
 }
 
@@ -308,7 +374,7 @@ async function fetchRssViaProxy(proxyPath: string): Promise<string> {
  */
 export async function fetchYouTubePlaylistRSS(
   playlistId: string,
-  categoryName: 'Émissions' | 'Podcasts'
+  categoryName: Episode['category']
 ): Promise<Episode[]> {
   const cleanId = playlistId.trim();
   if (!cleanId) {
@@ -328,16 +394,6 @@ type PlaylistProxyItem = {
   thumbnail?: string;
   publishedLabel?: string;
 };
-
-function formatLengthSeconds(total: number): string {
-  if (!Number.isFinite(total) || total <= 0) return 'Vidéo';
-  const hours = Math.floor(total / 3600);
-  const minutes = Math.floor((total % 3600) / 60);
-  const seconds = total % 60;
-  const pad = (n: number) => String(n).padStart(2, '0');
-  if (hours > 0) return `${hours}:${pad(minutes)}:${pad(seconds)}`;
-  return `${pad(minutes)}:${pad(seconds)}`;
-}
 
 const INVIDIOUS_INSTANCES = [
   'https://inv.nadeko.net',
@@ -367,7 +423,7 @@ async function fetchJsonWithTimeout(url: string, timeoutMs = 12000): Promise<any
  */
 export async function fetchYouTubePlaylistInvidious(
   playlistId: string,
-  categoryName: 'Émissions' | 'Podcasts'
+  categoryName: Episode['category']
 ): Promise<Episode[]> {
   const cleanId = playlistId.trim();
   if (!cleanId) throw new Error('Playlist ID is required');
@@ -453,7 +509,7 @@ export async function fetchYouTubePlaylistInvidious(
  */
 export async function fetchYouTubePlaylistFull(
   playlistId: string,
-  categoryName: 'Émissions' | 'Podcasts'
+  categoryName: Episode['category']
 ): Promise<Episode[]> {
   const cleanId = playlistId.trim();
   if (!cleanId) {
@@ -476,14 +532,16 @@ export async function fetchYouTubePlaylistFull(
   }
 
   return sortEpisodesByPublishDate(
-    items.map((item, index) =>
-      buildEpisodeFromVideoId(item.videoId, item.title, categoryName, index, {
-        thumbnail: item.thumbnail,
-        publishedAt: parseRelativePublishDate(item.publishedLabel || ''),
-        description: item.title,
-        duration: item.duration,
-      })
-    )
+    items
+      .filter((item) => !isYoutubeShortEpisode({ duration: item.duration || 'Vidéo' }))
+      .map((item, index) =>
+        buildEpisodeFromVideoId(item.videoId, item.title, categoryName, index, {
+          thumbnail: item.thumbnail,
+          publishedAt: parseRelativePublishDate(item.publishedLabel || ''),
+          description: item.title,
+          duration: item.duration,
+        })
+      )
   );
 }
 
@@ -505,7 +563,7 @@ export function toUploadsPlaylistId(channelId: string): string {
  */
 export async function fetchYouTubeChannelRSS(
   channelId: string,
-  categoryName: 'Émissions' | 'Podcasts' = 'Émissions'
+  categoryName: Episode['category'] = 'Émissions'
 ): Promise<Episode[]> {
   const cleanId = channelId.trim();
   if (!cleanId) {
@@ -547,6 +605,7 @@ export function mergeEpisodesById(...lists: Episode[][]): Episode[] {
         category: existing.category || episode.category,
         publishedAt: newer.publishedAt,
         publishDate: newer.publishDate || existing.publishDate,
+        duration: pickKnownDuration(existing.duration, episode.duration),
       });
     }
   }
@@ -561,22 +620,6 @@ function formatPublishDate(iso: string): string {
     month: 'long',
     year: 'numeric',
   });
-}
-
-function durationToSeconds(duration?: string): number | null {
-  if (!duration || duration === 'Vidéo') return null;
-  const parts = duration.trim().split(':').map((part) => parseInt(part, 10));
-  if (parts.length === 0 || parts.some((n) => Number.isNaN(n))) return null;
-  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
-  if (parts.length === 2) return parts[0] * 60 + parts[1];
-  return parts[0];
-}
-
-export function isYoutubeShortEpisode(episode: Pick<Episode, 'duration'> & { lengthSeconds?: number }): boolean {
-  const fromField = typeof episode.lengthSeconds === 'number' ? episode.lengthSeconds : null;
-  const fromDuration = durationToSeconds(episode.duration);
-  const seconds = fromField && fromField > 0 ? fromField : fromDuration;
-  return seconds !== null && seconds > 0 && seconds < MIN_EPISODE_SECONDS;
 }
 
 /**
@@ -597,8 +640,7 @@ export async function filterOutYoutubeShorts(episodes: Episode[]): Promise<Episo
           const type = String(info?.type || '').toLowerCase();
           if (type.includes('short')) return false;
           const length = Number(info?.lengthSeconds) || 0;
-          if (length > 0 && length < MIN_EPISODE_SECONDS) return false;
-          return true;
+          if (length > 0) return length >= MIN_EPISODE_SECONDS;
         } catch {
           /* next instance */
         }
@@ -703,7 +745,7 @@ export async function applyYoutubePublishDates(episodes: Episode[]): Promise<Epi
  */
 export async function loadChannelEpisodes(
   channelId?: string,
-  categoryName: 'Émissions' | 'Podcasts' = 'Émissions'
+  categoryName: Episode['category'] = 'Émissions'
 ): Promise<Episode[]> {
   const actualChannelId =
     (channelId ||
@@ -737,13 +779,20 @@ export async function loadChannelEpisodes(
  */
 export async function loadPlaylistEpisodes(
   playlistId: string,
-  categoryName: 'Émissions' | 'Podcasts'
+  categoryName: Episode['category']
 ): Promise<Episode[]> {
+  const cleanId = String(playlistId || '')
+    .replace(/^["']|["']$/g, '')
+    .trim()
+    .replace(/^.*[?&]list=/, '')
+    .replace(/[&"].*$/, '');
+  if (!cleanId) return [];
+
   const apiKey = import.meta.env.VITE_YOUTUBE_API_KEY || DEFAULT_YOUTUBE_API_KEY;
 
   if (apiKey) {
     try {
-      const items = await fetchYouTubePlaylistItems(playlistId, categoryName, apiKey);
+      const items = await fetchYouTubePlaylistItems(cleanId, categoryName, apiKey);
       if (items.length > 0) return sortEpisodesByPublishDate(items);
     } catch (e) {
       console.warn(`API YouTube échouée pour ${categoryName}, fallback playlist complète`, e);
@@ -751,35 +800,35 @@ export async function loadPlaylistEpisodes(
   }
 
   try {
-    const items = await fetchYouTubePlaylistFull(playlistId, categoryName);
+    const items = await fetchYouTubePlaylistFull(cleanId, categoryName);
     if (items.length > 0) return items;
   } catch (e) {
     console.warn(`Playlist complète échouée pour ${categoryName}, fallback Invidious`, e);
   }
 
   try {
-    const items = await fetchYouTubePlaylistInvidious(playlistId, categoryName);
+    const items = await fetchYouTubePlaylistInvidious(cleanId, categoryName);
     if (items.length > 0) return items;
   } catch (e) {
     console.warn(`Invidious échoué pour ${categoryName}, fallback RSS`, e);
   }
 
   try {
-    const items = await fetchYouTubePlaylistRSS(playlistId, categoryName);
+    const items = await fetchYouTubePlaylistRSS(cleanId, categoryName);
     if (items.length > 0) return items;
   } catch (e) {
     console.warn(`RSS échoué pour ${categoryName}, fallback scraping`, e);
   }
 
   try {
-    const items = await fetchYouTubePlaylistData(playlistId, categoryName);
+    const items = await fetchYouTubePlaylistData(cleanId, categoryName);
     if (items.length > 0) return sortEpisodesByPublishDate(items);
   } catch (e) {
     console.warn(`Scraping regex échoué pour ${categoryName}`, e);
   }
 
   try {
-    const items = await fetchYouTubePlaylistHTML(playlistId, categoryName);
+    const items = await fetchYouTubePlaylistHTML(cleanId, categoryName);
     return sortEpisodesByPublishDate(items);
   } catch (e) {
     console.warn(`Scraping HTML échoué pour ${categoryName}`, e);
@@ -791,7 +840,7 @@ export async function loadPlaylistEpisodes(
  * Method 3 (Legacy): Fetches a YouTube playlist page via a CORS proxy and extracts video entries.
  * Returns an array of Episode objects with the given category.
  */
-export async function fetchYouTubePlaylistHTML(playlistId: string, categoryName: 'Émissions' | 'Podcasts'): Promise<Episode[]> {
+export async function fetchYouTubePlaylistHTML(playlistId: string, categoryName: Episode['category']): Promise<Episode[]> {
   const cleanId = playlistId.trim();
   if (!cleanId) {
     throw new Error('Playlist ID is required');
@@ -854,7 +903,7 @@ export async function fetchYouTubePlaylistHTML(playlistId: string, categoryName:
  * Fetches a YouTube playlist page via a CORS proxy and extracts video entries using regex.
  * Returns an array of Episode objects with the given category.
  */
-export async function fetchYouTubePlaylistData(playlistId: string, categoryName: 'Émissions' | 'Podcasts'): Promise<Episode[]> {
+export async function fetchYouTubePlaylistData(playlistId: string, categoryName: Episode['category']): Promise<Episode[]> {
   const cleanId = playlistId.trim();
   if (!cleanId) {
     throw new Error('Playlist ID is required');

@@ -15,6 +15,7 @@ import {
   mergeEpisodesById,
   applyYoutubePublishDates,
   filterOutYoutubeShorts,
+  isYoutubeShortEpisode,
 } from './services/youtube';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -35,7 +36,7 @@ import BlogCategoryPage from './components/blog/BlogCategoryPage';
 import ContactPage from './components/ContactPage';
 import NewsletterUnsubscribe from './components/NewsletterUnsubscribe';
 
-const EPISODES_CACHE_KEY = 'bany_btx_episodes';
+const EPISODES_CACHE_KEY = 'bany_btx_episodes_v2';
 
 function readCachedEpisodes(): Episode[] {
   if (typeof window === 'undefined') return EPISODES;
@@ -43,7 +44,8 @@ function readCachedEpisodes(): Episode[] {
     const raw = sessionStorage.getItem(EPISODES_CACHE_KEY);
     if (!raw) return EPISODES;
     const parsed = JSON.parse(raw) as Episode[];
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : EPISODES;
+    if (!Array.isArray(parsed) || parsed.length === 0) return EPISODES;
+    return parsed.filter((episode) => !isYoutubeShortEpisode(episode));
   } catch {
     return EPISODES;
   }
@@ -118,20 +120,23 @@ export default function App() {
 
     const emissionsPlaylistId = import.meta.env.VITE_PLAYLIST_EMISSIONS_ID ?? 'PLXxMao9EmHNDMU4n8XuVFdbGmWjXSH9LC';
     const podcastsPlaylistId = import.meta.env.VITE_PLAYLIST_PODCASTS_ID ?? 'PLXxMao9EmHNAf_hXS8lZkWyZJA8F_Sr17';
+    const btxDailyPlaylistId = import.meta.env.VITE_PLAYLIST_BTX_DAILY_ID ?? 'PLYbDFQTbDUmg';
 
     try {
-      const [emissions, podcasts, channelLatest] = await Promise.all([
+      const [emissions, podcasts, btxDaily, channelLatest] = await Promise.all([
         loadPlaylistEpisodes(emissionsPlaylistId, 'Émissions'),
         loadPlaylistEpisodes(podcastsPlaylistId, 'Podcasts'),
+        loadPlaylistEpisodes(btxDailyPlaylistId, 'BTX Daily'),
         loadChannelEpisodes(undefined, 'Émissions'),
       ]);
 
       const categoryById = new Map<string, Episode['category']>();
       emissions.forEach((episode) => categoryById.set(episode.id, 'Émissions'));
       podcasts.forEach((episode) => categoryById.set(episode.id, 'Podcasts'));
+      btxDaily.forEach((episode) => categoryById.set(episode.id, 'BTX Daily'));
 
       const dated = await applyYoutubePublishDates(
-        mergeEpisodesById(emissions, podcasts, channelLatest).map((episode) => ({
+        mergeEpisodesById(emissions, podcasts, btxDaily, channelLatest).map((episode) => ({
           ...episode,
           category: categoryById.get(episode.id) || episode.category,
         }))
