@@ -4,22 +4,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import BanyTypewriterTitle from './BanyTypewriterTitle';
 
 const ABOUT_SLIDES = [
-  {
-    src: encodeURI('/bannière1.png'),
-    className: 'object-[right_48%] md:object-[right_center]',
-  },
-  {
-    src: encodeURI('/bannière2.png'),
-    className: 'object-[right_36%] md:object-[right_40%]',
-  },
-  {
-    src: encodeURI('/bannière3.png'),
-    className: 'object-[62%_58%] md:object-[58%_center]',
-  },
-  {
-    src: encodeURI('/bannière4.png'),
-    className: 'object-[right_48%] md:object-[right_center]',
-  },
+  { src: encodeURI('/bannière1.png'), className: 'object-right', origin: 'right center' },
+  { src: encodeURI('/bannière2.png'), className: 'object-right', origin: 'right center' },
+  { src: encodeURI('/bannière3.png'), className: 'object-[55%_center]', origin: '55% center' },
+  { src: encodeURI('/bannière4.png'), className: 'object-[72%_center]', origin: '72% center' },
 ];
 const SLIDE_MS = 6500;
 const FADE_S = 1.35;
@@ -44,7 +32,7 @@ export default function AboutHero() {
   return (
     <section
       id="about-hero"
-      className="relative -mt-16 min-h-[100svh] flex flex-col items-center justify-center overflow-hidden bg-stone-950"
+      className="relative -mt-16 min-h-[100svh] min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden bg-stone-950"
     >
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 overflow-hidden bg-stone-950">
@@ -53,11 +41,15 @@ export default function AboutHero() {
               key={ABOUT_SLIDES[index].src}
               src={ABOUT_SLIDES[index].src}
               alt=""
-              className={`absolute inset-0 w-full h-full object-cover origin-right ${ABOUT_SLIDES[index].className}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: FADE_S, ease: [0.22, 1, 0.36, 1] }}
+              className={`absolute inset-0 w-full h-full object-cover md:object-contain md:object-center ${ABOUT_SLIDES[index].className}`}
+              style={{ transformOrigin: ABOUT_SLIDES[index].origin }}
+              initial={{ opacity: 0, scale: 1.04 }}
+              animate={{ opacity: 1, scale: 1.12 }}
+              exit={{ opacity: 0, scale: 1.14 }}
+              transition={{
+                opacity: { duration: FADE_S, ease: [0.22, 1, 0.36, 1] },
+                scale: { duration: SLIDE_MS / 1000, ease: 'linear' },
+              }}
               aria-hidden
             />
           </AnimatePresence>
