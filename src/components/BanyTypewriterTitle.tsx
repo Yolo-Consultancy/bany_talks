@@ -63,15 +63,15 @@ export default function BanyTypewriterTitle({
           align === 'left' ? 'justify-center md:justify-start' : 'justify-center'
         }`}
       >
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence>
           {visible.split('').map((char, index) => (
             <motion.span
               key={`${char}-${index}`}
               className="inline-block hero-letter"
-              initial={{ opacity: 0, y: 28, filter: 'blur(10px)', scale: 0.85 }}
+              initial={{ opacity: 0, y: 10, filter: 'blur(4px)', scale: 0.97 }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-              exit={{ opacity: 0, y: -16, filter: 'blur(8px)', scale: 0.9 }}
-              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              exit={{ opacity: 0, y: -6, filter: 'blur(4px)', scale: 0.98 }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             >
               {char}
             </motion.span>

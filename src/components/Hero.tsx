@@ -25,13 +25,13 @@ export default function Hero() {
   return (
     <section
       id="hero-section"
-      className="relative -mt-16 min-h-[100svh] flex flex-col items-center justify-center overflow-hidden bg-stone-950"
+      className="hero-fullbleed relative -mt-16 w-full flex flex-col items-center justify-center overflow-hidden bg-stone-950"
     >
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 overflow-hidden">
         {!showPoster && (
           <video
             ref={videoRef}
-            className="hero-video-bg absolute inset-0 w-full h-full object-cover"
+            className="hero-video-bg"
             autoPlay
             muted
             loop
@@ -39,20 +39,19 @@ export default function Hero() {
             preload="auto"
             poster={HOST_DETAILS.heroPoster}
             onError={() => setVideoFailed(true)}
+            {...{ 'webkit-playsinline': 'true' }}
           >
             <source src={HOST_DETAILS.heroVideo} type="video/mp4" />
           </video>
         )}
 
         {showPoster && (
-          <div className="absolute inset-0 overflow-hidden">
-            <img
-              src={HOST_DETAILS.heroPoster}
-              alt=""
-              className="hero-poster-zoom absolute inset-0 w-full h-full object-cover object-center"
-              aria-hidden
-            />
-          </div>
+          <img
+            src={HOST_DETAILS.heroPoster}
+            alt=""
+            className="hero-poster-zoom"
+            aria-hidden
+          />
         )}
 
         <div className="hero-overlay absolute inset-0" aria-hidden />
@@ -60,7 +59,7 @@ export default function Hero() {
       </div>
 
       <div className="relative z-10 flex items-center justify-center w-full px-2 sm:px-4">
-        <BanyTypewriterTitle />
+        <BanyTypewriterTitle className="hero-title-compact" />
       </div>
 
       <div className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-stone-500">
