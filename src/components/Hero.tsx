@@ -37,7 +37,6 @@ export default function Hero() {
             loop
             playsInline
             preload="auto"
-            poster={HOST_DETAILS.heroPoster}
             onError={() => setVideoFailed(true)}
             {...{ 'webkit-playsinline': 'true' }}
           >
@@ -59,7 +58,7 @@ export default function Hero() {
       </div>
 
       <div className="relative z-10 flex items-center justify-center w-full px-2 sm:px-4">
-        <BanyTypewriterTitle className="hero-title-compact" />
+        <BanyTypewriterTitle className="scale-[0.78] sm:scale-[0.82] origin-center" />
       </div>
 
       <div className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-stone-500">

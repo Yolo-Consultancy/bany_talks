@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { HOST_DETAILS, TIMELINE_MILESTONES } from '../data';
-import { ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import propos1 from '../assets/images/propos1.jpg';
+import propos2 from '../assets/images/propos2.jpg';
+import propos3 from '../assets/images/propos3.jpg';
 import {
   fetchSiteContent,
   formatMilestoneDate,
@@ -11,6 +14,92 @@ import {
 
 interface StatsProps {
   onInviteClick?: () => void;
+}
+
+const ABOUT_PHOTOS = [propos1, propos2, propos3];
+const PHOTO_MS = 5500;
+const PHOTO_FADE_S = 0.9;
+
+function AboutPhotoCarousel() {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused) return;
+    const id = window.setInterval(() => {
+      if (document.visibilityState !== 'visible') return;
+      setIndex((current) => (current + 1) % ABOUT_PHOTOS.length);
+    }, PHOTO_MS);
+    return () => window.clearInterval(id);
+  }, [paused]);
+
+  const goTo = (next: number) => {
+    setIndex((next + ABOUT_PHOTOS.length) % ABOUT_PHOTOS.length);
+  };
+
+  return (
+    <div
+      className="lg:col-span-6 relative aspect-[4/5] overflow-hidden order-2 group bg-stone-900"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <AnimatePresence initial={false} mode="sync">
+        <motion.img
+          key={ABOUT_PHOTOS[index]}
+          src={ABOUT_PHOTOS[index]}
+          alt="Bany en session studio"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          initial={{ opacity: 0, scale: 1.04 }}
+          animate={{ opacity: 1, scale: 1.1 }}
+          exit={{ opacity: 0, scale: 1.12 }}
+          transition={{
+            opacity: { duration: PHOTO_FADE_S, ease: [0.22, 1, 0.36, 1] },
+            scale: { duration: PHOTO_MS / 1000, ease: 'linear' },
+          }}
+        />
+      </AnimatePresence>
+
+      <button
+        type="button"
+        aria-label="Photo précédente"
+        onClick={() => goTo(index - 1)}
+        className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-stone-950/60 border border-white/10 text-stone-100 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity cursor-pointer"
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </button>
+      <button
+        type="button"
+        aria-label="Photo suivante"
+        onClick={() => goTo(index + 1)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-stone-950/60 border border-white/10 text-stone-100 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity cursor-pointer"
+      >
+        <ChevronRight className="w-4 h-4" />
+      </button>
+
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
+        {ABOUT_PHOTOS.map((src, i) => (
+          <button
+            key={src}
+            type="button"
+            aria-label={`Photo ${i + 1}`}
+            onClick={() => goTo(i)}
+            className={`h-[3px] rounded-full transition-all duration-500 cursor-pointer ${
+              i === index ? 'w-7 bg-rose-500' : 'w-2 bg-white/35 hover:bg-white/60'
+            }`}
+          />
+        ))}
+      </div>
+
+      <motion.div
+        key={index}
+        className="absolute bottom-0 left-0 z-10 h-[2px] bg-rose-500/80"
+        initial={{ width: '0%' }}
+        animate={{ width: paused ? '0%' : '100%' }}
+        transition={{ duration: paused ? 0 : PHOTO_MS / 1000, ease: 'linear' }}
+        aria-hidden
+      />
+    </div>
+  );
 }
 
 export default function Stats({ onInviteClick }: StatsProps) {
@@ -100,14 +189,7 @@ export default function Stats({ onInviteClick }: StatsProps) {
             </blockquote>
           </div>
 
-          <div className="lg:col-span-6 relative aspect-[4/5] overflow-hidden order-2">
-            <img
-              src={HOST_DETAILS.aboutpicture}
-              alt="Bany en session studio"
-              className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition duration-700"
-              referrerPolicy="no-referrer"
-            />
-          </div>
+          <AboutPhotoCarousel />
         </div>
 
         {/* Timeline — Steven Bartlett style */}
