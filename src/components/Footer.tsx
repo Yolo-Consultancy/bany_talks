@@ -23,7 +23,7 @@ export default function Footer({ onNavigate, activeView, onInvite }: FooterProps
           <div className="md:col-span-5 space-y-6">
             <img src={logoBany} alt="Bany Talks" className="h-10 w-auto" />
             <p className="text-sm text-stone-500 font-body leading-relaxed max-w-sm">
-              Des conversations vraies avec ceux qui construisent l'Afrique. Podcast, émissions et média indépendant.
+             Consultant, entrepreneur et media host. Des idées, des conversations et des projets pour mieux comprendre et construire l'Afrique.
             </p>
             <SocialLinks size="sm" />
             {showInvite && (
