@@ -308,3 +308,101 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(239, 59, 59, 0.6);
 }
+
+/* Form fields — animated underline on focus / typing */
+@keyframes fieldLineExpand {
+  from {
+    transform: scaleX(0);
+    opacity: 0.4;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fieldLineFlow {
+  0% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 0 0 rgba(239, 59, 59, 0);
+  }
+  50% {
+    background-position: 100% 50%;
+    box-shadow: 0 0 12px 0 rgba(239, 59, 59, 0.35);
+  }
+  100% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 0 0 rgba(239, 59, 59, 0);
+  }
+}
+
+.field-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.field-wrap::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    #ef3b3b 0%,
+    #f16464 35%,
+    #fca5a5 50%,
+    #f16464 65%,
+    #ef3b3b 100%
+  );
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.field-wrap:focus-within::after {
+  opacity: 1;
+  animation:
+    fieldLineExpand 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    fieldLineFlow 1.8s ease-in-out 0.38s infinite;
+}
+
+.field-wrap.is-filled:not(:focus-within)::after {
+  opacity: 0.45;
+  transform: scaleX(1);
+  background: rgba(239, 59, 59, 0.45);
+  animation: none;
+}
+
+.field-input {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0.75rem 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e7e5e4;
+  font-size: 0.875rem;
+  font-family: "Roboto", ui-sans-serif, system-ui, sans-serif;
+  outline: none;
+  transition: border-color 0.25s ease, color 0.2s ease;
+  color-scheme: dark;
+}
+
+.field-input::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.field-wrap:focus-within .field-input {
+  border-bottom-color: transparent;
+}
+
+.field-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -13,10 +13,25 @@ import { initAuth } from '../firebaseAuth';
 import { appendRowToSheet } from '../sheetsService';
 import { sendContactMail } from '../services/contactMailService';
 
-const inputClass =
-  'w-full px-0 py-3 bg-transparent border-b border-white/10 focus:border-rose-500/60 text-stone-200 placeholder-stone-600 focus:outline-none transition text-sm font-body';
+const inputClass = 'field-input';
 
 const labelClass = 'block text-xs text-stone-500 font-body mb-2';
+
+function FieldWrap({
+  children,
+  filled = false,
+  className = '',
+}: {
+  children: React.ReactNode;
+  filled?: boolean;
+  className?: string;
+}) {
+  return (
+    <div className={`field-wrap${filled ? ' is-filled' : ''} ${className}`.trim()}>
+      {children}
+    </div>
+  );
+}
 
 const FORMULA_STYLE = [
   {
@@ -149,7 +164,7 @@ export default function InviteBany() {
 
   const packageDetails = currentPackage && accent ? (
     <div
-      className={`border ${packagePanelBg} border-l-4 ${accent.border} p-5 sm:p-6 space-y-5 sm:space-y-6 transition-colors duration-300`}
+      className={`border ${packagePanelBg} border-l-4 ${accent.border} p-4 sm:p-5 lg:p-6 space-y-4 sm:space-y-5 lg:space-y-6 transition-colors duration-300`}
     >
       <div>
         <p className={`text-[0.6rem] font-display font-semibold tracking-[0.18em] uppercase mb-3 ${accent.label}`}>
@@ -303,31 +318,31 @@ export default function InviteBany() {
   };
 
   return (
-    <section id="booking-section" className="bg-stone-950 py-20 lg:py-32">
+    <section id="booking-section" className="bg-stone-950 py-12 sm:py-16 lg:py-28 overflow-x-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 lg:mb-20">
-          <div className="lg:col-span-7 space-y-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-10 sm:mb-14 lg:mb-20">
+          <div className="lg:col-span-7 space-y-3 sm:space-y-5">
             <p className="section-label">Travaillons ensemble</p>
-            <h2 className="font-display text-4xl sm:text-5xl text-stone-100 font-medium leading-tight">
+            <h2 className="font-display text-[1.85rem] leading-[1.1] sm:text-4xl lg:text-5xl text-stone-100 font-medium break-words">
               TRAVAILLER AVEC BANY
             </h2>
-            <p className="text-stone-500 font-body text-base leading-relaxed max-w-lg">
+            <p className="text-stone-500 font-body text-sm sm:text-base leading-relaxed max-w-lg">
               Conseil, prise de parole, collaborations média ou partenariats : présentez-nous votre besoin et construisons le format le plus adapté.
             </p>
           </div>
           <div className="lg:col-span-5 flex items-end">
-            <p className="text-sm text-stone-600 font-body leading-relaxed">
+            <p className="text-xs sm:text-sm text-stone-600 font-body leading-relaxed">
               Bany et son équipe reviennent vers vous sous 48h ouvrées. Transport et hébergement (hôtel 4★ minimum) à la charge de l&apos;organisateur pour les interventions physiques.
             </p>
           </div>
         </div>
 
         {submitted && bookingSummary ? (
-          <div className="max-w-xl mx-auto border border-white/8 p-6 sm:p-10 space-y-8 animate-fade-in-up text-center">
+          <div className="max-w-xl mx-auto border border-white/8 p-5 sm:p-8 lg:p-10 space-y-6 sm:space-y-8 animate-fade-in-up text-center">
             <CheckCircle2 className="w-10 h-10 text-rose-500 mx-auto" strokeWidth={1.5} />
             <div className="space-y-3">
-              <h3 className="font-display text-2xl text-stone-100 font-medium">Demande envoyée</h3>
-              <p className="text-sm text-stone-500 font-body">
+              <h3 className="font-display text-xl sm:text-2xl text-stone-100 font-medium">Demande envoyée</h3>
+              <p className="text-sm text-stone-500 font-body px-1">
                 Merci {bookingSummary.name}. Bany et son équipe passeront en revue votre proposition sous 48h ouvrées.
               </p>
             </div>
@@ -340,9 +355,12 @@ export default function InviteBany() {
                 ['Date / échéance', bookingSummary.date],
                 ['Format', formulaDisplay(bookingSummary.eventType, bookingSummary.budgetRange)],
               ].map(([label, value]) => (
-                <div key={label} className="flex justify-between gap-4">
-                  <span className="text-stone-600">{label}</span>
-                  <span className="text-stone-300 text-right">{value}</span>
+                <div
+                  key={label}
+                  className="flex flex-col gap-0.5 xs:flex-row sm:flex-row sm:justify-between sm:gap-4"
+                >
+                  <span className="text-stone-600 shrink-0">{label}</span>
+                  <span className="text-stone-300 sm:text-right break-words min-w-0">{value}</span>
                 </div>
               ))}
               {successSheetsSync && (
@@ -350,153 +368,189 @@ export default function InviteBany() {
               )}
             </div>
 
-            <button onClick={resetForm} className="btn-primary mx-auto">
+            <button onClick={resetForm} className="btn-primary w-full sm:w-auto mx-auto justify-center">
               Nouvelle demande
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-start">
-            <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                <div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 lg:gap-16 xl:gap-20 items-start">
+            <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-6 sm:space-y-8 min-w-0">
+              {/* Intro mobile — pour les types avec formats (le détail format suit plus bas) */}
+              {typeConfig.showFormulas && (typeConfig.introTitle || typeConfig.intro) && (
+                <div className="lg:hidden space-y-2 pb-1 border-b border-white/5">
+                  {typeConfig.introTitle && (
+                    <h3 className="font-display text-xl text-stone-100 font-medium">
+                      {typeConfig.introTitle}
+                    </h3>
+                  )}
+                  {typeConfig.intro && (
+                    <p className="text-sm text-stone-500 font-body leading-relaxed">{typeConfig.intro}</p>
+                  )}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-8">
+                <div className="min-w-0">
                   <FormLabel htmlFor="name-input" required>
                     Nom complet
                   </FormLabel>
-                  <input
-                    id="name-input"
-                    type="text"
-                    name="name"
-                    required
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder="Hope Kakesa"
-                    className={inputClass}
-                  />
+                  <FieldWrap filled={Boolean(formData.name)}>
+                    <input
+                      id="name-input"
+                      type="text"
+                      name="name"
+                      required
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder="Hope Kakesa"
+                      className={inputClass}
+                      autoComplete="name"
+                    />
+                  </FieldWrap>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <FormLabel htmlFor="company-input">Entreprise / organisation</FormLabel>
-                  <input
-                    id="company-input"
-                    type="text"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleInputChange}
-                    placeholder="Votre organisation"
-                    className={inputClass}
-                  />
+                  <FieldWrap filled={Boolean(formData.company)}>
+                    <input
+                      id="company-input"
+                      type="text"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleInputChange}
+                      placeholder="Votre organisation"
+                      className={inputClass}
+                      autoComplete="organization"
+                    />
+                  </FieldWrap>
                 </div>
               </div>
 
-              <div>
+              <div className="min-w-0">
                 <FormLabel htmlFor="email-input" required>
                   Email professionnel
                 </FormLabel>
-                <input
-                  id="email-input"
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="hope@entreprise.com"
-                  className={inputClass}
-                />
+                <FieldWrap filled={Boolean(formData.email)}>
+                  <input
+                    id="email-input"
+                    type="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="hope@entreprise.com"
+                    className={inputClass}
+                    autoComplete="email"
+                    inputMode="email"
+                  />
+                </FieldWrap>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-8">
+                <div className="min-w-0">
                   <FormLabel htmlFor="eventType-select" required>
                     Type de demande
                   </FormLabel>
-                  <select
-                    id="eventType-select"
-                    name="eventType"
-                    value={formData.eventType}
-                    onChange={handleInputChange}
-                    className={`${inputClass} cursor-pointer`}
-                  >
-                    {FREQUENT_EVENT_TYPES.map((type) => (
-                      <option key={type} value={type} className="bg-stone-950">
-                        {type}
-                      </option>
-                    ))}
-                  </select>
+                  <FieldWrap filled>
+                    <select
+                      id="eventType-select"
+                      name="eventType"
+                      value={formData.eventType}
+                      onChange={handleInputChange}
+                      className={`${inputClass} cursor-pointer`}
+                    >
+                      {FREQUENT_EVENT_TYPES.map((type) => (
+                        <option key={type} value={type} className="bg-stone-950">
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </FieldWrap>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <FormLabel htmlFor="date-input" required={typeConfig.dateRequired}>
                     {typeConfig.dateLabel}
                   </FormLabel>
-                  <input
-                    id="date-input"
-                    type="date"
-                    name="date"
-                    required={typeConfig.dateRequired}
-                    value={formData.date}
-                    onChange={handleInputChange}
-                    className={inputClass}
-                  />
+                  <FieldWrap filled={Boolean(formData.date)}>
+                    <input
+                      id="date-input"
+                      type="date"
+                      name="date"
+                      required={typeConfig.dateRequired}
+                      value={formData.date}
+                      onChange={handleInputChange}
+                      className={`${inputClass} appearance-none`}
+                    />
+                  </FieldWrap>
                 </div>
               </div>
 
               {extraFields.length > 0 && (
-                <div className="space-y-8 animate-fade-in-up">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="space-y-5 sm:space-y-8 animate-fade-in-up">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-8">
                     {extraFields.includes('city') && (
-                      <div>
+                      <div className="min-w-0">
                         <FormLabel htmlFor="city-input">Ville / pays</FormLabel>
-                        <input
-                          id="city-input"
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleInputChange}
-                          placeholder="Kinshasa, RDC"
-                          className={inputClass}
-                        />
+                        <FieldWrap filled={Boolean(formData.city)}>
+                          <input
+                            id="city-input"
+                            type="text"
+                            name="city"
+                            value={formData.city}
+                            onChange={handleInputChange}
+                            placeholder="Kinshasa, RDC"
+                            className={inputClass}
+                          />
+                        </FieldWrap>
                       </div>
                     )}
                     {extraFields.includes('eventFormat') && (
-                      <div>
+                      <div className="min-w-0">
                         <FormLabel htmlFor="eventFormat-input">Type d’événement</FormLabel>
-                        <input
-                          id="eventFormat-input"
-                          type="text"
-                          name="eventFormat"
-                          value={formData.eventFormat}
-                          onChange={handleInputChange}
-                          placeholder="Sommet, forum, séminaire…"
-                          className={inputClass}
-                        />
+                        <FieldWrap filled={Boolean(formData.eventFormat)}>
+                          <input
+                            id="eventFormat-input"
+                            type="text"
+                            name="eventFormat"
+                            value={formData.eventFormat}
+                            onChange={handleInputChange}
+                            placeholder="Sommet, forum, séminaire…"
+                            className={inputClass}
+                          />
+                        </FieldWrap>
                       </div>
                     )}
                     {extraFields.includes('audience') && (
-                      <div>
+                      <div className="min-w-0">
                         <FormLabel htmlFor="audience-input">Audience estimée</FormLabel>
-                        <input
-                          id="audience-input"
-                          type="text"
-                          name="audience"
-                          value={formData.audience}
-                          onChange={handleInputChange}
-                          placeholder="Ex. 200 personnes"
-                          className={inputClass}
-                        />
+                        <FieldWrap filled={Boolean(formData.audience)}>
+                          <input
+                            id="audience-input"
+                            type="text"
+                            name="audience"
+                            value={formData.audience}
+                            onChange={handleInputChange}
+                            placeholder="Ex. 200 personnes"
+                            className={inputClass}
+                          />
+                        </FieldWrap>
                       </div>
                     )}
                     {extraFields.includes('theme') && (
-                      <div>
+                      <div className="min-w-0 sm:col-span-2">
                         <FormLabel htmlFor="theme-input">Thématique envisagée</FormLabel>
-                        <input
-                          id="theme-input"
-                          type="text"
-                          name="theme"
-                          value={formData.theme}
-                          onChange={handleInputChange}
-                          placeholder="Ex. Entreprendre en Afrique"
-                          className={inputClass}
-                          list="invite-themes"
-                        />
+                        <FieldWrap filled={Boolean(formData.theme)}>
+                          <input
+                            id="theme-input"
+                            type="text"
+                            name="theme"
+                            value={formData.theme}
+                            onChange={handleInputChange}
+                            placeholder="Ex. Entreprendre en Afrique"
+                            className={inputClass}
+                            list="invite-themes"
+                          />
+                        </FieldWrap>
                         {typeConfig.themes && (
                           <datalist id="invite-themes">
                             {typeConfig.themes.map((theme) => (
@@ -516,7 +570,7 @@ export default function InviteBany() {
                             key={theme}
                             type="button"
                             onClick={() => setFormData((prev) => ({ ...prev, theme }))}
-                            className={`text-[11px] font-body px-3 py-1.5 border transition ${
+                            className={`text-[10px] sm:text-[11px] font-body px-2.5 sm:px-3 py-1.5 border transition leading-snug text-left ${
                               formData.theme === theme
                                 ? 'border-rose-500/50 text-rose-300 bg-rose-500/10'
                                 : 'border-white/10 text-stone-500 hover:border-white/20 hover:text-stone-300'
@@ -534,14 +588,14 @@ export default function InviteBany() {
               {typeConfig.showFormulas && formulaOptions.length > 0 && (
                 <div>
                   <FormLabel required>{typeConfig.formulaLabel || 'Format'}</FormLabel>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
                     {formulaOptions.map((opt) => {
                       const style = FORMULA_STYLE.find((s) => s.value === opt.value)!;
                       const active = formData.budgetRange === opt.value;
                       return (
                         <label
                           key={opt.value}
-                          className={`flex items-center justify-center py-3 sm:py-3.5 px-2 text-xs sm:text-sm font-body font-medium text-center cursor-pointer border transition duration-200 ${
+                          className={`flex items-center md:justify-center py-3.5 px-4 md:px-2 text-sm md:text-xs lg:text-sm font-body font-medium cursor-pointer border transition duration-200 leading-snug ${
                             active
                               ? `${style.bgActive} ${style.textActive} ${style.borderActive}`
                               : `${style.bg} ${style.text} ${style.border} hover:brightness-110`
@@ -555,7 +609,7 @@ export default function InviteBany() {
                             onChange={handleInputChange}
                             className="sr-only"
                           />
-                          {opt.label}
+                          <span className="text-left md:text-center w-full">{opt.label}</span>
                         </label>
                       );
                     })}
@@ -563,7 +617,7 @@ export default function InviteBany() {
 
                   <div
                     key={`${formData.eventType}-${formData.budgetRange}`}
-                    className="lg:hidden mt-6 animate-fade-in-up"
+                    className="lg:hidden mt-5 sm:mt-6 animate-fade-in-up"
                   >
                     {packageDetails}
                   </div>
@@ -574,40 +628,46 @@ export default function InviteBany() {
                 <div className="lg:hidden animate-fade-in-up">{packageDetails}</div>
               )}
 
-              <div>
+              <div className="min-w-0">
                 <FormLabel htmlFor="message-textarea">
                   {typeConfig.briefTitle || 'Brief / objectifs'}
                 </FormLabel>
-                <textarea
-                  id="message-textarea"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  rows={4}
-                  placeholder={typeConfig.briefPlaceholder || 'Décrivez votre besoin…'}
-                  className={`${inputClass} resize-none leading-relaxed`}
-                />
+                <FieldWrap filled={Boolean(formData.message)}>
+                  <textarea
+                    id="message-textarea"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    rows={4}
+                    placeholder={typeConfig.briefPlaceholder || 'Décrivez votre besoin…'}
+                    className={`${inputClass} resize-none leading-relaxed min-h-[7rem]`}
+                  />
+                </FieldWrap>
               </div>
 
               {typeConfig.note && (
                 <p className="text-xs text-stone-600 font-body leading-relaxed">{typeConfig.note}</p>
               )}
 
-              {sheetsError && <p className="text-sm text-rose-400 font-body">{sheetsError}</p>}
+              {sheetsError && <p className="text-sm text-rose-400 font-body break-words">{sheetsError}</p>}
 
-              <button type="submit" disabled={loading} className="btn-primary w-full sm:w-auto justify-center">
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full sm:w-auto justify-center text-[11px] sm:text-xs px-5 sm:px-7 whitespace-normal text-center leading-snug min-h-[3rem]"
+              >
                 {loading ? (
-                  <span className="w-4 h-4 rounded-full border-2 border-stone-950 border-t-transparent animate-spin" />
+                  <span className="w-4 h-4 rounded-full border-2 border-stone-950 border-t-transparent animate-spin shrink-0" />
                 ) : (
                   <>
-                    {typeConfig.cta}
-                    <Send className="w-4 h-4" />
+                    <span>{typeConfig.cta}</span>
+                    <Send className="w-4 h-4 shrink-0" />
                   </>
                 )}
               </button>
             </form>
 
-            <aside className="lg:col-span-5 lg:sticky lg:top-32 space-y-10">
+            <aside className="lg:col-span-5 lg:sticky lg:top-28 space-y-8 sm:space-y-10 min-w-0 pt-2 lg:pt-0 border-t border-white/5 lg:border-0">
               <div className="hidden lg:block space-y-4">
                 {typeConfig.introTitle && typeConfig.showFormulas && (
                   <div className="space-y-2">
@@ -625,12 +685,12 @@ export default function InviteBany() {
 
               <hr className="editorial-rule hidden lg:block" />
 
-              <div className="space-y-5">
+              <div className="space-y-4 sm:space-y-5">
                 <p className="section-label text-[0.6rem]">Contact direct</p>
                 <div className="space-y-3">
                   <a
                     href="mailto:contact@banyofficial.com"
-                    className="flex items-center gap-4 p-4 border border-white/8 hover:border-rose-500/30 transition group"
+                    className="flex items-center gap-3 sm:gap-4 p-3.5 sm:p-4 border border-white/8 hover:border-rose-500/30 transition group"
                   >
                     <span className="flex items-center justify-center w-10 h-10 shrink-0 border border-white/10 text-rose-500/80 group-hover:border-rose-500/40 transition">
                       <Mail className="w-4 h-4" strokeWidth={1.5} />
@@ -648,7 +708,7 @@ export default function InviteBany() {
                     href="https://wa.me/813622975"
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-4 p-4 border border-white/8 hover:border-rose-500/30 transition group"
+                    className="flex items-center gap-3 sm:gap-4 p-3.5 sm:p-4 border border-white/8 hover:border-rose-500/30 transition group"
                   >
                     <span className="flex items-center justify-center w-10 h-10 shrink-0 border border-white/10 text-[#25D366] group-hover:border-[#25D366]/40 transition">
                       <WhatsAppIcon className="w-5 h-5" />
