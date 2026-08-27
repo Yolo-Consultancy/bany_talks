@@ -17,6 +17,10 @@ export type ContactMailPayload =
       date?: string;
       formule?: string;
       message?: string;
+      city?: string;
+      eventFormat?: string;
+      audience?: string;
+      theme?: string;
     };
 
 export async function sendContactMail(payload: ContactMailPayload): Promise<void> {

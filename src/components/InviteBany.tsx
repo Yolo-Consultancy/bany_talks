@@ -1,17 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { Mail, Calendar, Send, CheckCircle2, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Mail, Send, CheckCircle2, ArrowRight } from 'lucide-react';
 import WhatsAppIcon from './WhatsAppIcon';
-import { FREQUENT_EVENT_TYPES, getInvitePackage, type InviteEventType } from '../data';
+import {
+  FREQUENT_EVENT_TYPES,
+  getInviteFormulaOptions,
+  getInvitePackage,
+  getInviteTypeConfig,
+  type InviteEventType,
+} from '../data';
 import { SpeakerRequest } from '../types';
-import { initAuth, googleSignIn, logout } from '../firebaseAuth';
-import { createNewSpreadsheet, getFirstSheetTitle, appendRowToSheet, extractSpreadsheetId } from '../sheetsService';
-import { User as FirebaseUser } from 'firebase/auth';
+import { initAuth } from '../firebaseAuth';
+import { appendRowToSheet } from '../sheetsService';
 import { sendContactMail } from '../services/contactMailService';
 
 const inputClass =
   'w-full px-0 py-3 bg-transparent border-b border-white/10 focus:border-rose-500/60 text-stone-200 placeholder-stone-600 focus:outline-none transition text-sm font-body';
 
 const labelClass = 'block text-xs text-stone-500 font-body mb-2';
+
+const FORMULA_STYLE = [
+  {
+    value: 'essentiel',
+    bg: 'bg-white/[0.06]',
+    bgActive: 'bg-stone-200',
+    text: 'text-stone-400',
+    textActive: 'text-stone-950',
+    border: 'border-white/10',
+    borderActive: 'border-stone-200',
+  },
+  {
+    value: 'standard',
+    bg: 'bg-rose-500/15',
+    bgActive: 'bg-rose-500',
+    text: 'text-rose-400/80',
+    textActive: 'text-stone-950',
+    border: 'border-rose-500/25',
+    borderActive: 'border-rose-500',
+  },
+  {
+    value: 'premium',
+    bg: 'bg-rose-300/15',
+    bgActive: 'bg-rose-300',
+    text: 'text-rose-300/90',
+    textActive: 'text-stone-950',
+    border: 'border-rose-300/25',
+    borderActive: 'border-rose-300',
+  },
+] as const;
 
 function FormLabel({
   htmlFor,
@@ -34,153 +69,55 @@ function FormLabel({
   );
 }
 
-export default function InviteBany() {
-  const [formData, setFormData] = useState<{
-    name: string;
-    company: string;
-    email: string;
-    eventType: InviteEventType;
-    date: string;
-    budgetRange: string;
-    message: string;
-  }>({
-    name: '',
-    company: '',
-    email: '',
-    eventType: FREQUENT_EVENT_TYPES[0],
-    date: '',
-    budgetRange: 'standard',
-    message: '',
-  });
+const emptyForm = {
+  name: '',
+  company: '',
+  email: '',
+  eventType: FREQUENT_EVENT_TYPES[0] as InviteEventType,
+  date: '',
+  budgetRange: 'standard',
+  message: '',
+  city: '',
+  eventFormat: '',
+  audience: '',
+  theme: '',
+};
 
+export default function InviteBany() {
+  const [formData, setFormData] = useState(emptyForm);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [bookingSummary, setBookingSummary] = useState<SpeakerRequest | null>(null);
 
-  const [user, setUser] = useState<FirebaseUser | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [needsAuth, setNeedsAuth] = useState(true);
   const [spreadsheetId, setSpreadsheetId] = useState('');
-  const [spreadsheetUrl, setSpreadsheetUrl] = useState('');
-  const [spreadsheetTitle, setSpreadsheetTitle] = useState('');
-  const [syncingSheets, setSyncingSheets] = useState(false);
   const [sheetsError, setSheetsError] = useState<string | null>(null);
   const [successSheetsSync, setSuccessSheetsSync] = useState(false);
-  const [manualInputSheetId, setManualInputSheetId] = useState('');
+
+  const typeConfig = useMemo(() => getInviteTypeConfig(formData.eventType), [formData.eventType]);
+  const formulaOptions = useMemo(() => getInviteFormulaOptions(formData.eventType), [formData.eventType]);
+  const currentPackage = useMemo(
+    () => getInvitePackage(formData.eventType, formData.budgetRange),
+    [formData.eventType, formData.budgetRange]
+  );
+  const accent = currentPackage?.accent;
+  const extraFields = typeConfig.extraFields ?? [];
 
   useEffect(() => {
     const savedId = localStorage.getItem('bany_sheets_id');
-    const savedUrl = localStorage.getItem('bany_sheets_url');
-    const savedTitle = localStorage.getItem('bany_sheets_title');
     if (savedId) setSpreadsheetId(savedId);
-    if (savedUrl) setSpreadsheetUrl(savedUrl);
-    if (savedTitle) setSpreadsheetTitle(savedTitle);
 
     const unsubscribe = initAuth(
-      (currentUser, token) => {
-        setUser(currentUser);
+      (_currentUser, token) => {
         setAccessToken(token);
-        setNeedsAuth(false);
       },
       () => {
-        setUser(null);
         setAccessToken(null);
-        setNeedsAuth(true);
       }
     );
 
     return () => unsubscribe();
   }, []);
-
-  const handleGoogleLogin = async () => {
-    setSheetsError(null);
-    try {
-      const result = await googleSignIn();
-      if (result) {
-        setUser(result.user);
-        setAccessToken(result.accessToken);
-        setNeedsAuth(false);
-      }
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      setSheetsError(`Connexion échouée : ${message}`);
-    }
-  };
-
-  const handleGoogleLogout = async () => {
-    try {
-      await logout();
-      setUser(null);
-      setAccessToken(null);
-      setNeedsAuth(true);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      setSheetsError(`Déconnexion échouée : ${message}`);
-    }
-  };
-
-  const handleCreateSheet = async () => {
-    if (!accessToken) {
-      setSheetsError('Veuillez vous connecter à Google en premier.');
-      return;
-    }
-    setSyncingSheets(true);
-    setSheetsError(null);
-    try {
-      const sheet = await createNewSpreadsheet(accessToken, "Bany Talks - Demandes d'Invitations");
-      setSpreadsheetId(sheet.spreadsheetId);
-      setSpreadsheetUrl(sheet.spreadsheetUrl);
-      setSpreadsheetTitle(sheet.title);
-      localStorage.setItem('bany_sheets_id', sheet.spreadsheetId);
-      localStorage.setItem('bany_sheets_url', sheet.spreadsheetUrl);
-      localStorage.setItem('bany_sheets_title', sheet.title);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      setSheetsError(`Erreur lors de la création : ${message}`);
-    } finally {
-      setSyncingSheets(false);
-    }
-  };
-
-  const handleConnectSheet = async () => {
-    if (!accessToken) {
-      setSheetsError('Veuillez vous connecter à Google en premier.');
-      return;
-    }
-    if (!manualInputSheetId.trim()) {
-      setSheetsError('Veuillez entrer une URL ou un ID de feuille Google Sheets.');
-      return;
-    }
-    setSyncingSheets(true);
-    setSheetsError(null);
-    const targetId = extractSpreadsheetId(manualInputSheetId);
-    try {
-      const tabTitle = await getFirstSheetTitle(targetId, accessToken);
-      const sheetUrl = `https://docs.google.com/spreadsheets/d/${targetId}/edit`;
-      const sheetTitle = `Feuille connectée (${tabTitle})`;
-      setSpreadsheetId(targetId);
-      setSpreadsheetUrl(sheetUrl);
-      setSpreadsheetTitle(sheetTitle);
-      localStorage.setItem('bany_sheets_id', targetId);
-      localStorage.setItem('bany_sheets_url', sheetUrl);
-      localStorage.setItem('bany_sheets_title', sheetTitle);
-      setManualInputSheetId('');
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      setSheetsError(`Erreur lors de la connexion : ${message}`);
-    } finally {
-      setSyncingSheets(false);
-    }
-  };
-
-  const handleClearSpreadsheet = () => {
-    setSpreadsheetId('');
-    setSpreadsheetUrl('');
-    setSpreadsheetTitle('');
-    localStorage.removeItem('bany_sheets_id');
-    localStorage.removeItem('bany_sheets_url');
-    localStorage.removeItem('bany_sheets_title');
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -189,47 +126,19 @@ export default function InviteBany() {
         const nextType = (FREQUENT_EVENT_TYPES as readonly string[]).includes(value)
           ? (value as InviteEventType)
           : FREQUENT_EVENT_TYPES[0];
-        return { ...prev, eventType: nextType, budgetRange: 'standard' };
+        return {
+          ...prev,
+          eventType: nextType,
+          budgetRange: 'standard',
+          city: '',
+          eventFormat: '',
+          audience: '',
+          theme: '',
+        };
       }
       return { ...prev, [name]: value };
     });
   };
-
-  const currentPackage = getInvitePackage(formData.eventType, formData.budgetRange);
-  const accent = currentPackage.accent;
-
-  const FORMULA_OPTIONS = [
-    {
-      value: 'essentiel',
-      label: 'Essentiel',
-      bg: 'bg-white/[0.06]',
-      bgActive: 'bg-stone-200',
-      text: 'text-stone-400',
-      textActive: 'text-stone-950',
-      border: 'border-white/10',
-      borderActive: 'border-stone-200',
-    },
-    {
-      value: 'standard',
-      label: 'Standard',
-      bg: 'bg-rose-500/15',
-      bgActive: 'bg-rose-500',
-      text: 'text-rose-400/80',
-      textActive: 'text-stone-950',
-      border: 'border-rose-500/25',
-      borderActive: 'border-rose-500',
-    },
-    {
-      value: 'premium',
-      label: 'Premium',
-      bg: 'bg-rose-300/15',
-      bgActive: 'bg-rose-300',
-      text: 'text-rose-300/90',
-      textActive: 'text-stone-950',
-      border: 'border-rose-300/25',
-      borderActive: 'border-rose-300',
-    },
-  ] as const;
 
   const packagePanelBg =
     formData.budgetRange === 'essentiel' || formData.budgetRange === 'under-3000'
@@ -238,20 +147,22 @@ export default function InviteBany() {
         ? 'bg-rose-500/10 border-rose-500/25'
         : 'bg-rose-300/10 border-rose-300/25';
 
-  const packageDetails = (
+  const packageDetails = currentPackage && accent ? (
     <div
       className={`border ${packagePanelBg} border-l-4 ${accent.border} p-5 sm:p-6 space-y-5 sm:space-y-6 transition-colors duration-300`}
     >
       <div>
         <p className={`text-[0.6rem] font-display font-semibold tracking-[0.18em] uppercase mb-3 ${accent.label}`}>
-          Formule · {formData.eventType}
+          {typeConfig.formulaLabel || 'Format'} · {formData.eventType}
         </p>
         <h3 className={`font-display text-xl sm:text-2xl font-medium ${accent.text}`}>
           {currentPackage.tier}
         </h3>
-        <p className={`text-sm font-body mt-2 ${accent.textMuted}`}>
-          Durée conseillée : {currentPackage.estHours}
-        </p>
+        {currentPackage.estHours && (
+          <p className={`text-sm font-body mt-2 ${accent.textMuted}`}>
+            Durée conseillée : {currentPackage.estHours}
+          </p>
+        )}
       </div>
 
       <ul className="space-y-3">
@@ -263,12 +174,42 @@ export default function InviteBany() {
         ))}
       </ul>
     </div>
+  ) : (
+    <div className="border border-white/8 border-l-4 border-l-rose-500/50 p-5 sm:p-6 space-y-3">
+      {typeConfig.introTitle && (
+        <h3 className="font-display text-xl sm:text-2xl text-stone-100 font-medium">
+          {typeConfig.introTitle}
+        </h3>
+      )}
+      {typeConfig.intro && (
+        <p className="text-sm text-stone-500 font-body leading-relaxed">{typeConfig.intro}</p>
+      )}
+    </div>
   );
+
+  const formulaDisplay = (eventType: string, val: string) => {
+    const pkg = getInvitePackage(eventType, val);
+    return pkg?.tier || '—';
+  };
+
+  const buildDetailsMessage = () => {
+    const parts: string[] = [];
+    if (formData.message.trim()) parts.push(formData.message.trim());
+    if (formData.city.trim()) parts.push(`Ville / pays : ${formData.city.trim()}`);
+    if (formData.eventFormat.trim()) parts.push(`Type d’événement : ${formData.eventFormat.trim()}`);
+    if (formData.audience.trim()) parts.push(`Audience estimée : ${formData.audience.trim()}`);
+    if (formData.theme.trim()) parts.push(`Thématique : ${formData.theme.trim()}`);
+    return parts.join('\n');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.date) {
+    if (!formData.name || !formData.email) {
       alert('Veuillez remplir tous les champs requis.');
+      return;
+    }
+    if (typeConfig.dateRequired && !formData.date) {
+      alert('Veuillez indiquer la date souhaitée.');
       return;
     }
 
@@ -276,15 +217,24 @@ export default function InviteBany() {
     setSheetsError(null);
     setSuccessSheetsSync(false);
 
+    const details = buildDetailsMessage();
+    const formuleLabel = typeConfig.showFormulas
+      ? getInvitePackage(formData.eventType, formData.budgetRange)?.tier || '—'
+      : '—';
+
     const liveBooking: SpeakerRequest = {
       id: `book-${Date.now().toString().slice(-4)}`,
       name: formData.name,
       company: formData.company || 'Indépendant',
       email: formData.email,
       eventType: formData.eventType,
-      date: formData.date,
+      date: formData.date || 'Non précisée',
       budgetRange: formData.budgetRange,
-      message: formData.message,
+      message: details,
+      city: formData.city || undefined,
+      eventFormat: formData.eventFormat || undefined,
+      audience: formData.audience || undefined,
+      theme: formData.theme || undefined,
       createdAt: new Date().toLocaleDateString('fr-FR'),
     };
 
@@ -301,8 +251,12 @@ export default function InviteBany() {
         company: liveBooking.company,
         eventType: liveBooking.eventType,
         date: liveBooking.date,
-        formule: budgetDisplay(liveBooking.budgetRange),
+        formule: formuleLabel,
         message: liveBooking.message,
+        city: liveBooking.city,
+        eventFormat: liveBooking.eventFormat,
+        audience: liveBooking.audience,
+        theme: liveBooking.theme,
       });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
@@ -321,7 +275,11 @@ export default function InviteBany() {
           liveBooking.email,
           liveBooking.eventType,
           liveBooking.date,
-          budgetDisplay(liveBooking.budgetRange),
+          formuleLabel,
+          liveBooking.city || '',
+          liveBooking.eventFormat || '',
+          liveBooking.audience || '',
+          liveBooking.theme || '',
           liveBooking.message || 'Aucun message',
           new Date().toISOString(),
         ];
@@ -339,53 +297,27 @@ export default function InviteBany() {
     setSubmitted(true);
   };
 
-  const budgetDisplay = (val: string) => {
-    switch (val) {
-      case 'essentiel':
-      case 'under-3000':
-        return 'Essentiel';
-      case 'standard':
-      case '3000-5000':
-        return 'Standard';
-      case 'premium':
-      case 'above-5000':
-        return 'Premium';
-      default:
-        return 'Non défini';
-    }
-  };
-
   const resetForm = () => {
     setSubmitted(false);
-    setFormData({
-      name: '',
-      company: '',
-      email: '',
-      eventType: FREQUENT_EVENT_TYPES[0],
-      date: '',
-      budgetRange: 'standard',
-      message: '',
-    });
+    setFormData(emptyForm);
   };
 
   return (
     <section id="booking-section" className="bg-stone-950 py-20 lg:py-32">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Header */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 lg:mb-20">
           <div className="lg:col-span-7 space-y-5">
-            <p className="section-label">Speaking Engagements</p>
+            <p className="section-label">Travaillons ensemble</p>
             <h2 className="font-display text-4xl sm:text-5xl text-stone-100 font-medium leading-tight">
               TRAVAILLER AVEC BANY
             </h2>
             <p className="text-stone-500 font-body text-base leading-relaxed max-w-lg">
-              Conférences d'inspiration, tables rondes ou partenariats média. Alignez votre marque avec une voix qui compte en Afrique et au-delà.
+              Conseil, prise de parole, collaborations média ou partenariats : présentez-nous votre besoin et construisons le format le plus adapté.
             </p>
           </div>
           <div className="lg:col-span-5 flex items-end">
             <p className="text-sm text-stone-600 font-body leading-relaxed">
-              Bany et son équipe reviennent vers vous sous 48h ouvrées. Transport et hébergement (hôtel 4★ minimum) à la charge de l'organisateur.
+              Bany et son équipe reviennent vers vous sous 48h ouvrées. Transport et hébergement (hôtel 4★ minimum) à la charge de l&apos;organisateur pour les interventions physiques.
             </p>
           </div>
         </div>
@@ -394,9 +326,7 @@ export default function InviteBany() {
           <div className="max-w-xl mx-auto border border-white/8 p-6 sm:p-10 space-y-8 animate-fade-in-up text-center">
             <CheckCircle2 className="w-10 h-10 text-rose-500 mx-auto" strokeWidth={1.5} />
             <div className="space-y-3">
-              <h3 className="font-display text-2xl text-stone-100 font-medium">
-                Demande envoyée
-              </h3>
+              <h3 className="font-display text-2xl text-stone-100 font-medium">Demande envoyée</h3>
               <p className="text-sm text-stone-500 font-body">
                 Merci {bookingSummary.name}. Bany et son équipe passeront en revue votre proposition sous 48h ouvrées.
               </p>
@@ -405,10 +335,10 @@ export default function InviteBany() {
             <div className="border-t border-white/5 pt-6 text-left space-y-3 font-body text-sm">
               {[
                 ['Référence', bookingSummary.id],
-                ['Organisme', bookingSummary.company],
+                ['Organisation', bookingSummary.company],
                 ['Type', bookingSummary.eventType],
-                ['Date', bookingSummary.date],
-                ['Formule', budgetDisplay(bookingSummary.budgetRange)],
+                ['Date / échéance', bookingSummary.date],
+                ['Format', formulaDisplay(bookingSummary.eventType, bookingSummary.budgetRange)],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between gap-4">
                   <span className="text-stone-600">{label}</span>
@@ -427,13 +357,12 @@ export default function InviteBany() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-start">
-
-            {/* Form */}
             <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-8">
-
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div>
-                  <FormLabel htmlFor="name-input" required>Nom complet</FormLabel>
+                  <FormLabel htmlFor="name-input" required>
+                    Nom complet
+                  </FormLabel>
                   <input
                     id="name-input"
                     type="text"
@@ -446,21 +375,23 @@ export default function InviteBany() {
                   />
                 </div>
                 <div>
-                  <FormLabel htmlFor="company-input">Entreprise ou marque</FormLabel>
+                  <FormLabel htmlFor="company-input">Entreprise / organisation</FormLabel>
                   <input
                     id="company-input"
                     type="text"
                     name="company"
                     value={formData.company}
                     onChange={handleInputChange}
-                    placeholder="Orange, Stripe…"
+                    placeholder="Votre organisation"
                     className={inputClass}
                   />
                 </div>
               </div>
 
               <div>
-                <FormLabel htmlFor="email-input" required>Email professionnel</FormLabel>
+                <FormLabel htmlFor="email-input" required>
+                  Email professionnel
+                </FormLabel>
                 <input
                   id="email-input"
                   type="email"
@@ -475,7 +406,9 @@ export default function InviteBany() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div>
-                  <FormLabel htmlFor="eventType-select">Type de demande</FormLabel>
+                  <FormLabel htmlFor="eventType-select" required>
+                    Type de demande
+                  </FormLabel>
                   <select
                     id="eventType-select"
                     name="eventType"
@@ -483,18 +416,22 @@ export default function InviteBany() {
                     onChange={handleInputChange}
                     className={`${inputClass} cursor-pointer`}
                   >
-                    {FREQUENT_EVENT_TYPES.map((type, i) => (
-                      <option key={i} value={type} className="bg-stone-950">{type}</option>
+                    {FREQUENT_EVENT_TYPES.map((type) => (
+                      <option key={type} value={type} className="bg-stone-950">
+                        {type}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <FormLabel htmlFor="date-input" required>Date souhaitée</FormLabel>
+                  <FormLabel htmlFor="date-input" required={typeConfig.dateRequired}>
+                    {typeConfig.dateLabel}
+                  </FormLabel>
                   <input
                     id="date-input"
                     type="date"
                     name="date"
-                    required
+                    required={typeConfig.dateRequired}
                     value={formData.date}
                     onChange={handleInputChange}
                     className={inputClass}
@@ -502,75 +439,189 @@ export default function InviteBany() {
                 </div>
               </div>
 
-              <div>
-                <FormLabel required>Formule</FormLabel>
-                <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                  {FORMULA_OPTIONS.map((elem) => {
-                    const active = formData.budgetRange === elem.value;
-                    return (
-                      <label
-                        key={elem.value}
-                        className={`flex items-center justify-center py-3 sm:py-3.5 px-1 sm:px-2 text-xs sm:text-sm font-body font-medium text-center cursor-pointer border transition duration-200 ${
-                          active
-                            ? `${elem.bgActive} ${elem.textActive} ${elem.borderActive}`
-                            : `${elem.bg} ${elem.text} ${elem.border} hover:brightness-110`
-                        }`}
-                      >
+              {extraFields.length > 0 && (
+                <div className="space-y-8 animate-fade-in-up">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    {extraFields.includes('city') && (
+                      <div>
+                        <FormLabel htmlFor="city-input">Ville / pays</FormLabel>
                         <input
-                          type="radio"
-                          name="budgetRange"
-                          value={elem.value}
-                          checked={active}
+                          id="city-input"
+                          type="text"
+                          name="city"
+                          value={formData.city}
                           onChange={handleInputChange}
-                          className="sr-only"
+                          placeholder="Kinshasa, RDC"
+                          className={inputClass}
                         />
-                        {elem.label}
-                      </label>
-                    );
-                  })}
+                      </div>
+                    )}
+                    {extraFields.includes('eventFormat') && (
+                      <div>
+                        <FormLabel htmlFor="eventFormat-input">Type d’événement</FormLabel>
+                        <input
+                          id="eventFormat-input"
+                          type="text"
+                          name="eventFormat"
+                          value={formData.eventFormat}
+                          onChange={handleInputChange}
+                          placeholder="Sommet, forum, séminaire…"
+                          className={inputClass}
+                        />
+                      </div>
+                    )}
+                    {extraFields.includes('audience') && (
+                      <div>
+                        <FormLabel htmlFor="audience-input">Audience estimée</FormLabel>
+                        <input
+                          id="audience-input"
+                          type="text"
+                          name="audience"
+                          value={formData.audience}
+                          onChange={handleInputChange}
+                          placeholder="Ex. 200 personnes"
+                          className={inputClass}
+                        />
+                      </div>
+                    )}
+                    {extraFields.includes('theme') && (
+                      <div>
+                        <FormLabel htmlFor="theme-input">Thématique envisagée</FormLabel>
+                        <input
+                          id="theme-input"
+                          type="text"
+                          name="theme"
+                          value={formData.theme}
+                          onChange={handleInputChange}
+                          placeholder="Ex. Entreprendre en Afrique"
+                          className={inputClass}
+                          list="invite-themes"
+                        />
+                        {typeConfig.themes && (
+                          <datalist id="invite-themes">
+                            {typeConfig.themes.map((theme) => (
+                              <option key={theme} value={theme} />
+                            ))}
+                          </datalist>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {typeConfig.themes && (
+                    <div>
+                      <p className="text-xs text-stone-600 font-body mb-3">Thématiques fréquentes</p>
+                      <div className="flex flex-wrap gap-2">
+                        {typeConfig.themes.map((theme) => (
+                          <button
+                            key={theme}
+                            type="button"
+                            onClick={() => setFormData((prev) => ({ ...prev, theme }))}
+                            className={`text-[11px] font-body px-3 py-1.5 border transition ${
+                              formData.theme === theme
+                                ? 'border-rose-500/50 text-rose-300 bg-rose-500/10'
+                                : 'border-white/10 text-stone-500 hover:border-white/20 hover:text-stone-300'
+                            }`}
+                          >
+                            {theme}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
+              )}
 
-                {/* Mobile: détails visibles juste sous le choix */}
-                <div
-                  key={`${formData.eventType}-${formData.budgetRange}`}
-                  className="lg:hidden mt-6 animate-fade-in-up"
-                >
-                  {packageDetails}
+              {typeConfig.showFormulas && formulaOptions.length > 0 && (
+                <div>
+                  <FormLabel required>{typeConfig.formulaLabel || 'Format'}</FormLabel>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+                    {formulaOptions.map((opt) => {
+                      const style = FORMULA_STYLE.find((s) => s.value === opt.value)!;
+                      const active = formData.budgetRange === opt.value;
+                      return (
+                        <label
+                          key={opt.value}
+                          className={`flex items-center justify-center py-3 sm:py-3.5 px-2 text-xs sm:text-sm font-body font-medium text-center cursor-pointer border transition duration-200 ${
+                            active
+                              ? `${style.bgActive} ${style.textActive} ${style.borderActive}`
+                              : `${style.bg} ${style.text} ${style.border} hover:brightness-110`
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="budgetRange"
+                            value={opt.value}
+                            checked={active}
+                            onChange={handleInputChange}
+                            className="sr-only"
+                          />
+                          {opt.label}
+                        </label>
+                      );
+                    })}
+                  </div>
+
+                  <div
+                    key={`${formData.eventType}-${formData.budgetRange}`}
+                    className="lg:hidden mt-6 animate-fade-in-up"
+                  >
+                    {packageDetails}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {!typeConfig.showFormulas && (
+                <div className="lg:hidden animate-fade-in-up">{packageDetails}</div>
+              )}
 
               <div>
-                <FormLabel htmlFor="message-textarea">Brief / objectifs</FormLabel>
+                <FormLabel htmlFor="message-textarea">
+                  {typeConfig.briefTitle || 'Brief / objectifs'}
+                </FormLabel>
                 <textarea
                   id="message-textarea"
                   name="message"
                   value={formData.message}
                   onChange={handleInputChange}
                   rows={4}
-                  placeholder="Audience cible, thèmes à aborder, timing…"
+                  placeholder={typeConfig.briefPlaceholder || 'Décrivez votre besoin…'}
                   className={`${inputClass} resize-none leading-relaxed`}
                 />
               </div>
 
-              {sheetsError && (
-                <p className="text-sm text-rose-400 font-body">{sheetsError}</p>
+              {typeConfig.note && (
+                <p className="text-xs text-stone-600 font-body leading-relaxed">{typeConfig.note}</p>
               )}
+
+              {sheetsError && <p className="text-sm text-rose-400 font-body">{sheetsError}</p>}
 
               <button type="submit" disabled={loading} className="btn-primary w-full sm:w-auto justify-center">
                 {loading ? (
                   <span className="w-4 h-4 rounded-full border-2 border-stone-950 border-t-transparent animate-spin" />
                 ) : (
                   <>
-                    Envoyer la demande
+                    {typeConfig.cta}
                     <Send className="w-4 h-4" />
                   </>
                 )}
               </button>
             </form>
 
-            {/* Package sidebar — desktop */}
             <aside className="lg:col-span-5 lg:sticky lg:top-32 space-y-10">
-              <div className="hidden lg:block">{packageDetails}</div>
+              <div className="hidden lg:block space-y-4">
+                {typeConfig.introTitle && typeConfig.showFormulas && (
+                  <div className="space-y-2">
+                    <h3 className="font-display text-2xl text-stone-100 font-medium">{typeConfig.introTitle}</h3>
+                    {typeConfig.intro && (
+                      <p className="text-sm text-stone-500 font-body leading-relaxed">{typeConfig.intro}</p>
+                    )}
+                  </div>
+                )}
+                {packageDetails}
+                {typeConfig.note && typeConfig.showFormulas && (
+                  <p className="text-xs text-stone-600 font-body leading-relaxed">{typeConfig.note}</p>
+                )}
+              </div>
 
               <hr className="editorial-rule hidden lg:block" />
 
@@ -585,7 +636,9 @@ export default function InviteBany() {
                       <Mail className="w-4 h-4" strokeWidth={1.5} />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-[10px] uppercase tracking-wider text-stone-600 font-body mb-1">Email</span>
+                      <span className="block text-[10px] uppercase tracking-wider text-stone-600 font-body mb-1">
+                        Email
+                      </span>
                       <span className="block text-sm text-stone-300 font-body break-all group-hover:text-rose-400 transition">
                         contact@banyofficial.com
                       </span>
@@ -601,7 +654,9 @@ export default function InviteBany() {
                       <WhatsAppIcon className="w-5 h-5" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[10px] uppercase tracking-wider text-stone-600 font-body mb-1">WhatsApp</span>
+                      <span className="block text-[10px] uppercase tracking-wider text-stone-600 font-body mb-1">
+                        WhatsApp
+                      </span>
                       <span className="block text-sm text-stone-300 font-body group-hover:text-rose-400 transition">
                         Écrire sur WhatsApp
                       </span>

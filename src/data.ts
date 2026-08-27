@@ -178,13 +178,17 @@ export const TIMELINE_MILESTONES = [
 ];
 
 export const FREQUENT_EVENT_TYPES = [
-  'Episode BTX',
-  'Interviews',
-  'Conference',
+  'Conseil / Consultance',
+  'Keynote / Conférence',
+  'Panel / Modération',
+  'BTX – Partenariat média',
+  'Partenariat / Collaboration',
+  'Autre demande',
 ] as const;
 
 export type InviteEventType = (typeof FREQUENT_EVENT_TYPES)[number];
 export type InviteFormulaTier = 'essentiel' | 'standard' | 'premium';
+export type InviteExtraField = 'city' | 'eventFormat' | 'audience' | 'theme';
 
 export type InvitePackageAccent = {
   text: string;
@@ -199,8 +203,23 @@ export type InvitePackageAccent = {
 export type InvitePackage = {
   tier: string;
   features: string[];
-  estHours: string;
+  estHours?: string;
   accent: InvitePackageAccent;
+};
+
+export type InviteTypeConfig = {
+  introTitle?: string;
+  intro?: string;
+  note?: string;
+  cta: string;
+  dateLabel: string;
+  dateRequired: boolean;
+  showFormulas: boolean;
+  formulaLabel?: string;
+  extraFields?: InviteExtraField[];
+  themes?: string[];
+  briefTitle?: string;
+  briefPlaceholder?: string;
 };
 
 const ACCENT_ESSENTIEL: InvitePackageAccent = {
@@ -233,129 +252,224 @@ const ACCENT_PREMIUM: InvitePackageAccent = {
   underline: 'border-rose-300',
 };
 
+export const INVITE_TYPE_CONFIG: Record<InviteEventType, InviteTypeConfig> = {
+  'Conseil / Consultance': {
+    introTitle: 'Conseil & accompagnement',
+    intro:
+      'Stratégie, développement d’entreprise, entrepreneuriat, études, programmes, communication stratégique ou accompagnement spécifique.',
+    note: 'Aucun prix n’est affiché à ce stade. La proposition financière vient après cadrage.',
+    cta: 'Demander un échange',
+    dateLabel: 'Échéance',
+    dateRequired: false,
+    showFormulas: true,
+    formulaLabel: 'Format',
+    briefPlaceholder: 'Problématique, objectif, contexte…',
+  },
+  'Keynote / Conférence': {
+    introTitle: 'Prise de parole',
+    intro: 'Keynote ou conférence autour d’une thématique convenue.',
+    cta: 'Soumettre une invitation',
+    dateLabel: 'Date souhaitée',
+    dateRequired: true,
+    showFormulas: true,
+    formulaLabel: 'Format',
+    extraFields: ['city', 'eventFormat', 'audience', 'theme'],
+    themes: [
+      'Business & entrepreneuriat',
+      'Investissement & économie',
+      'PME & croissance',
+      'Jeunesse & compétences',
+      'Médias & transformation numérique',
+      'Entreprendre en Afrique',
+    ],
+    briefPlaceholder: 'Contexte de l’événement, attentes, message clé…',
+  },
+  'Panel / Modération': {
+    introTitle: 'Panel & modération',
+    intro: 'Participation, préparation éditoriale ou conduite de conversation.',
+    cta: 'Soumettre une invitation',
+    dateLabel: 'Date souhaitée',
+    dateRequired: true,
+    showFormulas: true,
+    formulaLabel: 'Format',
+    briefPlaceholder: 'Thème du panel, intervenants, format attendu…',
+  },
+  'BTX – Partenariat média': {
+    introTitle: 'Partenariat média BTX',
+    intro: 'Épisode, campagne ou dispositif sur mesure autour de la marque BTX.',
+    cta: 'Discuter d’un partenariat',
+    dateLabel: 'Échéance',
+    dateRequired: false,
+    showFormulas: true,
+    formulaLabel: 'Offre',
+    briefPlaceholder: 'Marque, objectifs de visibilité, audience cible…',
+  },
+  'Partenariat / Collaboration': {
+    introTitle: 'Parlez-nous de votre idée',
+    intro:
+      'Organisation, nature du partenariat, objectifs, ce que vous proposez, ce que vous attendez de Bany / BTX, échéance éventuelle et budget indicatif facultatif.',
+    cta: 'Envoyer la proposition',
+    dateLabel: 'Échéance éventuelle',
+    dateRequired: false,
+    showFormulas: false,
+    briefTitle: 'Votre proposition',
+    briefPlaceholder:
+      'Nature du partenariat, objectifs, ce que vous proposez, ce que vous attendez de Bany / BTX, budget indicatif…',
+  },
+  'Autre demande': {
+    introTitle: 'Autre demande',
+    intro: 'Décrivez votre besoin : nous reviendrons vers vous avec le format le plus adapté.',
+    cta: 'Envoyer la demande',
+    dateLabel: 'Échéance',
+    dateRequired: false,
+    showFormulas: false,
+    briefPlaceholder: 'Décrivez votre besoin, le contexte et vos objectifs…',
+  },
+};
+
 /** Formules distinctes par type de demande */
-export const INVITE_PACKAGES_BY_EVENT: Record<
-  InviteEventType,
-  Record<InviteFormulaTier, InvitePackage>
+export const INVITE_PACKAGES_BY_EVENT: Partial<
+  Record<InviteEventType, Record<InviteFormulaTier, InvitePackage>>
 > = {
-  'Episode BTX': {
+  'Conseil / Consultance': {
     essentiel: {
-      tier: 'Essentiel',
+      tier: 'Session stratégique',
       features: [
-        'Enregistrement podcast de 30 min',
-        'Mention de votre marque en intro/outro',
-        'Diffusion sur les plateformes audio',
+        'Une intervention ponctuelle pour challenger une problématique ou une décision.',
       ],
-      estHours: '1–2 heures',
       accent: ACCENT_ESSENTIEL,
     },
     standard: {
-      tier: 'Standard',
+      tier: 'Mission ciblée',
       features: [
-        'Épisode complet de 45–60 min',
-        'Montage & habillage sonore Bany Talks',
-        'Clips courts pour Instagram / TikTok',
-        'Publication multi-plateformes',
+        'Un mandat défini autour d’un objectif, d’un livrable ou d’une problématique spécifique.',
       ],
-      estHours: '3–4 heures',
       accent: ACCENT_STANDARD,
     },
     premium: {
-      tier: 'Premium',
+      tier: 'Accompagnement',
       features: [
-        'Épisode exclusif tourné en studio',
-        'Série de 3 clips vidéo prêts à publier',
-        'Post sponsorisé sur les réseaux Bany',
-        'Mise en avant newsletter (audience Bany)',
+        'Une collaboration plus longue avec suivi et appui dans l’exécution.',
       ],
-      estHours: '6+ heures',
       accent: ACCENT_PREMIUM,
     },
   },
-  Interviews: {
+  'Keynote / Conférence': {
     essentiel: {
-      tier: 'Essentiel',
-      features: [
-        "Interview filmée de 20–30 min",
-        'Une question brand / produit intégrée',
-        'Partage sur les réseaux sociaux',
-      ],
-      estHours: '1–2 heures',
+      tier: 'Intervention',
+      features: ['Keynote ou conférence autour d’une thématique convenue.'],
       accent: ACCENT_ESSENTIEL,
     },
     standard: {
-      tier: 'Standard',
+      tier: 'Intervention + échange',
       features: [
-        'Interview live ou studio de 45 min',
-        "Session Q&A avec l'audience",
-        'Pack photos professionnelles',
-        'Diffusion replay sur YouTube',
+        'Keynote suivie d’une session Q&A, fireside chat ou échange avec le public.',
       ],
-      estHours: '3–4 heures',
       accent: ACCENT_STANDARD,
     },
     premium: {
-      tier: 'Premium',
+      tier: 'Expérience complète',
       features: [
-        'Interview exclusive longue durée',
-        'Direction artistique & storytelling marque',
-        'Campagne multi-posts VIP',
-        'Newsletter dédiée à votre prise de parole',
+        'Keynote + échange + session spécifique avec dirigeants, entrepreneurs ou participants.',
       ],
-      estHours: '6+ heures',
       accent: ACCENT_PREMIUM,
     },
   },
-  Conference: {
+  'Panel / Modération': {
     essentiel: {
-      tier: 'Essentiel',
-      features: [
-        'Keynote inspirante de 30 min',
-        'Présence sur scène / événement',
-        'Mention dans les supports de communication',
-      ],
-      estHours: '1–2 heures',
+      tier: 'Panel',
+      features: ['Participation comme panéliste ou intervenant.'],
       accent: ACCENT_ESSENTIEL,
     },
     standard: {
-      tier: 'Standard',
-      features: [
-        'Conférence Keynote de 45 min',
-        'Table ronde interactive de 30 min',
-        "Session Q&A avec l'audience",
-        'Pack photos professionnelles',
-      ],
-      estHours: '3–4 heures',
+      tier: 'Modération',
+      features: ['Préparation éditoriale et conduite du panel ou de la conversation.'],
       accent: ACCENT_STANDARD,
     },
     premium: {
-      tier: 'Premium',
+      tier: 'Modération éditoriale',
       features: [
-        'Animation exclusive demi-journée',
-        'Keynote + masterclass sur mesure',
-        'Interview studio Bany Talks associée',
-        'Couverture média & posts VIP',
+        'Recherche sur les intervenants, structuration de la conversation et modération approfondie.',
       ],
-      estHours: '6+ heures',
+      accent: ACCENT_PREMIUM,
+    },
+  },
+  'BTX – Partenariat média': {
+    essentiel: {
+      tier: 'Épisode partenaire',
+      features: [
+        'Concept et préparation éditoriale',
+        'Enregistrement d’un épisode BTX',
+        'Publication sur les plateformes BTX',
+        'Extraits courts issus de l’épisode',
+      ],
+      accent: ACCENT_ESSENTIEL,
+    },
+    standard: {
+      tier: 'Campagne BTX',
+      features: [
+        'Épisode partenaire',
+        'Plusieurs contenus courts',
+        'Diffusion renforcée sur les réseaux',
+        'Mentions / intégration de marque',
+        'Relais via les canaux BTX',
+      ],
+      accent: ACCENT_STANDARD,
+    },
+    premium: {
+      tier: 'Partenariat sur mesure',
+      features: [
+        'Série de contenus',
+        'Podcast / BTX Daily / BBM',
+        'Événements et lives',
+        'Distribution multi-plateforme',
+        'Reporting',
+        'Dispositif conçu sur mesure',
+      ],
       accent: ACCENT_PREMIUM,
     },
   },
 };
 
-export function getInvitePackage(
-  eventType: string,
-  budgetRange: string
-): InvitePackage {
+export function getInviteTypeConfig(eventType: string): InviteTypeConfig {
   const type = (FREQUENT_EVENT_TYPES as readonly string[]).includes(eventType)
     ? (eventType as InviteEventType)
     : FREQUENT_EVENT_TYPES[0];
+  return INVITE_TYPE_CONFIG[type];
+}
+
+export function getInvitePackage(
+  eventType: string,
+  budgetRange: string
+): InvitePackage | null {
+  const type = (FREQUENT_EVENT_TYPES as readonly string[]).includes(eventType)
+    ? (eventType as InviteEventType)
+    : FREQUENT_EVENT_TYPES[0];
+
+  const packages = INVITE_PACKAGES_BY_EVENT[type];
+  if (!packages) return null;
 
   let tier: InviteFormulaTier = 'standard';
   if (budgetRange === 'essentiel' || budgetRange === 'under-3000') tier = 'essentiel';
   else if (budgetRange === 'premium' || budgetRange === 'above-5000') tier = 'premium';
   else tier = 'standard';
 
-  return INVITE_PACKAGES_BY_EVENT[type][tier];
+  return packages[tier];
+}
+
+export function getInviteFormulaOptions(
+  eventType: string
+): { value: InviteFormulaTier; label: string }[] {
+  const type = (FREQUENT_EVENT_TYPES as readonly string[]).includes(eventType)
+    ? (eventType as InviteEventType)
+    : FREQUENT_EVENT_TYPES[0];
+  const packages = INVITE_PACKAGES_BY_EVENT[type];
+  if (!packages) return [];
+
+  return (['essentiel', 'standard', 'premium'] as InviteFormulaTier[]).map((value) => ({
+    value,
+    label: packages[value].tier,
+  }));
 }
 
 export const BOOKS: Book[] = [

@@ -57,6 +57,10 @@ export interface SpeakerRequest {
   date: string;
   budgetRange: string;
   message: string;
+  city?: string;
+  eventFormat?: string;
+  audience?: string;
+  theme?: string;
   createdAt: string;
 }
 
