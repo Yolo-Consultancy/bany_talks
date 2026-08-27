@@ -151,7 +151,7 @@ export default function Stats({ onInviteClick }: StatsProps) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Inviter Bany pour votre événement
+                TRAVAILLER AVEC BANY
                 <ArrowRight className="w-4 h-4" />
               </motion.button>
             )}

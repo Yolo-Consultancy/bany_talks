@@ -3,7 +3,7 @@ import { ArrowDown } from 'lucide-react';
 import { motion, useAnimation } from 'framer-motion';
 
 const INVITE_HERO_BG = '/bany_about.jpg';
-const TITLE_LINE = 'Inviter Bany';
+const TITLE_LINE = 'TRAVAILLER AVEC BANY';
 const WORDS = TITLE_LINE.split(' ');
 const WORD_STAGGER = 0.22;
 const ENTRANCE_DELAY = 0.15;

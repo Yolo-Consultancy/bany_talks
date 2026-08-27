@@ -94,7 +94,7 @@ export default function HomeShowcase({ onExploreEpisodes, onAbout, onBlog, onInv
           onInvite={onInvite}
           title="Conférences, panels & keynotes "
           subtitle="Invitez Bany pour une keynote, un panel, une modération ou une conversation autour du business, de l’entrepreneuriat, de l’investissement et des transformations africaines."
-          label="Faire venir Bany"
+          label="TRAVAILLER AVEC BANY"
         />
       </div>
     </section>

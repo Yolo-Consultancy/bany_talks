@@ -377,7 +377,7 @@ export default function InviteBany() {
           <div className="lg:col-span-7 space-y-5">
             <p className="section-label">Speaking Engagements</p>
             <h2 className="font-display text-4xl sm:text-5xl text-stone-100 font-medium leading-tight">
-              Inviter Bany à votre événement
+              TRAVAILLER AVEC BANY
             </h2>
             <p className="text-stone-500 font-body text-base leading-relaxed max-w-lg">
               Conférences d'inspiration, tables rondes ou partenariats média. Alignez votre marque avec une voix qui compte en Afrique et au-delà.

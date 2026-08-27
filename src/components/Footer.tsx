@@ -30,7 +30,7 @@ export default function Footer({ onNavigate, activeView, onInvite }: FooterProps
               <InviteCta
                 variant="button"
                 onInvite={onInvite!}
-                label="Inviter Bany"
+                label="TRAVAILLER AVEC BANY"
               />
             )}
           </div>

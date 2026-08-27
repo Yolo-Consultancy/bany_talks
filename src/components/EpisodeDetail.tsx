@@ -289,7 +289,7 @@ export default function EpisodeDetail({
             onInvite={onInvite}
             title="Ce format, en vrai, sur votre scène"
             subtitle="Conférence, masterclass ou entretien public — invitez Bany pour votre prochain événement."
-            label="Inviter Bany sur votre scène"
+            label="TRAVAILLER AVEC BANY"
           />
         )}
 

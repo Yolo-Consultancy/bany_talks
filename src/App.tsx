@@ -351,7 +351,7 @@ export default function App() {
 
           <div className="hidden md:flex items-center gap-3">
             <button onClick={() => scrollToSection('booking-section')} className="btn-primary text-xs py-2.5 px-5">
-              Inviter Bany
+              TRAVAILLER AVEC BANY
             </button>
           </div>
 
@@ -426,7 +426,7 @@ export default function App() {
                 </button>
                 <div className="pt-4">
                   <button onClick={() => scrollToSection('booking-section')} className="w-full btn-primary justify-center text-xs">
-                    Inviter Bany
+                    TRAVAILLER AVEC BANY
                   </button>
                 </div>
               </div>

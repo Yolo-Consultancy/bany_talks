@@ -191,7 +191,7 @@ export default function ContactPage({ onInvite }: ContactPageProps) {
 
             {onInvite && (
               <div className="border border-white/8 p-5 space-y-3">
-                <p className="font-display text-lg text-stone-100">Inviter Bany</p>
+                <p className="font-display text-lg text-stone-100">TRAVAILLER AVEC BANY</p>
                 <p className="text-sm text-stone-500 font-body leading-relaxed">
                   Pour une conférence, un événement ou un enregistrement, utilisez le formulaire d’invitation.
                 </p>
