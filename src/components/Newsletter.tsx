@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, ArrowRight, CheckCircle2, Youtube, Library, Radio, AlertCircle } from 'lucide-react';
+import { Mail, ArrowRight, CheckCircle2, Mic2, Newspaper, Lightbulb, AlertCircle } from 'lucide-react';
 import { subscribeToNewsletter } from '../services/mailchimpService';
 
 export default function Newsletter() {
@@ -39,11 +39,10 @@ export default function Newsletter() {
             <div className="space-y-4">
               <p className="section-label">Newsletter</p>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-stone-100 font-medium leading-tight max-w-lg">
-                Restez informé des prochains épisodes
+                Recevez l’essentiel, sans le bruit.
               </h2>
               <p className="text-stone-500 font-body leading-relaxed max-w-lg">
-                Synthèses d&apos;épisodes, ressources exclusives de nos invités et invitations aux
-                enregistrements studio à Kinshasa. Vous serez notifié par email à chaque nouveauté.
+                <b>Nouveaux épisodes, analyses, idées clés et ressources sélectionnées</b> autour du business, de l’entrepreneuriat et de l’investissement en RDC et en Afrique.
               </p>
             </div>
 
@@ -97,16 +96,16 @@ export default function Newsletter() {
                   </div>
                 )}
 
-                <p className="text-xs text-stone-600 font-body">Pas de spam. Désabonnement en un clic.</p>
+                <p className="text-xs text-stone-600 font-body">Pas de spam. Seulement du contenu utile. Désabonnement à tout moment.</p>
               </form>
             )}
           </div>
 
           <div className="lg:col-span-5 space-y-6 lg:pt-12">
             {[
-              { icon: Radio, label: 'Spotify', stat: '235K auditeurs', sub: 'Top podcasts Afrique' },
-              { icon: Youtube, label: 'YouTube', stat: '180K abonnés', sub: 'Émissions hebdomadaires' },
-              { icon: Library, label: 'Apple Podcasts', stat: '4.8★', sub: '1.2K évaluations' },
+              { icon: Mic2, label: 'Conversations de fond', stat: 'BTX PODCAST', sub: 'Entrepreneurs, investisseurs & décideurs' },
+              { icon: Newspaper, label: 'L’économie décodée', stat: 'BTX DAILY / BBM', sub: 'Actualité, business & pédagogie' },
+              { icon: Lightbulb, label: 'Idées & analyses', stat: 'BANY INSIGHTS', sub: 'Pour comprendre avant d’agir' },
             ].map(({ icon: Icon, label, stat, sub }) => (
               <div key={label} className="flex items-center gap-5 py-4 border-b border-white/5">
                 <Icon className="w-5 h-5 text-stone-600 shrink-0" strokeWidth={1.5} />

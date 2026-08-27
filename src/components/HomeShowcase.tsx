@@ -13,23 +13,26 @@ interface HomeShowcaseProps {
 const PLATFORMS = [
   {
     id: 'episodes',
-    label: 'The Bany Talks',
-    subtitle: 'Émissions & Podcasts',
-    desc: 'Entretiens longs format avec fondateurs, investisseurs et décideurs africains.',
+    label: 'BTX',
+    subtitle: 'ÉMISSIONS & PODCASTS',
+    desc: 'Conversations, analyses et décryptages autour du business, de l’entrepreneuriat, de l’investissement et de l’économie africaine.',
+    cta: 'Découvrir BTX',
     icon: Mic2,
   },
   {
     id: 'about',
-    label: "L'histoire de Bany",
+    label: "Le parcours de Bany",
     subtitle: 'À propos',
-    desc: "Du Congo au studio : le parcours d'un entrepreneur média.",
+    desc: "Consultant, entrepreneur et homme de média : découvrez mon parcours, mes projets et les convictions qui guident mon travail.",
+    cta: 'Découvrir',
     icon: Users,
   },
   {
     id: 'blog',
-    label: 'Blog',
+    label: 'Idées & perspectives',
     subtitle: 'Articles & analyses',
-    desc: 'Leadership, business et coulisses — le prolongement écrit des conversations.',
+    desc: 'Analyses et prises de recul sur le business, l’économie, l’investissement, l’entrepreneuriat et les transformations africaines.',
+    cta: 'Lire les articles',
     icon: BookOpen,
   },
 ];
@@ -48,13 +51,12 @@ export default function HomeShowcase({ onExploreEpisodes, onAbout, onBlog, onInv
           <div className="lg:col-span-5">
             <p className="section-label mb-4">Explorer</p>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-stone-100 leading-tight font-medium">
-              Un écosystème média pensé pour inspirer et informer.
+            Comprendre. Entreprendre. Transmettre.
             </h2>
           </div>
           <div className="lg:col-span-7 flex items-end">
             <p className="text-stone-500 font-body text-base leading-relaxed max-w-lg">
-              Comme un journal intime des builders africains — sans filtre, sans script. Chaque format ouvre une porte différente sur le même univers : celui de ceux qui osent.
-            </p>
+            Mon travail se situe au croisement du business, de l’entrepreneuriat et des médias. Découvrez mes conversations, mon parcours et mes analyses sur les idées, les entreprises et les personnes qui construisent l’Afrique.            </p>
           </div>
         </div>
 
@@ -79,7 +81,7 @@ export default function HomeShowcase({ onExploreEpisodes, onAbout, onBlog, onInv
                     {platform.desc}
                   </p>
                   <span className="link-arrow text-xs pt-1">
-                    Découvrir <ArrowRight className="w-3.5 h-3.5" />
+                    {platform.cta} <ArrowRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
               </button>
@@ -90,8 +92,8 @@ export default function HomeShowcase({ onExploreEpisodes, onAbout, onBlog, onInv
         <InviteCta
           className="mt-14 lg:mt-16"
           onInvite={onInvite}
-          title="Conférences, panels & keynotes"
-          subtitle="Faites intervenir Bany pour animer, inspirer ou clôturer votre événement."
+          title="Conférences, panels & keynotes "
+          subtitle="Invitez Bany pour une keynote, un panel, une modération ou une conversation autour du business, de l’entrepreneuriat, de l’investissement et des transformations africaines."
           label="Faire venir Bany"
         />
       </div>

@@ -80,7 +80,7 @@ export default function BlogNewsletter() {
                 {error}
               </div>
             )}
-            <p className="text-xs text-stone-600 font-body">Pas de spam. Désabonnement en un clic.</p>
+            <p className="text-xs text-stone-600 font-body">Pas de spam. Seulement du contenu utile. Désabonnement à tout moment.</p>
           </form>
         )}
       </div>
