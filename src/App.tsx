@@ -465,7 +465,7 @@ export default function App() {
               transition={{ duration: 0.35 }}
             >
               <AboutHero />
-              <Stats onInviteClick={() => navigateToView('invite')} />
+              <Stats onContactClick={() => navigateToView('contact')} />
             </motion.div>
           )}
 

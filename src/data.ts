@@ -10,8 +10,12 @@ export const HOST_DETAILS = {
   fullName: 'Banyabo Bigomokero',
   title: 'Hôte & Producteur Média',
   tagline: 'Une voix qui inspire une génération.',
-  longBio: 'Bany est un entrepreneur congolais, stratège et fondateur du Yolo Group, avec une voix forte sur le business, l\'investissement et le développement en Afrique. Il est l\'hôte de Bany Talks, un podcast et programme télé dédié à des conversations locales, audacieuses et stratégiques pour l\'avenir du continent.',
-  quote: 'La vraie valeur d’une histoire ne réside pas dans son point d’arrivée, mais dans la clarté des obstacles surmontés durant la transition.',
+  longBio: [
+    'Banyabo Bigomokero est consultant, entrepreneur et homme de média congolais.',
+    'Son parcours se situe à la croisée du développement, du conseil, de l’entrepreneuriat et des médias. Après plusieurs expériences dans la gestion de projets, la transformation numérique et l’accompagnement d’organisations, il fonde Yolo Group of Companies et développe parallèlement un écosystème média consacré au business, à l’entrepreneuriat et à l’investissement.',
+    'À travers ses activités, ses interventions et BTX, il poursuit une même ambition : mieux comprendre les réalités africaines, contribuer à construire des solutions et rendre les enjeux économiques accessibles au plus grand nombre.',
+  ],
+  quote: 'Comprendre les réalités. Construire des solutions. Transmettre ce que j’apprends. ',
   avatar: bigo,
   aboutpicture: banyAbout,
   /** Vidéo hero en boucle — déposer le fichier dans public/ (ex. public/hero.mp4) */
@@ -170,11 +174,41 @@ export const EPISODES: Episode[] = [
 ];
 
 export const TIMELINE_MILESTONES = [
-  { year: '2025', title: 'Référence Européenne', desc: 'Bany Talks élue l’une des émissions de podcasts francophones les plus décisives de la décennie.' },
-  { year: '2024', title: 'Invités de Prestige', desc: 'Entrée des PDG fondateurs du CAC40 et d’investisseurs légendaires de la tech dans l’émission.' },
-  { year: '2023', title: 'Studio Bany Talks', desc: 'Inauguration du studio professionnel à Paris et passage aux diffusions de haute qualité sur YouTube.' },
-  { year: '2022', title: 'Audience Explosive', desc: 'Le cap des 100K téléchargements cumulés est franchi grâce à des interviews franches de créateurs.' },
-  { year: '2021', title: 'Le Premier Micro', desc: 'Bany lance les émissions de sa propre chambre avec des invités locaux branchés.' },
+  {
+    year: 'Aujourd’hui',
+    title: 'Construire une voix africaine du business',
+    desc: 'À travers le conseil, l’entrepreneuriat, les médias et la prise de parole, Bany construit progressivement une plateforme au service d’une ambition : mieux comprendre les transformations économiques africaines et contribuer à ceux qui les rendent possibles.',
+  },
+  {
+    year: 'Média',
+    title: 'De Bany Talks à BTX',
+    desc: 'Bany lance Bany Talks pour donner la parole aux entrepreneurs, dirigeants et décideurs. Le projet évolue progressivement vers BTX, un écosystème consacré au business, à l’économie, à l’entrepreneuriat et à l’investissement.',
+  },
+  {
+    year: 'Entrepreneuriat',
+    title: 'Création de Yolo Group',
+    desc: 'Il fonde Yolo Group of Companies, à travers lequel il développe et expérimente plusieurs activités entrepreneuriales dans des secteurs différents.',
+  },
+  {
+    year: 'Conseil',
+    title: 'Stratégie, recherche & accompagnement',
+    desc: 'Bany développe une activité de conseil autour de la stratégie, de la gestion de projets, du développement du secteur privé, de l’entrepreneuriat et de la transformation numérique.',
+  },
+  {
+    year: 'Médias & numérique',
+    title: 'Transformation des médias',
+    desc: 'Il travaille sur des problématiques liées aux médias, aux nouveaux environnements numériques et à la transformation digitale, notamment dans le cadre de programmes accompagnant des organisations médiatiques.',
+  },
+  {
+    year: 'Expérience internationale',
+    title: 'Gestion de projets & développement',
+    desc: 'Son parcours professionnel l’amène ensuite à travailler sur des programmes de développement et à évoluer dans des environnements internationaux, notamment en Afrique de l’Est.',
+  },
+  {
+    year: 'Premières années',
+    title: 'Créativité & communication',
+    desc: 'La musique constitue l’un des premiers terrains d’expression de Bany. Une expérience qui lui apprend très tôt la création, la scène, la communication et la construction d’une audience.',
+  },
 ];
 
 export const FREQUENT_EVENT_TYPES = [
