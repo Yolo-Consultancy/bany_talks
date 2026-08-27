@@ -332,7 +332,7 @@ export default function InviteBany() {
           </div>
           <div className="lg:col-span-5 flex items-end">
             <p className="text-xs sm:text-sm text-stone-600 font-body leading-relaxed">
-              Bany et son équipe reviennent vers vous sous 48h ouvrées. Transport et hébergement (hôtel 4★ minimum) à la charge de l&apos;organisateur pour les interventions physiques.
+              Notre équipe reviendra vers vous dans les 48 heures ouvrées afin d’évaluer le besoin et, si nécessaire, organiser un premier échange. 
             </p>
           </div>
         </div>
