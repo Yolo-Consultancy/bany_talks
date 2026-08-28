@@ -1,5 +1,4 @@
 import React from 'react';
-import { HOST_DETAILS } from '../data';
 import { NAV_ITEMS } from '../data/navItems';
 import SocialLinks from './SocialLinks';
 import InviteCta from './InviteCta';
@@ -10,6 +9,21 @@ interface FooterProps {
   activeView: string;
   onInvite?: () => void;
 }
+
+const PRINCIPLES = [
+  {
+    title: 'Oser',
+    desc: 'Voir des possibilités là où d’autres voient uniquement des contraintes.',
+  },
+  {
+    title: 'Agir',
+    desc: 'Transformer les idées, analyses et opportunités en initiatives concrètes.',
+  },
+  {
+    title: 'Innover',
+    desc: 'Questionner les modèles existants et expérimenter de nouvelles façons de construire.',
+  },
+] as const;
 
 export default function Footer({ onNavigate, activeView, onInvite }: FooterProps) {
   const currentYear = new Date().getFullYear();
@@ -23,7 +37,7 @@ export default function Footer({ onNavigate, activeView, onInvite }: FooterProps
           <div className="md:col-span-5 space-y-6">
             <img src={logoBany} alt="Bany Talks" className="h-10 w-auto" />
             <p className="text-sm text-stone-500 font-body leading-relaxed max-w-sm">
-             Consultant, entrepreneur et media host. Des idées, des conversations et des projets pour mieux comprendre et construire l'Afrique.
+              Consultant, entrepreneur et media host. Des idées, des conversations et des projets pour mieux comprendre et construire l&apos;Afrique.
             </p>
             <SocialLinks size="sm" />
             {showInvite && (
@@ -59,21 +73,32 @@ export default function Footer({ onNavigate, activeView, onInvite }: FooterProps
             </div>
           </div>
 
-          <div className="md:col-span-4">
-            <p className="section-label text-[0.6rem] mb-4">Citation</p>
-            <blockquote className="font-display text-lg text-stone-400 italic leading-relaxed">
-              « {HOST_DETAILS.quote} »
-            </blockquote>
-            <cite className="block mt-3 text-xs text-stone-600 not-italic font-body">
-              — {HOST_DETAILS.fullName}
-            </cite>
+          <div className="md:col-span-4 space-y-5">
+            <div>
+              <p className="section-label text-[0.6rem] mb-3">Principes</p>
+              <h3 className="font-display text-xl sm:text-2xl text-stone-100 font-medium leading-snug">
+                Oser. Agir. Innover.
+              </h3>
+            </div>
+            <div className="space-y-4">
+              {PRINCIPLES.map((item) => (
+                <div key={item.title} className="border-l border-rose-500/40 pl-4">
+                  <p className="font-display text-xs tracking-[0.16em] uppercase text-rose-400/90 mb-1.5">
+                    {item.title}
+                  </p>
+                  <p className="text-sm text-stone-500 font-body leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs text-stone-600 font-body">
           <span>© {currentYear} Bany Talks. Tous droits réservés.</span>
           <div className="flex items-center gap-6">
-            <span className="hover:text-stone-400 transition cursor-pointer">Conditions d'utilisation</span>
+            <span className="hover:text-stone-400 transition cursor-pointer">Conditions d&apos;utilisation</span>
             <span className="hover:text-stone-400 transition cursor-pointer">Confidentialité</span>
           </div>
         </div>
