@@ -189,12 +189,6 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
           <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl text-stone-100 font-medium leading-tight">
             {article.title}
           </h1>
-
-          {article.excerpt && (
-            <p className="text-base sm:text-lg text-stone-400 font-body leading-relaxed max-w-3xl">
-              {article.excerpt}
-            </p>
-          )}
         </div>
 
         {article.coverImage && (
