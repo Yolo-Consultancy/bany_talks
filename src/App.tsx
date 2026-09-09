@@ -7,7 +7,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Menu, X, ArrowUp } from 'lucide-react';
 import { EPISODES } from './data';
 import logoBany from './assets/logos/logo_bany.png';
-import { NAV_ITEMS } from './data/navItems';
+import { NAV_ITEMS, NAV_ITEM_HOVER_CLASS, NAV_ITEM_MOBILE_HOVER_CLASS } from './data/navItems';
 import { Episode } from './types';
 import {
   loadPlaylistEpisodes,
@@ -329,11 +329,14 @@ export default function App() {
                 }
               };
               return (
-                <button
+                <motion.button
                   key={link.value}
                   onClick={handleClick}
-                  className={`relative py-1 transition-colors duration-200 cursor-pointer ${
-                    isActive ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 18 }}
+                  className={`relative inline-block py-1 cursor-pointer ${NAV_ITEM_HOVER_CLASS} ${
+                    isActive ? 'is-active text-stone-100' : 'text-stone-500 hover:text-stone-100'
                   }`}
                 >
                   {link.label}
@@ -344,7 +347,7 @@ export default function App() {
                       transition={{ type: 'spring', stiffness: 350, damping: 28 }}
                     />
                   )}
-                </button>
+                </motion.button>
               );
             })}
           </div>
@@ -382,48 +385,47 @@ export default function App() {
               className="md:hidden bg-stone-950 border-b border-stone-900 overflow-hidden shadow-2xl"
             >
               <div className="px-5 pt-3 pb-6 space-y-1 font-body text-sm">
-                <button
-                  onClick={() => scrollToSection('hero-section')}
-                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
-                    currentView === 'home' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
-                  }`}
-                >
-                  Accueil
-                </button>
-                <button
-                  onClick={() => scrollToSection('about-bany')}
-                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
-                    currentView === 'about' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
-                  }`}
-                >
-                  À Propos
-                </button>
-                <button
-                  onClick={() => scrollToSection('episodes-section')}
-                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
-                    currentView === 'episodes' || currentView === 'episode-detail'
-                      ? 'text-stone-100'
-                      : 'text-stone-500 hover:text-stone-300'
-                  }`}
-                >
-                  BTX
-                </button>
-                <button
-                  onClick={() => openBlog()}
-                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
-                    isBlogView ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
-                  }`}
-                >
-                  Blog
-                </button>
-                <button
-                  onClick={() => navigateToView('contact')}
-                  className={`block w-full text-left py-3 border-b border-white/5 transition ${
-                    currentView === 'contact' ? 'text-stone-100' : 'text-stone-500 hover:text-stone-300'
-                  }`}
-                >
-                  Contact
-                </button>
+                {NAV_ITEMS.map((link) => {
+                  const isActive =
+                    currentView === link.value ||
+                    (currentView === 'episode-detail' && link.value === 'episodes') ||
+                    (isBlogView && link.value === 'blog');
+                  const handleClick = () => {
+                    if (link.value === 'blog') {
+                      openBlog();
+                      return;
+                    }
+                    if (link.value === 'contact') {
+                      navigateToView('contact');
+                      return;
+                    }
+                    if (['home', 'about', 'episodes'].includes(link.value)) {
+                      const sectionId =
+                        link.value === 'home'
+                          ? 'hero-section'
+                          : link.value === 'about'
+                            ? 'about-bany'
+                            : 'episodes-section';
+                      scrollToSection(sectionId);
+                    } else {
+                      navigateToView(link.value as AppView);
+                    }
+                  };
+                  return (
+                    <motion.button
+                      key={link.value}
+                      onClick={handleClick}
+                      whileHover={{ x: 4 }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+                      className={`block w-full text-left py-3 border-b border-white/5 cursor-pointer ${NAV_ITEM_MOBILE_HOVER_CLASS} ${
+                        isActive ? 'is-active text-stone-100' : 'text-stone-500'
+                      }`}
+                    >
+                      {link.label}
+                    </motion.button>
+                  );
+                })}
                 <div className="pt-4">
                   <button onClick={() => scrollToSection('booking-section')} className="w-full btn-primary justify-center text-xs">
                     TRAVAILLER AVEC BANY
