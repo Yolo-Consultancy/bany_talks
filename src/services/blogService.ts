@@ -162,7 +162,7 @@ export function applyArticleSeo(article: BlogArticle) {
   const image = article.seo?.ogImage || article.coverImage;
   const url = article.seo?.canonicalUrl || `${window.location.origin}/#/blog/${article.slug}`;
 
-  document.title = title;
+  document.title = `${title} | Bany Official`;
 
   const setMeta = (attr: 'name' | 'property', key: string, content: string) => {
     let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;

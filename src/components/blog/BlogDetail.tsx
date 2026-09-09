@@ -92,6 +92,7 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
       });
     return () => {
       cancelled = true;
+      document.title = 'Bany Official';
     };
   }, [slug]);
 

@@ -1,6 +1,6 @@
 {
-  "name": "Bany Talks",
-  "description": "Plateforme premium officielle de Bany Talks — Conversations vraies, récits inspirants et podcasts média haut de gamme.",
+  "name": "Bany Official",
+  "description": "Bany Official (Bany Officiel) — site officiel de Banyabo Bigomokero. Conversations, podcasts BTX et analyses business.",
   "requestFramePermissions": ["microphone"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
