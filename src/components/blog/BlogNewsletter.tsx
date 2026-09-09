@@ -37,7 +37,7 @@ export default function BlogNewsletter() {
           Recevez les nouveaux articles
         </h2>
         <p className="text-stone-500 font-body mb-8 max-w-lg">
-          Leadership, business et coulisses de Bany Talks — directement dans votre boîte mail.
+          Leadership, business et coulisses de Bany Experience — directement dans votre boîte mail.
         </p>
 
         {success ? (

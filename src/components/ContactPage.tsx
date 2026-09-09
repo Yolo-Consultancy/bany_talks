@@ -56,7 +56,7 @@ export default function ContactPage({ onInvite }: ContactPageProps) {
             Contact
           </h1>
           <p className="text-stone-500 font-body text-base leading-relaxed">
-            Une question, une collaboration ou une invitation ? Écrivez-nous — l’équipe Bany Talks vous répond.
+            Une question, une collaboration ou une invitation ? Écrivez-nous — l’équipe Bany Experience vous répond.
           </p>
         </div>
 

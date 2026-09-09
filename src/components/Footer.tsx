@@ -35,7 +35,7 @@ export default function Footer({ onNavigate, activeView, onInvite }: FooterProps
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           <div className="md:col-span-5 space-y-6">
-            <img src={logoBany} alt="Bany Talks" className="h-10 w-auto" />
+            <img src={logoBany} alt="Bany Experience" className="h-10 w-auto" />
             <p className="text-sm text-stone-500 font-body leading-relaxed max-w-sm">
               Consultant, entrepreneur et media host. Des idées, des conversations et des projets pour mieux comprendre et construire l&apos;Afrique.
             </p>
@@ -96,7 +96,7 @@ export default function Footer({ onNavigate, activeView, onInvite }: FooterProps
         </div>
 
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs text-stone-600 font-body">
-          <span>© {currentYear} Bany Talks. Tous droits réservés.</span>
+          <span>© {currentYear} Bany Experience. Tous droits réservés.</span>
           <div className="flex items-center gap-6">
             <span className="hover:text-stone-400 transition cursor-pointer">Conditions d&apos;utilisation</span>
             <span className="hover:text-stone-400 transition cursor-pointer">Confidentialité</span>

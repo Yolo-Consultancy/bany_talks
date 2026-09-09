@@ -6,7 +6,7 @@ import guestCreator from './assets/images/guest_creator_1779362546167.png';
 import guestExecutive from './assets/images/guest_executive_1779362567789.png';
 
 export const HOST_DETAILS = {
-  name: 'Bany Talks',
+  name: 'Bany Experience',
   fullName: 'Banyabo Bigomokero',
   title: 'Hôte & Producteur Média',
   tagline: 'Une voix qui inspire une génération.',
@@ -89,7 +89,7 @@ export const EPISODES: Episode[] = [
     number: 123,
     title: 'Création de contenu, santé mentale et liberté financière',
     description: 'Le créateur de tendances Kélian Koffi partage sa vision brutale de l’économie de l’attention, la gestion de sa marque personnelle et la transition d’influenceur média à investisseur aguerri.',
-    richDescription: 'Derrière les vues et l’algorithme se cache une équation psychologique redoutée par de nombreux créateurs. Kélian Koffi prend le micro de Bany Talks pour un épisode introspectif où il explore comment il a converti son audience de 2M+ d’abonnés en une structure d’investissement diversifiée dans le commerce physique et l’immobilier locatif tout en préservant sa clarté mentale.',
+    richDescription: 'Derrière les vues et l’algorithme se cache une équation psychologique redoutée par de nombreux créateurs. Kélian Koffi prend le micro de Bany Experience pour un épisode introspectif où il explore comment il a converti son audience de 2M+ d’abonnés en une structure d’investissement diversifiée dans le commerce physique et l’immobilier locatif tout en préservant sa clarté mentale.',
     duration: '58:45',
     publishDate: '14 Mai 2026',
     category: 'Podcasts',
@@ -131,7 +131,7 @@ export const EPISODES: Episode[] = [
     number: 122,
     title: 'Négociation de crise & Leadership d’exception',
     description: 'Antoine Dupont, négociateur chevronné et consultant en climat social, livre ses techniques de résolution de conflits majeurs et d’organisation du leadership de crise.',
-    richDescription: 'De la restructuration d’entreprises en péril aux négociations d’accords industriels stratégiques, Antoine Dupont décrypte pour Bany Talks la psychologie des tensions relationnelles extrêmes. Un cours magistral sur la persuasion, l’intelligence émotionnelle, et l’art subtil de faire céder l’adversaire tout en le laissant sauvegarder la face.',
+    richDescription: 'De la restructuration d’entreprises en péril aux négociations d’accords industriels stratégiques, Antoine Dupont décrypte pour Bany Experience la psychologie des tensions relationnelles extrêmes. Un cours magistral sur la persuasion, l’intelligence émotionnelle, et l’art subtil de faire céder l’adversaire tout en le laissant sauvegarder la face.',
     duration: '01:28:10',
     publishDate: '07 Mai 2026',
     category: 'Podcasts',
@@ -181,8 +181,8 @@ export const TIMELINE_MILESTONES = [
   },
   {
     year: 'Média',
-    title: 'De Bany Talks à BTX',
-    desc: 'Bany lance Bany Talks pour donner la parole aux entrepreneurs, dirigeants et décideurs. Le projet évolue progressivement vers BTX, un écosystème consacré au business, à l’économie, à l’entrepreneuriat et à l’investissement.',
+    title: 'De Bany Experience à BTX',
+    desc: 'Bany lance Bany Experience pour donner la parole aux entrepreneurs, dirigeants et décideurs. Le projet évolue progressivement vers BTX, un écosystème consacré au business, à l’économie, à l’entrepreneuriat et à l’investissement.',
   },
   {
     year: 'Entrepreneuriat',
@@ -215,6 +215,7 @@ export const FREQUENT_EVENT_TYPES = [
   'Conseil / Consultance',
   'Keynote / Conférence',
   'Panel / Modération',
+  'BTX – Participer à un épisode',
   'BTX – Partenariat média',
   'Partenariat / Collaboration',
   'Autre demande',
@@ -236,8 +237,8 @@ export type InvitePackageAccent = {
 
 export type InvitePackage = {
   tier: string;
-  features: string[];
-  estHours?: string;
+  description: string;
+  cta: string;
   accent: InvitePackageAccent;
 };
 
@@ -288,25 +289,24 @@ const ACCENT_PREMIUM: InvitePackageAccent = {
 
 export const INVITE_TYPE_CONFIG: Record<InviteEventType, InviteTypeConfig> = {
   'Conseil / Consultance': {
-    introTitle: 'Conseil & accompagnement',
-    intro:
-      'Stratégie, développement d’entreprise, entrepreneuriat, études, programmes, communication stratégique ou accompagnement spécifique.',
+    introTitle: 'Conseil / Consultance',
+    intro: 'Trois formats pour clarifier une décision, structurer une mission ou accompagner dans la durée.',
     note: 'Aucun prix n’est affiché à ce stade. La proposition financière vient après cadrage.',
-    cta: 'Demander un échange',
+    cta: 'Demander une session',
     dateLabel: 'Échéance',
     dateRequired: false,
     showFormulas: true,
-    formulaLabel: 'Format',
+    formulaLabel: 'Formule',
     briefPlaceholder: 'Problématique, objectif, contexte…',
   },
   'Keynote / Conférence': {
-    introTitle: 'Prise de parole',
-    intro: 'Keynote ou conférence autour d’une thématique convenue.',
-    cta: 'Soumettre une invitation',
+    introTitle: 'Keynote / Conférence',
+    intro: 'Des formats de prise de parole adaptés au message, au public et à l’ambition de votre événement.',
+    cta: 'Inviter Bany',
     dateLabel: 'Date souhaitée',
     dateRequired: true,
     showFormulas: true,
-    formulaLabel: 'Format',
+    formulaLabel: 'Formule',
     extraFields: ['city', 'eventFormat', 'audience', 'theme'],
     themes: [
       'Business & entrepreneuriat',
@@ -319,148 +319,194 @@ export const INVITE_TYPE_CONFIG: Record<InviteEventType, InviteTypeConfig> = {
     briefPlaceholder: 'Contexte de l’événement, attentes, message clé…',
   },
   'Panel / Modération': {
-    introTitle: 'Panel & modération',
-    intro: 'Participation, préparation éditoriale ou conduite de conversation.',
-    cta: 'Soumettre une invitation',
+    introTitle: 'Panel / Modération',
+    intro: 'Participation, modération ou conception éditoriale complète d’une conversation.',
+    cta: 'Proposer un panel',
     dateLabel: 'Date souhaitée',
     dateRequired: true,
     showFormulas: true,
-    formulaLabel: 'Format',
+    formulaLabel: 'Formule',
     briefPlaceholder: 'Thème du panel, intervenants, format attendu…',
   },
-  'BTX – Partenariat média': {
-    introTitle: 'Partenariat média BTX',
-    intro: 'Épisode, campagne ou dispositif sur mesure autour de la marque BTX.',
-    cta: 'Discuter d’un partenariat',
+  'BTX – Participer à un épisode': {
+    introTitle: 'BTX — Participer à un épisode',
+    intro: 'Proposez un invité, une histoire ou un sujet pour BTX.',
+    cta: 'Proposer un invité',
     dateLabel: 'Échéance',
     dateRequired: false,
     showFormulas: true,
-    formulaLabel: 'Offre',
+    formulaLabel: 'Formule',
+    briefPlaceholder: 'Personne proposée, parcours, intérêt de la conversation pour l’audience…',
+  },
+  'BTX – Partenariat média': {
+    introTitle: 'BTX — Partenariat média',
+    intro: 'Épisode partenaire, campagne ou dispositif sur mesure autour de BTX.',
+    cta: 'Discuter d’un épisode partenaire',
+    dateLabel: 'Échéance',
+    dateRequired: false,
+    showFormulas: true,
+    formulaLabel: 'Formule',
     briefPlaceholder: 'Marque, objectifs de visibilité, audience cible…',
   },
   'Partenariat / Collaboration': {
-    introTitle: 'Parlez-nous de votre idée',
-    intro:
-      'Organisation, nature du partenariat, objectifs, ce que vous proposez, ce que vous attendez de Bany / BTX, échéance éventuelle et budget indicatif facultatif.',
-    cta: 'Envoyer la proposition',
+    introTitle: 'Partenariat / Collaboration',
+    intro: 'Des collaborations ponctuelles aux partenariats stratégiques de plus long terme.',
+    cta: 'Proposer une collaboration',
     dateLabel: 'Échéance éventuelle',
     dateRequired: false,
-    showFormulas: false,
+    showFormulas: true,
+    formulaLabel: 'Formule',
     briefTitle: 'Votre proposition',
     briefPlaceholder:
       'Nature du partenariat, objectifs, ce que vous proposez, ce que vous attendez de Bany / BTX, budget indicatif…',
   },
   'Autre demande': {
     introTitle: 'Autre demande',
-    intro: 'Décrivez votre besoin : nous reviendrons vers vous avec le format le plus adapté.',
+    intro: 'Votre besoin ne correspond à aucune catégorie ? Présentez-nous simplement votre projet.',
     cta: 'Envoyer la demande',
     dateLabel: 'Échéance',
     dateRequired: false,
-    showFormulas: false,
-    briefPlaceholder: 'Décrivez votre besoin, le contexte et vos objectifs…',
+    showFormulas: true,
+    formulaLabel: 'Formule',
+    briefPlaceholder: 'Décrivez votre projet, votre objectif et le type de collaboration envisagé…',
   },
 };
 
 /** Formules distinctes par type de demande */
 export const INVITE_PACKAGES_BY_EVENT: Partial<
-  Record<InviteEventType, Record<InviteFormulaTier, InvitePackage>>
+  Record<InviteEventType, Partial<Record<InviteFormulaTier, InvitePackage>>>
 > = {
   'Conseil / Consultance': {
     essentiel: {
       tier: 'Session stratégique',
-      features: [
-        'Une intervention ponctuelle pour challenger une problématique ou une décision.',
-      ],
+      description:
+        'Une session ponctuelle de travail pour analyser une problématique précise, challenger une décision et identifier rapidement les options et prochaines actions. Adaptée aux dirigeants et entrepreneurs qui ont besoin d’un regard externe sur un enjeu clairement défini.',
+      cta: 'Demander une session',
       accent: ACCENT_ESSENTIEL,
     },
     standard: {
-      tier: 'Mission ciblée',
-      features: [
-        'Un mandat défini autour d’un objectif, d’un livrable ou d’une problématique spécifique.',
-      ],
+      tier: 'Mission de conseil',
+      description:
+        'Une mission structurée autour d’une problématique, d’objectifs et de livrables définis ensemble. Elle peut inclure diagnostic, recherche, analyse, recommandations et plan d’action selon les besoins de l’organisation.',
+      cta: 'Discuter d’une mission',
       accent: ACCENT_STANDARD,
     },
     premium: {
-      tier: 'Accompagnement',
-      features: [
-        'Une collaboration plus longue avec suivi et appui dans l’exécution.',
-      ],
+      tier: 'Accompagnement stratégique',
+      description:
+        'Un accompagnement dans la durée pour aider un dirigeant ou une organisation à prendre de meilleures décisions, suivre ses priorités et ajuster sa stratégie au fur et à mesure de l’exécution.',
+      cta: 'Explorer un accompagnement',
       accent: ACCENT_PREMIUM,
     },
   },
   'Keynote / Conférence': {
     essentiel: {
-      tier: 'Intervention',
-      features: ['Keynote ou conférence autour d’une thématique convenue.'],
+      tier: 'Keynote',
+      description:
+        'Une intervention préparée autour d’un message fort et adaptée au thème, au contexte et au public de l’événement. Idéale pour apporter une perspective, provoquer la réflexion et installer une idée centrale.',
+      cta: 'Inviter Bany',
       accent: ACCENT_ESSENTIEL,
     },
     standard: {
-      tier: 'Intervention + échange',
-      features: [
-        'Keynote suivie d’une session Q&A, fireside chat ou échange avec le public.',
-      ],
+      tier: 'Keynote + échange',
+      description:
+        'Une keynote suivie d’un moment interactif avec le public ou un modérateur. Ce format permet d’approfondir les idées présentées et de transformer l’intervention en véritable conversation.',
+      cta: 'Organiser une intervention',
       accent: ACCENT_STANDARD,
     },
     premium: {
-      tier: 'Expérience complète',
-      features: [
-        'Keynote + échange + session spécifique avec dirigeants, entrepreneurs ou participants.',
-      ],
+      tier: 'Expérience sur mesure',
+      description:
+        'Une intervention entièrement conçue autour des objectifs de l’événement, pouvant combiner keynote, échange, fireside chat ou rencontre avec certains participants. Pensée pour les événements qui veulent faire de l’intervention un véritable temps fort.',
+      cta: 'Construire une intervention sur mesure',
       accent: ACCENT_PREMIUM,
     },
   },
   'Panel / Modération': {
     essentiel: {
-      tier: 'Panel',
-      features: ['Participation comme panéliste ou intervenant.'],
+      tier: 'Participation à un panel',
+      description:
+        'Bany intervient comme panéliste pour apporter son regard, son expérience et son analyse sur une thématique liée au business, à l’entrepreneuriat, à l’investissement ou aux transformations africaines.',
+      cta: 'Proposer un panel',
       accent: ACCENT_ESSENTIEL,
     },
     standard: {
       tier: 'Modération',
-      features: ['Préparation éditoriale et conduite du panel ou de la conversation.'],
+      description:
+        'Une préparation en amont puis une conduite dynamique de la conversation afin de faire émerger les idées essentielles, maintenir le rythme et créer de véritables échanges entre les intervenants et le public.',
+      cta: 'Confier la modération à Bany',
       accent: ACCENT_STANDARD,
     },
     premium: {
       tier: 'Modération éditoriale',
-      features: [
-        'Recherche sur les intervenants, structuration de la conversation et modération approfondie.',
-      ],
+      description:
+        'Une modération plus approfondie qui intègre recherche, conception de l’angle, préparation des questions et structuration complète de la conversation. Adaptée aux panels où la qualité du contenu est aussi importante que la conduite de la scène.',
+      cta: 'Construire la modération',
       accent: ACCENT_PREMIUM,
+    },
+  },
+  'BTX – Participer à un épisode': {
+    standard: {
+      tier: 'Proposition éditoriale BTX',
+      description:
+        'Vous souhaitez proposer un invité, une histoire ou un sujet à BTX ? Présentez-nous la personne, son parcours et l’intérêt de la conversation pour notre audience. Les propositions sont étudiées selon leur pertinence éditoriale et ne garantissent pas automatiquement une participation.',
+      cta: 'Proposer un invité',
+      accent: ACCENT_STANDARD,
     },
   },
   'BTX – Partenariat média': {
     essentiel: {
       tier: 'Épisode partenaire',
-      features: [
-        'Concept et préparation éditoriale',
-        'Enregistrement d’un épisode BTX',
-        'Publication sur les plateformes BTX',
-        'Extraits courts issus de l’épisode',
-      ],
+      description:
+        'Un épisode BTX conçu avec une entreprise ou une institution autour d’un sujet pertinent pour l’audience, avec préparation éditoriale, production, diffusion et déclinaisons courtes issues de la conversation.',
+      cta: 'Discuter d’un épisode partenaire',
       accent: ACCENT_ESSENTIEL,
     },
     standard: {
       tier: 'Campagne BTX',
-      features: [
-        'Épisode partenaire',
-        'Plusieurs contenus courts',
-        'Diffusion renforcée sur les réseaux',
-        'Mentions / intégration de marque',
-        'Relais via les canaux BTX',
-      ],
+      description:
+        'Un dispositif éditorial combinant plusieurs contenus et points de contact pour porter un message dans la durée. Il peut associer épisode, formats courts, diffusion renforcée et autres activations sur les plateformes BTX.',
+      cta: 'Construire une campagne BTX',
       accent: ACCENT_STANDARD,
     },
     premium: {
       tier: 'Partenariat sur mesure',
-      features: [
-        'Série de contenus',
-        'Podcast / BTX Daily / BBM',
-        'Événements et lives',
-        'Distribution multi-plateforme',
-        'Reporting',
-        'Dispositif conçu sur mesure',
-      ],
+      description:
+        'Une collaboration média conçue spécifiquement autour des objectifs du partenaire et pouvant mobiliser plusieurs formats de l’écosystème BTX, de la série de contenus aux événements, lives ou campagnes multi-plateformes.',
+      cta: 'Discuter d’un partenariat sur mesure',
       accent: ACCENT_PREMIUM,
+    },
+  },
+  'Partenariat / Collaboration': {
+    essentiel: {
+      tier: 'Collaboration ponctuelle',
+      description:
+        'Une collaboration autour d’une initiative précise et limitée dans le temps : événement, campagne, atelier, programme spécial ou autre action construite autour d’un objectif commun.',
+      cta: 'Proposer une collaboration',
+      accent: ACCENT_ESSENTIEL,
+    },
+    standard: {
+      tier: 'Partenariat de projet',
+      description:
+        'Une collaboration structurée pour concevoir et mettre en œuvre ensemble un projet ou une initiative, avec des objectifs, responsabilités, activités et résultats clairement définis.',
+      cta: 'Discuter d’un projet',
+      accent: ACCENT_STANDARD,
+    },
+    premium: {
+      tier: 'Partenariat stratégique',
+      description:
+        'Une relation de plus long terme permettant de construire plusieurs initiatives autour d’intérêts communs et de mobiliser, selon les besoins, les différentes expertises et plateformes de l’écosystème Bany, BTX ou Yolo.',
+      cta: 'Explorer un partenariat stratégique',
+      accent: ACCENT_PREMIUM,
+    },
+  },
+  'Autre demande': {
+    standard: {
+      tier: 'Autre demande',
+      description:
+        'Votre besoin ne correspond à aucune des catégories proposées ? Présentez-nous simplement votre projet, votre objectif et le type de collaboration envisagé. Notre équipe déterminera avec vous le format le plus adapté.',
+      cta: 'Envoyer la demande',
+      accent: ACCENT_STANDARD,
     },
   },
 };
@@ -488,7 +534,7 @@ export function getInvitePackage(
   else if (budgetRange === 'premium' || budgetRange === 'above-5000') tier = 'premium';
   else tier = 'standard';
 
-  return packages[tier];
+  return packages[tier] ?? packages.standard ?? packages.essentiel ?? packages.premium ?? null;
 }
 
 export function getInviteFormulaOptions(
@@ -500,10 +546,17 @@ export function getInviteFormulaOptions(
   const packages = INVITE_PACKAGES_BY_EVENT[type];
   if (!packages) return [];
 
-  return (['essentiel', 'standard', 'premium'] as InviteFormulaTier[]).map((value) => ({
-    value,
-    label: packages[value].tier,
-  }));
+  return (['essentiel', 'standard', 'premium'] as InviteFormulaTier[])
+    .filter((value) => Boolean(packages[value]))
+    .map((value) => ({
+      value,
+      label: packages[value]!.tier,
+    }));
+}
+
+export function getDefaultInviteFormula(eventType: string): InviteFormulaTier {
+  const options = getInviteFormulaOptions(eventType);
+  return options[0]?.value ?? 'standard';
 }
 
 export const BOOKS: Book[] = [

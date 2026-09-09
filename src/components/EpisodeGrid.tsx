@@ -88,7 +88,7 @@ export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: Epis
         {/* Header */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 items-end">
           <div className="lg:col-span-7 space-y-4">
-            <p className="section-label">The Bany Talks</p>
+            <p className="section-label">The Bany Experience</p>
             <h2 className="font-display text-4xl sm:text-5xl text-stone-100 font-medium leading-tight">
               Épisodes & conversations
             </h2>

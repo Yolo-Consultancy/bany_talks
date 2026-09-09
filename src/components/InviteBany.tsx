@@ -3,6 +3,7 @@ import { Mail, Send, CheckCircle2, ArrowRight } from 'lucide-react';
 import WhatsAppIcon from './WhatsAppIcon';
 import {
   FREQUENT_EVENT_TYPES,
+  getDefaultInviteFormula,
   getInviteFormulaOptions,
   getInvitePackage,
   getInviteTypeConfig,
@@ -90,7 +91,7 @@ const emptyForm = {
   email: '',
   eventType: FREQUENT_EVENT_TYPES[0] as InviteEventType,
   date: '',
-  budgetRange: 'standard',
+  budgetRange: getDefaultInviteFormula(FREQUENT_EVENT_TYPES[0]),
   message: '',
   city: '',
   eventFormat: '',
@@ -116,7 +117,9 @@ export default function InviteBany() {
     [formData.eventType, formData.budgetRange]
   );
   const accent = currentPackage?.accent;
+  const activeCta = currentPackage?.cta || typeConfig.cta;
   const extraFields = typeConfig.extraFields ?? [];
+  const showFormulaPicker = typeConfig.showFormulas && formulaOptions.length > 1;
 
   useEffect(() => {
     const savedId = localStorage.getItem('bany_sheets_id');
@@ -144,7 +147,7 @@ export default function InviteBany() {
         return {
           ...prev,
           eventType: nextType,
-          budgetRange: 'standard',
+          budgetRange: getDefaultInviteFormula(nextType),
           city: '',
           eventFormat: '',
           audience: '',
@@ -156,38 +159,27 @@ export default function InviteBany() {
   };
 
   const packagePanelBg =
-    formData.budgetRange === 'essentiel' || formData.budgetRange === 'under-3000'
+    formData.budgetRange === 'essentiel'
       ? 'bg-white/[0.04] border-white/10'
-      : formData.budgetRange === 'standard' || formData.budgetRange === '3000-5000'
-        ? 'bg-rose-500/10 border-rose-500/25'
-        : 'bg-rose-300/10 border-rose-300/25';
+      : formData.budgetRange === 'premium'
+        ? 'bg-rose-300/10 border-rose-300/25'
+        : 'bg-rose-500/10 border-rose-500/25';
 
   const packageDetails = currentPackage && accent ? (
     <div
-      className={`border ${packagePanelBg} border-l-4 ${accent.border} p-4 sm:p-5 lg:p-6 space-y-4 sm:space-y-5 lg:space-y-6 transition-colors duration-300`}
+      className={`border ${packagePanelBg} border-l-4 ${accent.border} p-5 sm:p-6 lg:p-7 space-y-5 transition-colors duration-300`}
     >
-      <div>
-        <p className={`text-[0.6rem] font-display font-semibold tracking-[0.18em] uppercase mb-3 ${accent.label}`}>
-          {typeConfig.formulaLabel || 'Format'} · {formData.eventType}
+      <div className="space-y-3">
+        <p className={`text-[0.6rem] font-display font-semibold tracking-[0.18em] uppercase ${accent.label}`}>
+          {formData.eventType}
         </p>
-        <h3 className={`font-display text-xl sm:text-2xl font-medium ${accent.text}`}>
+        <h3 className={`font-display text-xl sm:text-2xl font-medium leading-snug ${accent.text}`}>
           {currentPackage.tier}
         </h3>
-        {currentPackage.estHours && (
-          <p className={`text-sm font-body mt-2 ${accent.textMuted}`}>
-            Durée conseillée : {currentPackage.estHours}
-          </p>
-        )}
+        <p className="text-sm text-stone-400 font-body leading-relaxed">
+          {currentPackage.description}
+        </p>
       </div>
-
-      <ul className="space-y-3">
-        {currentPackage.features.map((feat, idx) => (
-          <li key={idx} className="flex gap-3 text-sm text-stone-400 font-body">
-            <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${accent.icon}`} strokeWidth={1.5} />
-            {feat}
-          </li>
-        ))}
-      </ul>
     </div>
   ) : (
     <div className="border border-white/8 border-l-4 border-l-rose-500/50 p-5 sm:p-6 space-y-3">
@@ -233,9 +225,7 @@ export default function InviteBany() {
     setSuccessSheetsSync(false);
 
     const details = buildDetailsMessage();
-    const formuleLabel = typeConfig.showFormulas
-      ? getInvitePackage(formData.eventType, formData.budgetRange)?.tier || '—'
-      : '—';
+    const formuleLabel = currentPackage?.tier || '—';
 
     const liveBooking: SpeakerRequest = {
       id: `book-${Date.now().toString().slice(-4)}`,
@@ -375,15 +365,12 @@ export default function InviteBany() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 lg:gap-16 xl:gap-20 items-start">
-            <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-6 sm:space-y-8 min-w-0">
-              {/* Intro mobile — pour les types avec formats (le détail format suit plus bas) */}
-              {typeConfig.showFormulas && (typeConfig.introTitle || typeConfig.intro) && (
+            <form id="invite-form" onSubmit={handleSubmit} className="lg:col-span-7 space-y-6 sm:space-y-8 min-w-0">
+              {typeConfig.introTitle && (
                 <div className="lg:hidden space-y-2 pb-1 border-b border-white/5">
-                  {typeConfig.introTitle && (
-                    <h3 className="font-display text-xl text-stone-100 font-medium">
-                      {typeConfig.introTitle}
-                    </h3>
-                  )}
+                  <h3 className="font-display text-xl text-stone-100 font-medium">
+                    {typeConfig.introTitle}
+                  </h3>
                   {typeConfig.intro && (
                     <p className="text-sm text-stone-500 font-body leading-relaxed">{typeConfig.intro}</p>
                   )}
@@ -585,9 +572,9 @@ export default function InviteBany() {
                 </div>
               )}
 
-              {typeConfig.showFormulas && formulaOptions.length > 0 && (
+              {showFormulaPicker && (
                 <div>
-                  <FormLabel required>{typeConfig.formulaLabel || 'Format'}</FormLabel>
+                  <FormLabel required>{typeConfig.formulaLabel || 'Formule'}</FormLabel>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
                     {formulaOptions.map((opt) => {
                       const style = FORMULA_STYLE.find((s) => s.value === opt.value)!;
@@ -595,7 +582,7 @@ export default function InviteBany() {
                       return (
                         <label
                           key={opt.value}
-                          className={`flex items-center md:justify-center py-3.5 px-4 md:px-2 text-sm md:text-xs lg:text-sm font-body font-medium cursor-pointer border transition duration-200 leading-snug ${
+                          className={`flex items-center md:justify-center py-2 sm:py-2.5 px-3 md:px-2 text-xs font-body font-medium cursor-pointer border transition duration-200 leading-snug ${
                             active
                               ? `${style.bgActive} ${style.textActive} ${style.borderActive}`
                               : `${style.bg} ${style.text} ${style.border} hover:brightness-110`
@@ -614,19 +601,15 @@ export default function InviteBany() {
                       );
                     })}
                   </div>
-
-                  <div
-                    key={`${formData.eventType}-${formData.budgetRange}`}
-                    className="lg:hidden mt-5 sm:mt-6 animate-fade-in-up"
-                  >
-                    {packageDetails}
-                  </div>
                 </div>
               )}
 
-              {!typeConfig.showFormulas && (
-                <div className="lg:hidden animate-fade-in-up">{packageDetails}</div>
-              )}
+              <div
+                key={`${formData.eventType}-${formData.budgetRange}`}
+                className="lg:hidden animate-fade-in-up"
+              >
+                {packageDetails}
+              </div>
 
               <div className="min-w-0">
                 <FormLabel htmlFor="message-textarea">
@@ -646,7 +629,7 @@ export default function InviteBany() {
               </div>
 
               {typeConfig.note && (
-                <p className="text-xs text-stone-600 font-body leading-relaxed">{typeConfig.note}</p>
+                <p className="text-xs text-stone-600 font-body leading-relaxed lg:hidden">{typeConfig.note}</p>
               )}
 
               {sheetsError && <p className="text-sm text-rose-400 font-body break-words">{sheetsError}</p>}
@@ -654,13 +637,13 @@ export default function InviteBany() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full sm:w-auto justify-center text-[11px] sm:text-xs px-5 sm:px-7 whitespace-normal text-center leading-snug min-h-[3rem]"
+                className="btn-primary w-full sm:w-auto justify-center text-[11px] sm:text-xs px-5 sm:px-7 whitespace-normal text-center leading-snug min-h-12"
               >
                 {loading ? (
                   <span className="w-4 h-4 rounded-full border-2 border-stone-950 border-t-transparent animate-spin shrink-0" />
                 ) : (
                   <>
-                    <span>{typeConfig.cta}</span>
+                    <span>{activeCta}</span>
                     <Send className="w-4 h-4 shrink-0" />
                   </>
                 )}
@@ -668,17 +651,9 @@ export default function InviteBany() {
             </form>
 
             <aside className="lg:col-span-5 lg:sticky lg:top-28 space-y-8 sm:space-y-10 min-w-0 pt-2 lg:pt-0 border-t border-white/5 lg:border-0">
-              <div className="hidden lg:block space-y-4">
-                {typeConfig.introTitle && typeConfig.showFormulas && (
-                  <div className="space-y-2">
-                    <h3 className="font-display text-2xl text-stone-100 font-medium">{typeConfig.introTitle}</h3>
-                    {typeConfig.intro && (
-                      <p className="text-sm text-stone-500 font-body leading-relaxed">{typeConfig.intro}</p>
-                    )}
-                  </div>
-                )}
+              <div className="hidden lg:block space-y-5">
                 {packageDetails}
-                {typeConfig.note && typeConfig.showFormulas && (
+                {typeConfig.note && (
                   <p className="text-xs text-stone-600 font-body leading-relaxed">{typeConfig.note}</p>
                 )}
               </div>

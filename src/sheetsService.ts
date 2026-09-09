@@ -46,7 +46,7 @@ export const getFirstSheetTitle = async (spreadsheetId: string, accessToken: str
 /**
  * Create a new brand-dedicated Google Spreadsheet and initialize its headers.
  */
-export const createNewSpreadsheet = async (accessToken: string, title: string = "Bany Talks - Demandes d'Invitations"): Promise<GoogleSpreadsheetInfo> => {
+export const createNewSpreadsheet = async (accessToken: string, title: string = "Bany Experience - Demandes d'Invitations"): Promise<GoogleSpreadsheetInfo> => {
   const url = 'https://sheets.googleapis.com/v4/spreadsheets';
   const response = await fetch(url, {
     method: 'POST',

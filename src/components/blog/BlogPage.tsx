@@ -135,7 +135,7 @@ export default function BlogPage({
             Blog
           </h1>
           <p className="text-stone-500 font-body text-sm leading-relaxed max-w-xl">
-            Analyses, interviews et coulisses — le prolongement écrit des conversations Bany Talks.
+            Analyses, interviews et coulisses — le prolongement écrit des conversations Bany Experience.
           </p>
         </div>
 

@@ -150,7 +150,7 @@ export default function BlogArticleCard({
               {article.author || 'Bany'}
             </button>
           </div>
-          <p className="text-[11px] text-stone-500 font-body leading-snug mt-0.5 truncate" title={article.authorTitle || 'Founder & CEO – Yolo Group | Honorary Doctor (Entrepreneurship & Host of Bany Talks)'}>
+          <p className="text-[11px] text-stone-500 font-body leading-snug mt-0.5 truncate" title={article.authorTitle || 'Founder & CEO – Yolo Group | Honorary Doctor (Entrepreneurship & Host of Bany Experience)'}>
             Founder &amp; CEO – Yolo Group | Honorary Doctor…
           </p>
           <div className="flex flex-wrap items-center gap-1 text-[12px] text-stone-500 font-body mt-1">
@@ -216,7 +216,7 @@ export default function BlogArticleCard({
         className="w-full flex items-center gap-3 px-4 py-3 bg-[#161616] border-t border-white/5 text-left cursor-pointer hover:bg-[#1a1a1a] transition"
       >
         <div className="flex-1 min-w-0 space-y-0.5">
-          <p className="text-[11px] uppercase tracking-wide text-stone-600 font-body">Bany Talks</p>
+          <p className="text-[11px] uppercase tracking-wide text-stone-600 font-body">Bany Business Minute</p>
           <p className="text-[15px] font-semibold text-stone-100 leading-snug line-clamp-2">{article.title}</p>
           {article.excerpt && (
             <p className="text-[13px] text-stone-500 font-body line-clamp-1">{article.excerpt}</p>
