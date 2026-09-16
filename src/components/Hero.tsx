@@ -3,13 +3,34 @@ import { ArrowDown } from 'lucide-react';
 import { HOST_DETAILS } from '../data';
 import BanyTypewriterTitle from './BanyTypewriterTitle';
 
+const MOBILE_MQ = '(max-width: 767px)';
+
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoFailed, setVideoFailed] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(MOBILE_MQ).matches : false
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_MQ);
+    const onChange = () => {
+      setIsMobile(mq.matches);
+      setVideoFailed(false);
+    };
+    onChange();
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  const videoSrc =
+    isMobile && HOST_DETAILS.heroVideoMobile
+      ? HOST_DETAILS.heroVideoMobile
+      : HOST_DETAILS.heroVideo;
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || videoFailed) return;
+    if (!video || videoFailed || !videoSrc) return;
 
     const play = () => {
       video.play().catch(() => setVideoFailed(true));
@@ -18,9 +39,9 @@ export default function Hero() {
     play();
     video.addEventListener('canplay', play);
     return () => video.removeEventListener('canplay', play);
-  }, [videoFailed]);
+  }, [videoFailed, videoSrc]);
 
-  const showPoster = videoFailed || !HOST_DETAILS.heroVideo;
+  const showPoster = videoFailed || !videoSrc;
 
   return (
     <section
@@ -30,6 +51,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-0 overflow-hidden">
         {!showPoster && (
           <video
+            key={videoSrc}
             ref={videoRef}
             className="hero-video-bg"
             autoPlay
@@ -40,7 +62,7 @@ export default function Hero() {
             onError={() => setVideoFailed(true)}
             {...{ 'webkit-playsinline': 'true' }}
           >
-            <source src={HOST_DETAILS.heroVideo} type="video/mp4" />
+            <source src={videoSrc} type="video/mp4" />
           </video>
         )}
 

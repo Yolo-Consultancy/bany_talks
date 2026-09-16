@@ -1,19 +1,67 @@
-const INNERTUBE_CLIENT = {
-  clientName: 'WEB',
-  clientVersion: '2.20240801.00.00',
-  hl: 'fr',
-  gl: 'FR',
-};
+const INNERTUBE_API_KEY = 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8';
 
-async function browseInnertube(payload) {
-  const res = await fetch('https://www.youtube.com/youtubei/v1/browse?prettyPrint=false', {
-    method: 'POST',
+const CLIENTS = [
+  {
+    label: 'WEB',
+    client: {
+      clientName: 'WEB',
+      clientVersion: '2.20250320.01.00',
+      hl: 'fr',
+      gl: 'FR',
+    },
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache',
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      Origin: 'https://www.youtube.com',
+      Referer: 'https://www.youtube.com/',
+      'X-Youtube-Client-Name': '1',
+      'X-Youtube-Client-Version': '2.20250320.01.00',
     },
-    body: JSON.stringify({ context: { client: INNERTUBE_CLIENT }, ...payload }),
+    useKey: true,
+  },
+  {
+    label: 'TVHTML5',
+    client: {
+      clientName: 'TVHTML5_SIMPLY_EMBEDDED_PLAYER',
+      clientVersion: '2.0',
+      hl: 'fr',
+      gl: 'FR',
+    },
+    headers: {
+      'Content-Type': 'application/json',
+      Origin: 'https://www.youtube.com',
+      Referer: 'https://www.youtube.com/',
+    },
+    useKey: true,
+    key: 'AIzaSyDCU8hByM-4DrUqRUYnGn-3zao5Hmg3UAg',
+  },
+];
+
+async function sleep(ms) {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function browseInnertube(payload, clientConfig, attempt = 1) {
+  const key = clientConfig.useKey ? clientConfig.key || INNERTUBE_API_KEY : null;
+  const url = key
+    ? `https://www.youtube.com/youtubei/v1/browse?key=${key}&prettyPrint=false`
+    : 'https://www.youtube.com/youtubei/v1/browse?prettyPrint=false';
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: clientConfig.headers,
+    body: JSON.stringify({
+      context: { client: clientConfig.client },
+      ...payload,
+    }),
   });
+
+  if ((res.status === 500 || res.status === 503) && attempt < 3) {
+    await sleep(250 * attempt);
+    return browseInnertube(payload, clientConfig, attempt + 1);
+  }
+
   if (!res.ok) {
     throw new Error(`YouTube innertube ${res.status}`);
   }
@@ -85,47 +133,47 @@ function collectPlaylistItems(node, videos, tokens) {
   }
 }
 
-export async function fetchYoutubePlaylistItems(playlistId) {
-  const cleanId = String(playlistId || '').trim();
-  if (!cleanId) throw new Error('Missing playlist_id');
+async function fetchViaInnertube(playlistId, clientConfig) {
+  const seen = new Set();
+  const items = [];
+  let tokens = [];
+  const first = await browseInnertube({ browseId: `VL${playlistId}` }, clientConfig);
+  collectPlaylistItems(first, items, tokens);
 
-  try {
-    const seen = new Set();
-    const items = [];
-    let tokens = [];
-    const first = await browseInnertube({ browseId: `VL${cleanId}` });
-    collectPlaylistItems(first, items, tokens);
-
-    let guard = 0;
-    while (tokens.length && guard++ < 20) {
-      const token = tokens.shift();
-      const page = await browseInnertube({ continuation: token });
+  let guard = 0;
+  while (tokens.length && guard++ < 20) {
+    const token = tokens.shift();
+    try {
+      const page = await browseInnertube({ continuation: token }, clientConfig);
       const extra = [];
       const nextTokens = [];
       collectPlaylistItems(page, extra, nextTokens);
       items.push(...extra);
       tokens.push(...nextTokens);
+    } catch {
+      // Keep items already collected if a later page fails.
+      break;
     }
-
-    const unique = items.filter((item) => {
-      if (seen.has(item.videoId)) return false;
-      seen.add(item.videoId);
-      return true;
-    });
-    if (unique.length > 0) return unique;
-  } catch (error) {
-    console.warn('Innertube playlist failed, fallback Invidious', error);
   }
 
+  return items.filter((item) => {
+    if (seen.has(item.videoId)) return false;
+    seen.add(item.videoId);
+    return true;
+  });
+}
+
+async function fetchViaInvidious(playlistId) {
   const instances = [
     'https://inv.nadeko.net',
     'https://invidious.privacyredirect.com',
     'https://yewtu.be',
+    'https://invidious.flokinet.to',
   ];
   let lastError;
   for (const instance of instances) {
     try {
-      const res = await fetch(`${instance}/api/v1/playlists/${encodeURIComponent(cleanId)}`, {
+      const res = await fetch(`${instance}/api/v1/playlists/${encodeURIComponent(playlistId)}`, {
         signal: AbortSignal.timeout(12000),
       });
       if (!res.ok) throw new Error(`Invidious ${res.status}`);
@@ -146,4 +194,20 @@ export async function fetchYoutubePlaylistItems(playlistId) {
     }
   }
   throw lastError || new Error('Invidious playlist empty');
+}
+
+export async function fetchYoutubePlaylistItems(playlistId) {
+  const cleanId = String(playlistId || '').trim();
+  if (!cleanId) throw new Error('Missing playlist_id');
+
+  for (const clientConfig of CLIENTS) {
+    try {
+      const unique = await fetchViaInnertube(cleanId, clientConfig);
+      if (unique.length > 0) return unique;
+    } catch {
+      // try next client
+    }
+  }
+
+  return fetchViaInvidious(cleanId);
 }

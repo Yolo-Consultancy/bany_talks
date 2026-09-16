@@ -20,6 +20,8 @@ export const HOST_DETAILS = {
   aboutpicture: banyAbout,
   /** Vidéo hero en boucle — déposer le fichier dans public/ (ex. public/hero.mp4) */
   heroVideo: '/hero.mp4',
+  /** Variante verticale / cadrée pour mobile */
+  heroVideoMobile: '/hero-mobile.mp4',
   heroPoster: banyAbout,
   statistics: [
     { label: 'Auditeurs Mensuels', value: '450K+' },
