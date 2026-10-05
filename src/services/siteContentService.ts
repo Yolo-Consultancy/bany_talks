@@ -14,11 +14,24 @@ export type TimelineMilestone = {
   desc: string;
 };
 
+export type EngagementSettings = {
+  showLikes: boolean;
+  showComments: boolean;
+  showShare: boolean;
+};
+
+export const DEFAULT_ENGAGEMENT: EngagementSettings = {
+  showLikes: true,
+  showComments: true,
+  showShare: true,
+};
+
 export type SiteContent = {
   id?: string;
   key?: string;
   statistics: SiteStatistic[];
   timeline?: TimelineMilestone[];
+  engagement?: EngagementSettings;
 };
 
 const MONTH_LABELS = [

@@ -9,6 +9,7 @@ import {
   unlikeArticle,
 } from '../../services/blogService';
 import BlogComments from './BlogComments';
+import { engagementGridClass, useEngagementSettings } from '../../hooks/useEngagementSettings';
 
 const LIKED_ARTICLES_KEY = 'bany_liked_articles';
 
@@ -59,6 +60,7 @@ export default function BlogArticleCard({
   const [liking, setLiking] = useState(false);
   const [sharedHint, setSharedHint] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const engagement = useEngagementSettings();
   const [relativeTime, setRelativeTime] = useState(() =>
     formatRelativePublishTime(article.publishedAt)
   );
@@ -119,6 +121,9 @@ export default function BlogArticleCard({
   };
 
   const toggleComments = () => setShowComments((v) => !v);
+  const showLikeCount = engagement.showLikes && likes > 0;
+  const showCommentCount = engagement.showComments && commentCount > 0;
+  const hasActions = engagement.showLikes || engagement.showComments || engagement.showShare;
 
   return (
     <motion.article
@@ -227,25 +232,33 @@ export default function BlogArticleCard({
         </span>
       </button>
 
-      {(likes > 0 || commentCount > 0) && (
+      {(showLikeCount || showCommentCount) && (
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 text-[13px] text-stone-500 font-body border-t border-white/5">
-          <button
-            type="button"
-            onClick={() => handleLike()}
-            className="inline-flex items-center gap-1.5 hover:underline cursor-pointer"
-          >
-            <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-rose-500">
-              <ThumbsUp className="w-2.5 h-2.5 text-white fill-white" />
-            </span>
-            <span>{formatCount(likes)}</span>
-          </button>
-          <button type="button" onClick={toggleComments} className="hover:underline cursor-pointer">
-            {commentCount} commentaire{commentCount !== 1 ? 's' : ''}
-          </button>
+          {showLikeCount ? (
+            <button
+              type="button"
+              onClick={() => handleLike()}
+              className="inline-flex items-center gap-1.5 hover:underline cursor-pointer"
+            >
+              <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-rose-500">
+                <ThumbsUp className="w-2.5 h-2.5 text-white fill-white" />
+              </span>
+              <span>{formatCount(likes)}</span>
+            </button>
+          ) : (
+            <span />
+          )}
+          {showCommentCount && (
+            <button type="button" onClick={toggleComments} className="hover:underline cursor-pointer">
+              {commentCount} commentaire{commentCount !== 1 ? 's' : ''}
+            </button>
+          )}
         </div>
       )}
 
-      <div className="grid grid-cols-3 border-t border-white/5 mx-1 sm:mx-2 mb-1">
+      {hasActions && (
+      <div className={`grid ${engagementGridClass(engagement)} border-t border-white/5 mx-1 sm:mx-2 mb-1`}>
+        {engagement.showLikes && (
         <button
           type="button"
           onClick={() => handleLike()}
@@ -257,6 +270,8 @@ export default function BlogArticleCard({
           <ThumbsUp className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${liked ? 'fill-rose-500' : ''}`} />
           J’aime
         </button>
+        )}
+        {engagement.showComments && (
         <button
           type="button"
           onClick={toggleComments}
@@ -267,6 +282,8 @@ export default function BlogArticleCard({
           <MessageCircle className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
           Commenter
         </button>
+        )}
+        {engagement.showShare && (
         <button
           type="button"
           onClick={handleShare}
@@ -275,10 +292,12 @@ export default function BlogArticleCard({
           <Share2 className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
           {sharedHint ? 'Copié' : 'Partager'}
         </button>
+        )}
       </div>
+      )}
 
       <AnimatePresence initial={false}>
-        {showComments && (
+        {engagement.showComments && showComments && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}

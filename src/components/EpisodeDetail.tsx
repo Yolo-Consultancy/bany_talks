@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Play, Clock, Share2, Linkedin, Twitter, MessageSquare, Copy, Check, Heart } from 'lucide-react';
 import { Episode, Timestamp } from '../types';
 import InviteCta from './InviteCta';
+import { useEngagementSettings } from '../hooks/useEngagementSettings';
 
 interface EpisodeDetailProps {
   episode: Episode;
@@ -21,6 +22,7 @@ export default function EpisodeDetail({
   const [copied, setCopied] = useState(false);
   const [likes, setLikes] = useState(episode.likesCount);
   const [hasLiked, setHasLiked] = useState(false);
+  const engagement = useEngagementSettings();
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -96,7 +98,7 @@ export default function EpisodeDetail({
               ÉCOUTER L'AUDIO COMPLET ({episode.duration})
             </button>
 
-            {/* Like count action */}
+            {engagement.showLikes && (
             <button
               onClick={handleLikeClick}
               className={`flex items-center gap-2 px-4 py-3 rounded-xl border font-mono text-xs font-bold uppercase transition cursor-pointer ${
@@ -108,9 +110,10 @@ export default function EpisodeDetail({
               <Heart className={`w-4 h-4 ${hasLiked ? 'fill-rose-500 text-rose-500' : ''}`} />
               {likes} J'aime
             </button>
+            )}
           </div>
 
-          {/* Social share widget */}
+          {engagement.showShare && (
           <div className="flex items-center gap-3">
             <span className="text-[10px] font-mono text-stone-500 uppercase">Partager l'épisode :</span>
             
@@ -140,6 +143,7 @@ export default function EpisodeDetail({
               <Twitter className="w-4 h-4" />
             </a>
           </div>
+          )}
 
         </div>
 

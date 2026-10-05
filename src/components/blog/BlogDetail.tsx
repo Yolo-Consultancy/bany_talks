@@ -22,6 +22,7 @@ import BlogArticleCard from './BlogArticleCard';
 import { BlogCardSkeleton } from './BlogSkeleton';
 import BlogComments from './BlogComments';
 import InviteCta from '../InviteCta';
+import { engagementGridClass, useEngagementSettings } from '../../hooks/useEngagementSettings';
 
 const LIKED_ARTICLES_KEY = 'bany_liked_articles';
 
@@ -67,6 +68,7 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
   const [likes, setLikes] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
   const [showComments, setShowComments] = useState(false);
+  const engagement = useEngagementSettings();
 
   useEffect(() => {
     let cancelled = false;
@@ -203,26 +205,34 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
         )}
 
         {/* Actions — juste sous la grande photo, style cards */}
+        {(engagement.showLikes || engagement.showComments || engagement.showShare) && (
         <div className={`border border-white/5 border-t-0 mb-10 ${!article.coverImage ? 'border-t mt-0' : ''}`}>
-          {(likes > 0 || commentCount > 0) && (
+          {( (engagement.showLikes && likes > 0) || (engagement.showComments && commentCount > 0) ) && (
             <div className="flex items-center justify-between gap-3 px-3 sm:px-4 py-2.5 text-[13px] text-stone-500 font-body">
-              <button
-                type="button"
-                onClick={handleLike}
-                className="inline-flex items-center gap-1.5 hover:underline cursor-pointer"
-              >
-                <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-rose-500">
-                  <ThumbsUp className="w-2.5 h-2.5 text-white fill-white" />
-                </span>
-                <span>{formatCount(likes)}</span>
-              </button>
-              <button type="button" onClick={toggleComments} className="hover:underline cursor-pointer">
-                {commentCount} commentaire{commentCount !== 1 ? 's' : ''}
-              </button>
+              {engagement.showLikes && likes > 0 ? (
+                <button
+                  type="button"
+                  onClick={handleLike}
+                  className="inline-flex items-center gap-1.5 hover:underline cursor-pointer"
+                >
+                  <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-rose-500">
+                    <ThumbsUp className="w-2.5 h-2.5 text-white fill-white" />
+                  </span>
+                  <span>{formatCount(likes)}</span>
+                </button>
+              ) : (
+                <span />
+              )}
+              {engagement.showComments && commentCount > 0 && (
+                <button type="button" onClick={toggleComments} className="hover:underline cursor-pointer">
+                  {commentCount} commentaire{commentCount !== 1 ? 's' : ''}
+                </button>
+              )}
             </div>
           )}
 
-          <div className={`grid grid-cols-3 mx-1 sm:mx-2 ${(likes > 0 || commentCount > 0) ? 'border-t border-white/5' : ''}`}>
+          <div className={`grid ${engagementGridClass(engagement)} mx-1 sm:mx-2 ${((engagement.showLikes && likes > 0) || (engagement.showComments && commentCount > 0)) ? 'border-t border-white/5' : ''}`}>
+            {engagement.showLikes && (
             <button
               type="button"
               onClick={handleLike}
@@ -234,6 +244,8 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
               <ThumbsUp className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${liked ? 'fill-rose-500' : ''}`} />
               J’aime
             </button>
+            )}
+            {engagement.showComments && (
             <button
               type="button"
               onClick={toggleComments}
@@ -244,6 +256,8 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
               <MessageCircle className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
               Commenter
             </button>
+            )}
+            {engagement.showShare && (
             <button
               type="button"
               onClick={handleShare}
@@ -252,10 +266,11 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
               <Share2 className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
               {sharedHint ? 'Copié' : 'Partager'}
             </button>
+            )}
           </div>
 
           <AnimatePresence initial={false}>
-            {showComments && (
+            {engagement.showComments && showComments && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
@@ -276,6 +291,7 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
             )}
           </AnimatePresence>
         </div>
+        )}
 
         <div className="flex flex-wrap items-start gap-5 text-sm text-stone-500 font-body mb-12">
           <span className="inline-flex items-start gap-2 max-w-xl">
