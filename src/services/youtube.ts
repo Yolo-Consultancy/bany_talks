@@ -174,7 +174,7 @@ function mapApiItemsToEpisodes(
       applePodcastsUrl: '',
       guest: {
         id: `guest-${videoId}`,
-        name: 'Bany Experience & Invités',
+        name: 'Bany Talks Experience & Invités',
         role: categoryName,
         bio: snippet.description || 'Retrouvez toutes les infos et notes de l’émission sur notre chaîne YouTube !',
         avatar: '/input_file_0.png',
@@ -294,7 +294,7 @@ function buildEpisodeFromVideoId(
     applePodcastsUrl: '',
     guest: {
       id: `guest-${videoId}`,
-      name: 'Bany Experience & Invités',
+      name: 'Bany Talks Experience & Invités',
       role: categoryName,
       bio: description,
       avatar: '/input_file_0.png',

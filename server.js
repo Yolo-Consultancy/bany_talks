@@ -118,5 +118,5 @@ app.get('*', (_req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Bany Talks server running on http://localhost:${PORT}`);
+  console.log(`Bany Talks Experience server running on http://localhost:${PORT}`);
 });

@@ -1,6 +1,6 @@
-# Guide de Configuration YouTube — Dany Talks
+# Guide de Configuration YouTube — Bany Talks Experience
 
-Ce guide vous explique en détail comment lier votre chaîne YouTube **Bany Talks** à votre site d'émission directement depuis le code ou vos fichiers d'environnement (`.env`), sans aucune trace de formulaires ou boutons de connexion sur l'interface publique de vos auditeurs.
+Ce guide vous explique en détail comment lier votre chaîne YouTube **Bany Talks Experience** à votre site d'émission directement depuis le code ou vos fichiers d'environnement (`.env`), sans aucune trace de formulaires ou boutons de connexion sur l'interface publique de vos auditeurs.
 
 ---
 
@@ -56,7 +56,7 @@ Si vous préférez séparer vos configurations techniques ou garder vos clés se
 ## 🔍 Comment obtenir vos identifiants ?
 
 ### 1. Trouver l'ID de votre Chaîne YouTube (ID commençant par `UC`)
-* Connectez-vous sur YouTube et visitez la page d'accueil de votre chaîne **Bany Talks**.
+* Connectez-vous sur YouTube et visitez la page d'accueil de votre chaîne **Bany Talks Experience**.
 * Regardez l'adresse URL de votre navigateur. Elle peut ressembler à : `https://www.youtube.com/channel/UCXm66hscv_pW-i7dCg0W1HA` -> Votre ID est `UCXm66hscv_pW-i7dCg0W1HA`.
 * Si votre URL contient un pseudonyme personnalisé (comme `youtube.com/@bany_talks`), vous pouvez cliquer avec le bouton droit de la souris sur la page de votre chaîne, choisir **Afficher le code source de la page** et faire une recherche (`Ctrl+F` ou `Cmd+F`) sur `"externalId"`. L'identifiant situé juste après correspond à votre ID.
 * Vous pouvez également utiliser un outil en ligne rapide et gratuit en copiant votre pseudonyme `@` sur un site comme [CommentObtenirIDYouTube](https://commentobteniridyoutube.com).

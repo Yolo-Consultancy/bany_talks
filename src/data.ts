@@ -6,7 +6,7 @@ import guestCreator from './assets/images/guest_creator_1779362546167.png';
 import guestExecutive from './assets/images/guest_executive_1779362567789.png';
 
 export const HOST_DETAILS = {
-  name: 'Bany Experience',
+  name: 'Bany Talks Experience',
   fullName: 'Banyabo Bigomokero',
   title: 'Hôte & Producteur Média',
   tagline: 'Une voix qui inspire une génération.',
@@ -91,7 +91,7 @@ export const EPISODES: Episode[] = [
     number: 123,
     title: 'Création de contenu, santé mentale et liberté financière',
     description: 'Le créateur de tendances Kélian Koffi partage sa vision brutale de l’économie de l’attention, la gestion de sa marque personnelle et la transition d’influenceur média à investisseur aguerri.',
-    richDescription: 'Derrière les vues et l’algorithme se cache une équation psychologique redoutée par de nombreux créateurs. Kélian Koffi prend le micro de Bany Experience pour un épisode introspectif où il explore comment il a converti son audience de 2M+ d’abonnés en une structure d’investissement diversifiée dans le commerce physique et l’immobilier locatif tout en préservant sa clarté mentale.',
+    richDescription: 'Derrière les vues et l’algorithme se cache une équation psychologique redoutée par de nombreux créateurs. Kélian Koffi prend le micro de Bany Talks Experience pour un épisode introspectif où il explore comment il a converti son audience de 2M+ d’abonnés en une structure d’investissement diversifiée dans le commerce physique et l’immobilier locatif tout en préservant sa clarté mentale.',
     duration: '58:45',
     publishDate: '14 Mai 2026',
     category: 'Podcasts',
@@ -133,7 +133,7 @@ export const EPISODES: Episode[] = [
     number: 122,
     title: 'Négociation de crise & Leadership d’exception',
     description: 'Antoine Dupont, négociateur chevronné et consultant en climat social, livre ses techniques de résolution de conflits majeurs et d’organisation du leadership de crise.',
-    richDescription: 'De la restructuration d’entreprises en péril aux négociations d’accords industriels stratégiques, Antoine Dupont décrypte pour Bany Experience la psychologie des tensions relationnelles extrêmes. Un cours magistral sur la persuasion, l’intelligence émotionnelle, et l’art subtil de faire céder l’adversaire tout en le laissant sauvegarder la face.',
+    richDescription: 'De la restructuration d’entreprises en péril aux négociations d’accords industriels stratégiques, Antoine Dupont décrypte pour Bany Talks Experience la psychologie des tensions relationnelles extrêmes. Un cours magistral sur la persuasion, l’intelligence émotionnelle, et l’art subtil de faire céder l’adversaire tout en le laissant sauvegarder la face.',
     duration: '01:28:10',
     publishDate: '07 Mai 2026',
     category: 'Podcasts',
@@ -183,8 +183,8 @@ export const TIMELINE_MILESTONES = [
   },
   {
     year: 'Média',
-    title: 'De Bany Experience à BTX',
-    desc: 'Bany lance Bany Experience pour donner la parole aux entrepreneurs, dirigeants et décideurs. Le projet évolue progressivement vers BTX, un écosystème consacré au business, à l’économie, à l’entrepreneuriat et à l’investissement.',
+    title: 'De Bany Talks Experience à BTX',
+    desc: 'Bany lance Bany Talks Experience pour donner la parole aux entrepreneurs, dirigeants et décideurs. Le projet évolue progressivement vers BTX, un écosystème consacré au business, à l’économie, à l’entrepreneuriat et à l’investissement.',
   },
   {
     year: 'Entrepreneuriat',

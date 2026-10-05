@@ -296,7 +296,7 @@ export default function App() {
             }}
             className="flex items-center gap-2 text-stone-100 hover:opacity-80 transition cursor-pointer"
           >
-            <img src={logoBany} alt="BANY TALKS" className="h-12 w-auto" />
+            <img src={logoBany} alt="Bany Talks Experience" className="h-12 w-auto" />
           </button>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-body relative">
@@ -482,14 +482,12 @@ export default function App() {
               <EpisodesHero episodes={episodes} />
               <EpisodeGrid
                 episodes={episodes}
-                onInvite={() => navigateToView('invite')}
                 onEpisodeClick={(ep) => {
                   setSelectedEpisode(ep);
                   setCurrentView('episode-detail');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
               />
-              <Newsletter />
             </motion.div>
           )}
 

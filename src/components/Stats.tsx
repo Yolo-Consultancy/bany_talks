@@ -14,6 +14,7 @@ interface StatsProps {
   onContactClick?: () => void;
 }
 
+const SHOW_KEY_FIGURES = false;
 const ABOUT_PHOTOS = [propos1, propos2, propos3];
 const PHOTO_MS = 5500;
 const PHOTO_FADE_S = 0.9;
@@ -171,21 +172,23 @@ export default function Stats({ onContactClick }: StatsProps) {
         {/* Stats + photo row — text first, image after */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-24 lg:mb-32">
           <div className="lg:col-span-6 space-y-10 order-1">
-            <div>
-              <p className="section-label mb-4">Chiffres clés</p>
-              <div className="grid grid-cols-2 gap-8">
-                {statistics.map((stat, idx) => (
-                  <div key={`${stat.label}-${idx}`} className="space-y-1">
-                    <span className="block font-display text-4xl sm:text-5xl text-rose-400 font-medium">
-                      {stat.value}
-                    </span>
-                    <span className="block text-xs text-stone-500 font-body tracking-wide">
-                      {stat.label}
-                    </span>
-                  </div>
-                ))}
+            {SHOW_KEY_FIGURES && (
+              <div>
+                <p className="section-label mb-4">Chiffres clés</p>
+                <div className="grid grid-cols-2 gap-8">
+                  {statistics.map((stat, idx) => (
+                    <div key={`${stat.label}-${idx}`} className="space-y-1">
+                      <span className="block font-display text-4xl sm:text-5xl text-rose-400 font-medium">
+                        {stat.value}
+                      </span>
+                      <span className="block text-xs text-stone-500 font-body tracking-wide">
+                        {stat.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <blockquote className="border-l-2 border-rose-500/50 pl-6">
               <p className="font-display text-xl text-stone-300 italic leading-relaxed">

@@ -286,7 +286,7 @@ export default function BlogDetail({ slug, onBack, onReadArticle, onOpenCategory
                 <span className="md:hidden">Founder &amp; CEO – Yolo Group | Honorary Doctor…</span>
                 <span className="hidden md:inline">
                   {article.authorTitle ||
-                    'Founder & CEO – Yolo Group | Honorary Doctor (Entrepreneurship & Host of Bany Experience)'}
+                    'Founder & CEO – Yolo Group | Honorary Doctor (Entrepreneurship & Host of Bany Talks Experience)'}
                 </span>
               </span>
             </span>

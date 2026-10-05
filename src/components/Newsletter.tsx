@@ -105,7 +105,7 @@ export default function Newsletter() {
             {[
               { icon: Mic2, label: 'Conversations de fond', stat: 'BTX PODCAST', sub: 'Entrepreneurs, investisseurs & décideurs' },
               { icon: Newspaper, label: 'L’économie décodée', stat: 'BTX DAILY / BBM', sub: 'Actualité, business & pédagogie' },
-              { icon: Lightbulb, label: 'Idées & analyses', stat: 'BANY INSIGHTS', sub: 'Pour comprendre avant d’agir' },
+              { icon: Lightbulb, label: 'Idées & analyses', stat: 'BANY BUSINESS MINUTE', sub: 'Pour comprendre avant d’agir' },
             ].map(({ icon: Icon, label, stat, sub }) => (
               <div key={label} className="flex items-center gap-5 py-4 border-b border-white/5">
                 <Icon className="w-5 h-5 text-stone-600 shrink-0" strokeWidth={1.5} />

@@ -9,7 +9,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Accueil', value: 'home' },
   { label: 'À Propos', value: 'about' },
   { label: 'BTX', value: 'episodes' },
-  { label: 'Blog', value: 'blog' },
+  { label: 'News Letters', value: 'blog' },
   { label: 'Contact', value: 'contact' },
 ];
 

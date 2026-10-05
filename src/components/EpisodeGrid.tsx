@@ -3,12 +3,10 @@ import { Search, Play, ArrowRight, FilterX, ChevronLeft, ChevronRight, X } from 
 import { motion, Variants } from 'framer-motion';
 import { Episode } from '../types';
 import { sortEpisodesByPublishDate } from '../services/youtube';
-import InviteCta from './InviteCta';
 
 interface EpisodeGridProps {
   episodes: Episode[];
   onEpisodeClick: (episode: Episode) => void;
-  onInvite?: () => void;
 }
 
 const containerVariants: Variants = {
@@ -31,7 +29,7 @@ const cardVariants: Variants = {
 const ITEMS_PER_PAGE_MOBILE = 3;
 const ITEMS_PER_PAGE_DESKTOP = 6;
 
-export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: EpisodeGridProps) {
+export default function EpisodeGrid({ episodes, onEpisodeClick }: EpisodeGridProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Toutes');
   const [currentPage, setCurrentPage] = useState(1);
@@ -88,7 +86,7 @@ export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: Epis
         {/* Header */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 items-end">
           <div className="lg:col-span-7 space-y-4">
-            <p className="section-label">The Bany Experience</p>
+            <p className="section-label">Bany Talks Experience</p>
             <h2 className="font-display text-4xl sm:text-5xl text-stone-100 font-medium leading-tight">
               Épisodes & conversations
             </h2>
@@ -264,16 +262,6 @@ export default function EpisodeGrid({ episodes, onEpisodeClick, onInvite }: Epis
                   </button>
                 </div>
               </div>
-            )}
-
-            {onInvite && (
-              <InviteCta
-                className="mt-16 lg:mt-20"
-                onInvite={onInvite}
-                title="Envie d’une édition en live ?"
-                subtitle="Panels, tables rondes ou enregistrement public — Bany peut animer votre prochaine édition."
-                label="Organiser une édition live"
-              />
             )}
           </>
         )}
